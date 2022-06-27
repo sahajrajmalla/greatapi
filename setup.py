@@ -20,6 +20,7 @@ setup(
     packages=["greatapi"],
     include_package_data=True,
 
+    keywords="fastapi, api, django, admin, web-framework",
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
