@@ -36,9 +36,13 @@ setup(
     install_requires = [
         "numpy",
         "fastapi",
-        "uvicorn"
+        "uvicorn",
+        "typer"
     ],
-
+    entry_points='''
+        [console_scripts]
+        greatapi=greatapi.commands:app
+    ''',
     extras_require = {
         'dev': [
             'pytest>=3.7',
