@@ -4,7 +4,6 @@ from greatapi import Multiplication
 
 
 class MultiplicationTestCase(unittest.TestCase):
-
     def setUp(self):
         self.multiplication = Multiplication(2)
 
@@ -33,8 +32,8 @@ class MultiplicationTestCase(unittest.TestCase):
         """Test rational number 6/17 multiplied by 2"""
 
         # 6/17 multiplied by 2 return (6/17) * 2
-        result = self.multiplication.multiply(6/17)
-        self.assertEqual(result, (6/17) * 2)
+        result = self.multiplication.multiply(6 / 17)
+        self.assertEqual(result, (6 / 17) * 2)
 
     def test_real_number(self):
         """Test real number PI multiplied by 2"""
@@ -44,5 +43,5 @@ class MultiplicationTestCase(unittest.TestCase):
         self.assertEqual(result, math.pi * 2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

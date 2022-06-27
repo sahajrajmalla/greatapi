@@ -1,5 +1,5 @@
 def say_hello(name=None):
     if name is None:
-        return 'Hello mewow!'
+        return "Hello mewow!"
     else:
-        return f'Hello, {name}!'
+        return f"Hello, {name}!"
