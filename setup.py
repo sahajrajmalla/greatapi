@@ -2,7 +2,7 @@
 from codecs import open
 from os import path
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 # The directory containing this file
 HERE = path.abspath(path.dirname(__file__))
