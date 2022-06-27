@@ -13,7 +13,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name = 'greatapi',
-    version = '0.0.1',
+    version = '0.0.2',
     description = 'GreatAPI Framework, FastAPI with admin panel',
     long_description=long_description,
     long_description_content_type="text/markdown",
