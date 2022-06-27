@@ -1,4 +1,6 @@
 # Importing NumPy as "np"
+from __future__ import annotations
+
 import numpy as np
 
 
@@ -11,10 +13,10 @@ class Multiplication:
     :type multiplier: int
     """
 
-    def __init__(self, multiplier):
+    def __init__(self, multiplier: float) -> None:
         self.multiplier = multiplier
 
-    def multiply(self, number):
+    def multiply(self, number: float) -> int:
         """
         Multiply a given number by the multiplier.
 

@@ -1,6 +1,6 @@
 name: Publish Python 🐍 distributions 📦 to TestPyPI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push to the master branch
   push:
@@ -23,7 +23,7 @@ jobs:
       # Sets up python3
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8 
+          python-version: 3.8
 
       # Installs and upgrades pip, installs other dependencies and installs the package from setup.py
       - name: "Installs and upgrades pip, installs other dependencies and installs the package from setup.py"

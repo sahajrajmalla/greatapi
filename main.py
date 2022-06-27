@@ -1,4 +1,6 @@
 # Import Multiplication from your library
+from __future__ import annotations
+
 from greatapi import Multiplication
 
 # Instantiate a Multiplication object

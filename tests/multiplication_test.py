@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 import unittest
 
@@ -44,5 +46,5 @@ class MultiplicationTestCase(unittest.TestCase):
         self.assertEqual(result, math.pi * 2)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
