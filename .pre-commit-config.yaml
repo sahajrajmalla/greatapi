@@ -1,3 +1,7 @@
+exclude: 'docs|node_modules|migrations|.git|.tox'
+default_stages: [commit]
+fail_fast: true
+
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
@@ -7,6 +11,7 @@ repos:
     -   id: check-added-large-files
     -   id: check-toml
     -   id: check-yaml
+    -   id: check-ast
         args:
         -   --unsafe
     -   id: end-of-file-fixer
