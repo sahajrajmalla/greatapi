@@ -6,10 +6,10 @@ fail_fast: true
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.1.0
     hooks:
     -   id: check-added-large-files
-    -   id: check-toml
+    -   id: check-ast
     -   id: check-yaml
     args:
     -   --unsafe
@@ -41,12 +41,8 @@ repos:
     hooks:
     -   id: isort
         name: isort (python)
-    -   id: isort
-        name: isort (cython)
-        types: [cython]
-    -   id: isort
-        name: isort (pyi)
-        types: [pyi]
+
+
 -   repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
