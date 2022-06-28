@@ -1,0 +1,171 @@
+{%extends 'base.html'%} {%block title%}Blogs | Great
+API{%endblock%} {%block body%}
+<section class="w-full h-screen flex gap-2 xxl:gap-3 p-2 xxl:p-3">
+  {%include 'sidebar.html'%}
+  <!-- ends -->
+
+  <main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
+    {%include 'navbar.html'%}
+
+    <div class="w-full h-full overflow-y-scroll px-0.5">
+      <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
+        <a href="{{ '/admin' }}" class="text-blacktwo text-sm font-medium">Dashboard</a>
+        <span class="text-blacktwo">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+        <a href="{{ 'group/%s' % group_name }}" class="text-blacktwo text-sm font-medium">{{group_name}}</a>
+        <span class="text-blacktwo">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+        <a href="{{ 'group-item/%s/%s' % (group_name, group_item) }}"
+          class="text-primary text-sm font-medium">{{group_item}}</a>
+      </div>
+      <!-- ends -->
+
+      <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4">
+        <div class="w-full xl:w-2/3 h-full grid grid-cols-1 gap-3">
+          <div class="block relative w-full h-fit">
+            <input type="search" name="search" id="" placeholder="Search contents.."
+              class="w-full h-12 px-4 pl-10 tracking-wider font-medium text-shadeblack bg-white rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
+            <span class="absolute inset-y-0 left-2 flex justify-center items-center cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
+                <path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none"
+                  stroke-miterlimit="10" stroke-width="30" />
+                <path fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="30"
+                  d="M338.29 338.29L448 448" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center gap-2 sm:gap-4">
+            <button type="button" class="p-3 bg-white text-primary font-semibold flex items-center gap-2 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 32 32">
+                <path fill="currentColor"
+                  d="M24,4H8A4,4,0,0,0,4,8V24a4,4,0,0,0,4,4H24a4,4,0,0,0,4-4V8A4,4,0,0,0,24,4Zm2,20a2,2,0,0,1-2,2H8a2,2,0,0,1-2-2V8A2,2,0,0,1,8,6H24a2,2,0,0,1,2,2ZM20.27,12.064a1,1,0,0,1,.166,1.4l-4.964,6.3a1,1,0,0,1-.786.381h-.01a1,1,0,0,1-.787-.4l-2.337-3.087a1,1,0,0,1,1.6-1.207L14.7,17.514l4.163-5.283A1,1,0,0,1,20.27,12.064Z" />
+              </svg>
+              Select All
+            </button>
+            <div class="flex items-center gap-2 sm:gap-4">
+              <button type="button" class="p-3 bg-white text-success font-semibold flex items-center gap-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+                Add
+              </button>
+              <button type="button" class="p-3 bg-white text-danger font-semibold flex items-center gap-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 32 32">
+                  <path fill="currentColor"
+                    d="M24.2,12.193,23.8,24.3a3.988,3.988,0,0,1-4,3.857H12.2a3.988,3.988,0,0,1-4-3.853L7.8,12.193a1,1,0,0,1,2-.066l.4,12.11a2,2,0,0,0,2,1.923h7.6a2,2,0,0,0,2-1.927l.4-12.106a1,1,0,0,1,2,.066Zm1.323-4.029a1,1,0,0,1-1,1H7.478a1,1,0,0,1,0-2h3.1a1.276,1.276,0,0,0,1.273-1.148,2.991,2.991,0,0,1,2.984-2.694h2.33a2.991,2.991,0,0,1,2.984,2.694,1.276,1.276,0,0,0,1.273,1.148h3.1A1,1,0,0,1,25.522,8.164Zm-11.936-1h4.828a3.3,3.3,0,0,1-.255-.944,1,1,0,0,0-.994-.9h-2.33a1,1,0,0,0-.994.9A3.3,3.3,0,0,1,13.586,7.164Zm1.007,15.151V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Zm4.814,0V13.8a1,1,0,0,0-2,0v8.519a1,1,0,0,0,2,0Z" />
+                </svg>
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-auto rounded-xl">
+            <table class="w-full bg-white">
+              <thead>
+                <tr class="text-left">
+                  <th class="w-20 text-sm text-blacktwo font-bold py-5 px-4 whitespace-nowrap">
+                    Select
+                  </th>
+                  {%for title in titles%}
+                  <th class="text-sm text-blacktwo font-bold py-5 px-4 whitespace-nowrap">
+                    {{title}}
+                  </th>
+                  {%endfor%}
+                </tr>
+              </thead>
+              <tbody>
+                {%for item in items%}
+                <tr>
+                  <td class="py-3 px-4 whitespace-nowrap">
+                    <input type="checkbox"
+                      class="w-6 h-6 rounded-md border-primary outline-none focus:ring-0 appearance-none checked:bg-primary" />
+                  </td>
+                  {%for content in item%}
+
+                  <td class="text-sm text-primary font-semibold py-3 px-4 cursor-pointer whitespace-nowrap">
+                    <a href="{{ 'item-detail/%s/%s/%s' % (group_name, group_item, slug) }}">
+                      {{content}}
+                    </a>
+                  </td>
+
+                  {%endfor%}
+                </tr>
+                {%endfor%}
+                <!-- <td
+                    class="text-sm text-blacktwo font-medium py-3 flex items-center gap-2 px-4 whitespace-nowrap"
+                  >
+                    <input
+                      type="checkbox"
+                      class="w-5 h-5 rounded-md border-primary outline-none focus:ring-0 appearance-none checked:bg-primary"
+                    />
+                    Pin
+                  </td> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="w-full xl:w-1/3 h-fit bg-white p-4 rounded-2xl flex flex-col gap-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-blacktwo">Filter</h3>
+          </div>
+
+          <hr class="border-shadeblack/30" />
+
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-2">
+              <h2 class="text-lg font-semibold text-blacktwo">Status</h2>
+              <ul class="flex flex-col gap-1">
+                <li>
+                  <a href="" class="text-primary font-medium">All</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">Draft</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">Published</a>
+                </li>
+              </ul>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h2 class="text-lg font-semibold text-blacktwo">Date</h2>
+              <ul class="flex flex-col gap-1">
+                <li>
+                  <a href="" class="text-primary font-medium">Any Date</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">Today</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">This Week</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">This Month</a>
+                </li>
+                <li>
+                  <a href="" class="text-shadeblack font-medium">This Year</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {%endblock%}
+</section>

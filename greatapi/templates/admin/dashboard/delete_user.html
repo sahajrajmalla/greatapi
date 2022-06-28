@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modal | Great API</title>
+  <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <script href="{{ url_for('static', path='/main.js') }}"></script>
+</head>
+
+<body>
+  <section class="w-full h-screen fixed inset-0 bg-[#264073]/60 z-20 flex justify-center items-center p-2">
+    <main class="max-w-md xxl:max-w-lg w-full flex flex-col gap-6">
+      <div class="bg-white p-6 rounded-3xl">
+        <h3 class="text-lg text-blacktwo font-bold">Attention!</h3>
+        <h6 class="font-medium text-shadeblack mt-1">
+          You are about to delete your account please enter your password to
+          continue.
+        </h6>
+        <div class="relative mt-6">
+          <input type="password" name="Password" id="" placeholder="Password"
+            class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
+          <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
+              <path
+                d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
+                fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="40" />
+              <circle cx="256" cy="256" r="80" fill="none" stroke-miterlimit="10" stroke-width="40" />
+            </svg>
+          </span>
+        </div>
+        <div class="w-full flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mt-6">
+          <button type="button"
+            class="w-full p-3 bg-white text-lg text-shadeblack font-bold border-2 border-shadeblack flex justify-center items-center gap-2 rounded-lg tracking-wider">
+            Cancel
+          </button>
+
+          <button type="submit"
+            class="w-full p-3 bg-danger text-lg text-white font-bold border-2 border-danger flex justify-center items-center gap-2 rounded-lg tracking-wider">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </main>
+  </section>
+</body>
+
+</html>
