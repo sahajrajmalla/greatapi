@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from db.database import engine
-from db.models.user import Base
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from src.routers import admin
-from src.routers import auth
-from src.routers import index
-from src.routers import user
+from greatapi.config import GREATAPI_ADMIN_STATIC_PATH
+from greatapi.db.database import engine
+from greatapi.db.models.user import Base
+from greatapi.routers import admin, auth, index, user
 
 app = FastAPI()
 
-app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount("/static", StaticFiles(directory=GREATAPI_ADMIN_STATIC_PATH), name="static")
 
 Base.metadata.create_all(engine)
 
