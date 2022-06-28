@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import shutil
 from pathlib import Path
-from typing import Union
 
 
-def copy_files_and_dirs(base_copy_path: Union[str, Path], base_paste_path: Union[str, Path]) -> None:
+def copy_files_and_dirs(base_copy_path: Path, base_paste_path: Path) -> None:
     if not base_paste_path.exists():
         base_paste_path.mkdir(parents=False, exist_ok=False)
 

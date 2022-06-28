@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 from db.database import engine
 from db.models.user import Base
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from src.routers import admin, auth, index, user
+from src.routers import admin
+from src.routers import auth
+from src.routers import index
+from src.routers import user
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 Base.metadata.create_all(engine)
 
