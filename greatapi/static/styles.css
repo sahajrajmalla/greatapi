@@ -1,0 +1,9 @@
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: #f7f8fb;
+  font-family: "Raleway";
+  letter-spacing: 1px;
+}
