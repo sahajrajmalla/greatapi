@@ -1,18 +1,23 @@
+from __future__ import annotations
+
 from pydantic import BaseModel
 
-class UserSchema(BaseModel):
-	name: str
-	email: str
 
-	class Config():
-		orm_mode = True
+class UserSchema(BaseModel):
+    name: str
+    email: str
+
+    class Config():
+        orm_mode = True
+
 
 class UserType(UserSchema):
-	password: str
+    password: str
+
 
 class ShowUser(BaseModel):
-	name: str
-	email: str
+    name: str
+    email: str
 
-	class Config():
-		orm_mode = True
+    class Config():
+        orm_mode = True

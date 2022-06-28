@@ -1,10 +1,17 @@
+from __future__ import annotations
+
 from db.database import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column
+from sqlalchemy import DateTime
+from sqlalchemy import Integer
+from sqlalchemy import String
+# from sqlalchemy import ForeignKey
+
+# from sqlalchemy.orm import relationship
 
 
 class Group(Base):
-    __tablename__ = "groups"
+    __tablename__ = 'groups'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
@@ -14,7 +21,7 @@ class Group(Base):
 
 
 class History(Base):
-    __tablename__ = "history"
+    __tablename__ = 'history'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)

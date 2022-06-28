@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from pydantic import BaseModel
-from typing import Optional
 
 
 class LoginSchema(BaseModel):
-	username: str
-	password: str
+    username: str
+    password: str
+
 
 class TokenData(BaseModel):
-	username: Optional[str] = None
+    username: str | None = None

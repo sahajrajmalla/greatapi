@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import String
+
 from greatapi.db.database import Base
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
