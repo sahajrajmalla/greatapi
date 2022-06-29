@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import subprocess
-import typer
+
 
 def server_initialization() -> None:
-    result = subprocess.run(["uvicorn", "main:app", "--reload"])
+    subprocess.run(['uvicorn', 'main:app', '--reload'])
