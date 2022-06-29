@@ -4,15 +4,19 @@ import typer
 
 from greatapi.commands.startapp import application_initialization
 from greatapi.commands.startproject import project_initialization
+from greatapi.commands.runserver import server_initialization
 
 app = typer.Typer()
 
+@app.command()
+def runserver() -> None:
+    server_initialization()
 
 @app.command()
-def cli(first_arg: str, second_arg: str) -> None:
-    if first_arg == 'startproject':
-        project_initialization(second_arg)
-    elif first_arg == 'startapp':
-        application_initialization(second_arg)
-    else:
-        typer.echo('Command not found!')
+def startproject(project_name: str) -> None:
+    project_initialization(project_name)
+
+@app.command()
+def startapp(app_name: str) -> None:
+    application_initialization(app_name)
+
