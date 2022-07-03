@@ -1,0 +1,130 @@
+{%extends 'base.html'%} {%block title%}Account | Great
+API{%endblock%} {%block body%} {%include 'sidebar.html'%}
+<!-- ends -->
+
+<main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
+  {%include 'navbar.html' %}
+
+  <div class="w-full h-full overflow-y-scroll px-0.5">
+    <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
+      <a href="#" class="text-blacktwo text-sm font-medium">Dashboard</a>
+      <span class="text-blacktwo">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+            clip-rule="evenodd" />
+        </svg>
+      </span>
+      <a href="#" class="text-primary text-sm font-medium">Account</a>
+    </div>
+    <!-- ends -->
+
+    <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4 pb-4">
+      <div class="w-full">
+        <h2 class="text-lg font-bold text-blacktwo">Account</h2>
+
+        <div class="w-full grid grid-col-1 lg:grid-col-2 grid-flow-col lg:grid-rows-3 gap-2 xxl:gap-3 mt-4">
+          <div class="w-full col-span-full md:col-span-2 order-0">
+            <div class="w-full bg-white rounded-2xl p-4 xxl:p-8">
+              <div class="flex justify-between items-center">
+                <h3 class="xxl:text-lg font-bold text-blacktwo">General</h3>
+                <button type="button" class="bg-primary/10 py-1 px-3 font-semibold text-primary rounded-md">
+                  Edit
+                </button>
+              </div>
+
+              <hr class="border-shadeblack/30 my-3" />
+
+              <div class="mt-4">
+                <dl class="flex flex-col gap-4">
+                  <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
+                    <dt class="font-semibold text-shadeblack">Name</dt>
+                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
+                      Admin
+                    </dd>
+                  </div>
+
+                  <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
+                    <dt class="font-semibold text-shadeblack">Username</dt>
+                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
+                      admin
+                    </dd>
+                  </div>
+
+                  <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
+                    <dt class="font-semibold text-shadeblack">Email</dt>
+                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
+                      admin@site.com
+                    </dd>
+                  </div>
+
+                  <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
+                    <dt class="font-semibold text-shadeblack">Phone Number</dt>
+                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
+                      +977 9876543210
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+            <!-- ends -->
+          </div>
+
+          <div class="w-full col-span-full md:col-span-2 bg-white h-fit rounded-2xl p-4 xxl:p-8 order-2 md:order-1">
+            <h3 class="xxl:text-lg font-bold text-blacktwo">Delete Account</h3>
+            <h6 class="text-sm lg:text-base text-shadeblack font-medium">
+              Are you sure you want to delete your account.
+            </h6>
+            <button type="button" class="mt-4 px-8 py-3 bg-danger text-white font-bold tracking-wider rounded-xl">
+              Delete
+            </button>
+          </div>
+
+          <div
+            class="w-full col-span-full md:col-span-1 bg-white h-fit rounded-2xl p-4 xxl:p-8 order-1 md:order-2 row-span-3">
+            <div>
+              <h3 class="xxl:text-lg font-bold text-blacktwo">
+                Change Password
+              </h3>
+              <h6 class="text-sm lg:text-base text-shadeblack font-medium">
+                Enter the old and new password to change your password.
+              </h6>
+              <form action="" class="flex flex-col gap-3 mt-4">
+                <div class="relative">
+                  <input type="password" name="Password" id="" placeholder="Old password"
+                    class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
+                      <path
+                        d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="40" />
+                      <circle cx="256" cy="256" r="80" fill="none" stroke-miterlimit="10" stroke-width="40" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="relative">
+                  <input type="password" name="Password" id="" placeholder="New password"
+                    class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
+                      <path
+                        d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="40" />
+                      <circle cx="256" cy="256" r="80" fill="none" stroke-miterlimit="10" stroke-width="40" />
+                    </svg>
+                  </span>
+                </div>
+              </form>
+              <button type="button"
+                class="mt-4 px-8 py-3 bg-primary w-full text-white font-bold tracking-wider rounded-xl">
+                Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{%endblock%}

@@ -1,0 +1,64 @@
+{%extends 'base.html'%} {%block title%}Visualization | Great
+API{%endblock%} {%block body%} {%include 'sidebar.html'%}
+<!-- ends -->
+
+<main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
+  {%include 'navbar.html'%}
+
+  <div class="w-full h-full overflow-y-scroll">
+    <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
+      <a href="#" class="text-blacktwo text-sm font-medium">Visualization</a>
+      <!-- <span class="text-blacktwo">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <a href="#" class="text-primary text-sm font-medium">Overall</a> -->
+    </div>
+    <!-- ends -->
+
+    <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4 pb-4">
+      <div class="w-full">
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-2 xxl:gap-3 mt-4">
+          <div class="w-full order-0">
+            <div class="w-full h-96 bg-white rounded-xl p-4">
+              <!-- delete below div and put whatever here -->
+              <!-- <div class="w-full h-full grid place-content-center">
+                      chart
+                    </div> -->
+              <img src="https://matplotlib.org/stable/_images/sphx_glr_bar_001.png" alt=""
+                class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <div class="w-full order-2 lg:order-1">
+            <div class="w-full h-60 bg-white rounded-xl">
+              <!-- delete below div and put whatever here -->
+              <div class="w-full h-full grid place-content-center">summary</div>
+            </div>
+          </div>
+
+          <div class="w-full order-1 xl:order-2">
+            <div class="w-full h-60 bg-white rounded-xl">
+              <!-- delete below div and put whatever here -->
+              <div class="w-full h-full grid place-content-center">
+                Line graph
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{%endblock%}
