@@ -5,8 +5,8 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from greatapi.db.database import get_db
-from greatapi.repositories.users.user import create_new_user
-from greatapi.repositories.users.user import get_user_by_id
+from greatapi.core.users.user import create_new_user
+from greatapi.core.users.user import get_user_by_id
 from greatapi.schemas.user import ShowUser
 from greatapi.schemas.user import UserType
 

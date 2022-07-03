@@ -11,8 +11,8 @@ from sqlalchemy.orm import Session
 
 from greatapi.db.database import get_db
 from greatapi.db.models.user import User
-from greatapi.repositories.auth.hashing import Hash
-from greatapi.repositories.auth.jwt_token import create_access_token
+from greatapi.core.auth.hashing import Hash
+from greatapi.core.auth.jwt_token import create_access_token
 
 router = APIRouter(prefix='/login', tags=['Authentication'])
 
