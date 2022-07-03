@@ -5,7 +5,7 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from greatapi.db.models.user import User
-from greatapi.repositories.auth.hashing import Hash
+from greatapi.core.auth.hashing import Hash
 from greatapi.schemas.user import UserType
 
 
