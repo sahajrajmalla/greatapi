@@ -10,7 +10,7 @@ T = TypeVar("T")
 CBV_CLASS_KEY = "__cbv_class__"
 
 
-def cbv(router: APIRouter, json_models: dict) -> Callable[[Type[T]], Type[T]]:
+def cbv(router: APIRouter) -> Callable[[Type[T]], Type[T]]:
     """
     This function returns a decorator that converts the decorated into a class-based view for the provided router.
     Any methods of the decorated class that are decorated as endpoints using the router provided to this function
@@ -21,12 +21,12 @@ def cbv(router: APIRouter, json_models: dict) -> Callable[[Type[T]], Type[T]]:
     """
 
     def decorator(cls: Type[T]) -> Type[T]:
-        return _cbv(router, json_models, cls)
+        return _cbv(router, cls)
 
     return decorator
 
 
-def _cbv(router: APIRouter, json_models: dict, cls: Type[T]) -> Type[T]:
+def _cbv(router: APIRouter, cls: Type[T], json_models: dict = {}) -> Type[T]:
     """
     Replaces any methods of the provided class `cls` that are endpoints of routes in `router` with updated
     function calls that will properly inject an instance of `cls`.
@@ -89,13 +89,16 @@ def _update_cbv_route_endpoint_signature(cls: Type[Any], route: Union[Route, Web
     """
     Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.
     """
-    old_endpoint = route.endpoint
-    old_signature = inspect.signature(old_endpoint)
-    old_parameters: List[inspect.Parameter] = list(old_signature.parameters.values())
-    old_first_parameter = old_parameters[0]
-    new_first_parameter = old_first_parameter.replace(default=Depends(cls))
-    new_parameters = [new_first_parameter] + [
-        parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY) for parameter in old_parameters[1:]
-    ]
-    new_signature = old_signature.replace(parameters=new_parameters)
-    setattr(route.endpoint, "__signature__", new_signature)
+    try:
+        old_endpoint = route.endpoint
+        old_signature = inspect.signature(old_endpoint)
+        old_parameters: List[inspect.Parameter] = list(old_signature.parameters.values())
+        old_first_parameter = old_parameters[0]
+        new_first_parameter = old_first_parameter.replace(default=Depends(cls))
+        new_parameters = [new_first_parameter] + [
+            parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY) for parameter in old_parameters[1:]
+        ]
+        new_signature = old_signature.replace(parameters=new_parameters)
+        setattr(route.endpoint, "__signature__", new_signature)
+    except Exception as e:
+        print("Exception Occurred while updating cbv endpoints with msg:", e)
