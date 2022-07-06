@@ -26,12 +26,12 @@ def cbv(router: APIRouter) -> Callable[[Type[T]], Type[T]]:
     return decorator
 
 
-def _cbv(router: APIRouter, cls: Type[T], json_models: dict = {}) -> Type[T]:
+def _cbv(router: APIRouter, cls: Type[T], admin_settings: dict = {}) -> Type[T]:
     """
     Replaces any methods of the provided class `cls` that are endpoints of routes in `router` with updated
     function calls that will properly inject an instance of `cls`.
     """
-    _init_cbv(json_models, cls)
+    _init_cbv(admin_settings, cls)
     cbv_router = APIRouter()
     function_members = inspect.getmembers(cls, inspect.isfunction)
     functions_set = set(func for _, func in function_members)
@@ -48,7 +48,7 @@ def _cbv(router: APIRouter, cls: Type[T], json_models: dict = {}) -> Type[T]:
     return cls
 
 
-def _init_cbv(json_models: dict, cls: Type[Any]) -> None:
+def _init_cbv(admin_settings: dict, cls: Type[Any]) -> None:
     """
     Idempotently modifies the provided `cls`, performing the following modifications:
     * The `__init__` function is updated to set any class-annotated dependencies as instance attributes
@@ -82,7 +82,7 @@ def _init_cbv(json_models: dict, cls: Type[Any]) -> None:
     setattr(cls, "__signature__", new_signature)
     setattr(cls, "__init__", new_init)
     setattr(cls, CBV_CLASS_KEY, True)
-    setattr(cls, "json_models", json_models)
+    setattr(cls, "admin_settings", admin_settings)
 
 
 def _update_cbv_route_endpoint_signature(cls: Type[Any], route: Union[Route, WebSocketRoute]) -> None:
