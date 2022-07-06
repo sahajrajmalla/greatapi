@@ -11,6 +11,11 @@ from greatapi.admin.sites import AdminSite
 from greatapi.utils.cbv import _cbv
 from greatapi.core import auth_router, user_router, test_auth_router
 
+from mero_project import REGISTERED_ADMINS
+
+from greatapi.utils.urls import get_route_dict
+
+
 app = FastAPI()
 
 app.mount('/static', StaticFiles(directory=GREATAPI_ADMIN_STATIC_PATH), name='static')
@@ -18,18 +23,12 @@ app.mount('/static', StaticFiles(directory=GREATAPI_ADMIN_STATIC_PATH), name='st
 Base.metadata.create_all(engine)
 
 
-class ClassSahaj:
-    name = "sahaj"
+registered_admins = get_route_dict(REGISTERED_ADMINS)
 
-dummy_str = {"sahaj": ClassSahaj}
-
-admin_site = _cbv(admin_router, AdminSite, dummy_str)
-
+admin_site = _cbv(admin_router, AdminSite, registered_admins)
 
 
 app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(test_auth_router)
-
-
