@@ -1,27 +1,27 @@
 from __future__ import annotations
-from greatapi.utils.inferring_router import InferringRouter
-
-from greatapi.utils.cbv import cbv
 
 from typing import Any
+
 from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from greatapi.db.database import get_db
-from greatapi.db.models.user import User
 from greatapi.core.auth.hashing import Hash
 from greatapi.core.auth.jwt_token import create_access_token
+from greatapi.db.database import get_db
+from greatapi.db.models.user import User
+from greatapi.utils.cbv import cbv
+from greatapi.utils.inferring_router import InferringRouter
 
 
 auth_router = InferringRouter(tags=['Authentication'])
 
+
 @cbv(auth_router)
 class AuthSite:
     db: Session = Depends(get_db)
-
 
     @auth_router.post('/login')
     def login(self, request: OAuth2PasswordRequestForm = Depends()) -> dict[str, Any]:

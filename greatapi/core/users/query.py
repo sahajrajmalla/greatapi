@@ -4,8 +4,8 @@ from fastapi import HTTPException
 from fastapi import status
 from sqlalchemy.orm import Session
 
-from greatapi.db.models.user import User
 from greatapi.core.auth.hashing import Hash
+from greatapi.db.models.user import User
 from greatapi.schemas.user import UserType
 
 

@@ -1,25 +1,33 @@
 from __future__ import annotations
-from greatapi.utils.inferring_router import InferringRouter
 
-from typing import Any
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from greatapi.utils.component import fetch_admin_by_app, fetch_app_list, fetch_table_data
 
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
+from greatapi.db.database import Base
+from greatapi.utils.component import fetch_admin_by_app
+from greatapi.utils.component import fetch_app_list
+from greatapi.utils.component import fetch_table_data
+from greatapi.utils.inferring_router import InferringRouter
 
 admin_router = InferringRouter(tags=['Admin'])
 templates = Jinja2Templates(directory=str(GREATAPI_ADMIN_TEMPLATE_PATH))
 
+
 class AdminSite:
+    admin_settings: dict[str, dict[str, Base]] = {}
+
     @admin_router.get('/', response_class=HTMLResponse)
     async def fetch_dashboard_page(self, request: Request) -> HTMLResponse:
         items = [
             {'type': 'edit', 'date': 'Feb 20, 2022'},
             {'type': 'create', 'date': 'Feb 20, 2022'},
         ]
-        groups = [{'name': 'User', 'total_count': 2}, {'name': 'Images', 'total_count': 2}]
+        groups = [
+            {'name': 'User', 'total_count': 2},
+            {'name': 'Images', 'total_count': 2},
+        ]
         return templates.TemplateResponse(
             'dashboard/index.html',
             {
@@ -30,21 +38,17 @@ class AdminSite:
             },
         )
 
-
     @admin_router.get('/login', response_class=HTMLResponse)
     async def fetch_login_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('authentication/login.html', {'request': request})
-
 
     @admin_router.get('/account', response_class=HTMLResponse)
     async def fetch_account_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/account.html', {'request': request})
 
-
     @admin_router.get('/settings', response_class=HTMLResponse)
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/settings.html', {'request': request})
-
 
     @admin_router.get('/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
     async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
@@ -83,11 +87,9 @@ class AdminSite:
             },
         )
 
-
     @admin_router.get('/add_item', response_class=HTMLResponse)
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
-
 
     @admin_router.get('/group/{group_name}', response_class=HTMLResponse)
     async def fetch_app_page(self, request: Request, group_name: str) -> HTMLResponse:
@@ -115,7 +117,6 @@ class AdminSite:
             },
         )
 
-
     @admin_router.get('/history', response_class=HTMLResponse)
     async def fetch_history_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse(
@@ -127,32 +128,34 @@ class AdminSite:
             },
         )
 
-
     @admin_router.get('/delete_user', response_class=HTMLResponse)
     async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
-
 
     @admin_router.get('/visualization', response_class=HTMLResponse)
     async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
     @admin_router.get('/test_me')
-    async def fetch_test_me(self, request: Request) -> dict:
-        user = self.admin_settings.get("user")
-        print("user ----------------------------------------------")
+    async def fetch_test_me(self, request: Request) -> str:
+        user = self.admin_settings.get('user')
+        print('user ----------------------------------------------')
         print(user)
-        print("self ----------------------------------------------")
+        print('self ----------------------------------------------')
         print(self.admin_settings)
 
-        print("TABLE NAME: ", user["users"].__tablename__)
+        print('TABLE NAME: ', user['users'].__tablename__)  # type: ignore
 
-        table_data = fetch_table_data(self.admin_settings.get("user").get("users"))
-        print("TABLE DATA: ", table_data)
+        table_data = fetch_table_data(
+            self.admin_settings.get(        # type: ignore
+                'user',
+            ).get('users'),
+        )
+        print('TABLE DATA: ', table_data)
         app_list = fetch_app_list(self.admin_settings)
-        print("app_list DATA: ", app_list)
+        print('app_list DATA: ', app_list)
 
-        admin_by_app = fetch_admin_by_app(self.admin_settings, "user")
-        print("admin_by_app DATA: ", admin_by_app)
+        admin_by_app = fetch_admin_by_app(self.admin_settings, 'user')
+        print('admin_by_app DATA: ', admin_by_app)
 
         return 'HELLO'

@@ -1,7 +1,15 @@
-import inspect
+from __future__ import annotations
 
-def get_route_app(class_name):
-    module_path = inspect.getmodule(class_name).__name__
+import inspect
+from typing import Any
+
+from greatapi.db.database import Base
+
+# TODO: Substitute Any with AdminSite class type
+
+
+def get_route_app(class_name: Any) -> str:
+    module_path = inspect.getmodule(class_name).__name__  # type: ignore
     split_by_dot = module_path.split('.')
     if split_by_dot[-1] == 'admin':
         return split_by_dot[-2]
@@ -9,8 +17,8 @@ def get_route_app(class_name):
         return split_by_dot[-1]
 
 
-def get_route_dict(REGISTERED_ADMINS: list) -> dict:
-    registered_admins = {}
+def get_route_dict(REGISTERED_ADMINS: list[Any]) -> dict[str, dict[str, Base]]:
+    registered_admins: dict[str, dict[str, Base]] = {}
 
     for admin_class in REGISTERED_ADMINS:
         app_name = get_route_app(admin_class)
@@ -19,5 +27,5 @@ def get_route_dict(REGISTERED_ADMINS: list) -> dict:
             registered_admins[app_name].update({route_url: admin_class})
         else:
             registered_admins[app_name] = {route_url: admin_class}
-    
+
     return registered_admins
