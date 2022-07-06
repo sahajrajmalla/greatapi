@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from greatapi.db.models.user import User
 
 
