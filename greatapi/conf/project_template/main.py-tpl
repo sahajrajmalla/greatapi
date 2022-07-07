@@ -11,7 +11,7 @@ from greatapi.admin.sites import AdminSite
 from greatapi.utils.cbv import _cbv
 from greatapi.core import auth_router, user_router, test_auth_router
 
-from mero_project import REGISTERED_ADMINS
+from {{project_name}} import REGISTERED_ADMINS
 
 from greatapi.utils.urls import get_route_dict
 
