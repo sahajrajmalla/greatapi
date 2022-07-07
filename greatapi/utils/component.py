@@ -15,8 +15,8 @@ def fetch_table_data(TABLE_CLASS: Base) -> list[dict[str, str]]:
     return result_dict
 
 
-def fetch_app_list(admin_settings: dict[str, dict[str, Any]]) -> list[str]:
-    return [key for key in admin_settings.keys()]
+def fetch_app_list(admin_settings: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    return [{'name': key.capitalize(), 'total_count': len(values)} for key, values in admin_settings.items()]
 
 
 def fetch_admin_by_app(admin_settings: dict[str, dict[str, Any]], app_name: str) -> list[str]:

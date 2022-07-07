@@ -24,17 +24,14 @@ class AdminSite:
             {'type': 'edit', 'date': 'Feb 20, 2022'},
             {'type': 'create', 'date': 'Feb 20, 2022'},
         ]
-        groups = [
-            {'name': 'User', 'total_count': 2},
-            {'name': 'Images', 'total_count': 2},
-        ]
+        apps = fetch_app_list(self.admin_settings)
         return templates.TemplateResponse(
             'dashboard/index.html',
             {
                 'request': request,
                 'active': 'dashboard',
                 'history_items': items,
-                'groups': groups,
+                'groups': apps,
             },
         )
 
