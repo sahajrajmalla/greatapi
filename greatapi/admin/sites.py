@@ -11,6 +11,7 @@ from greatapi.db.database import Base
 from greatapi.db.database import get_db
 from greatapi.utils.component import fetch_app_list
 from greatapi.utils.component import fetch_app_list_with_count
+from greatapi.utils.component import fetch_models_by_app
 from greatapi.utils.component import fetch_models_by_app_with_count
 from greatapi.utils.component import fetch_table_data
 from greatapi.utils.component import query_history_table
@@ -51,26 +52,12 @@ class AdminSite:
 
     @admin_router.get('/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
     async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
-        titles = []
-        items = []
-        sidebar_groups = []
+        titles, items = fetch_table_data(
+            self.admin_settings[group_name.lower()][group_item.lower()],
+        )
+        sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
 
         test_slug = 'this-is-static-slug-make-dynamic'
-
-        if group_item in ['Blogs', 'Categories', 'Comments']:
-            sidebar_groups = ['Blogs', 'Categories', 'Comments']
-            titles = ['Name', 'Slug', 'Date', 'Is_pinned']
-            items = [
-                ['The First Blog', 'first-blog', 'Feb 20, 2022', True],
-                ['The Second Blog', 'second-blog', 'Feb 20, 2022', False],
-            ]
-        else:
-            sidebar_groups = ['Users']
-            titles = ['Name', 'Email', 'Is_superuser']
-            items = [
-                ['Diwash Lamichhane', 'happiness404@gmail.com', False],
-                ['Sahaj Raj Malla', 'sahajakalegend@gmail.com', True],
-            ]
 
         return templates.TemplateResponse(
             'dashboard/items.html',
@@ -79,7 +66,7 @@ class AdminSite:
                 'active': 'dashboard',
                 'group_name': group_name,
                 'group_item': group_item,
-                'titles': titles,
+                'titles': [title.capitalize() for title in titles],
                 'items': items,
                 'slug': test_slug,
                 'sidebar_groups': sidebar_groups,
@@ -136,12 +123,14 @@ class AdminSite:
 
         print('TABLE NAME: ', user['users'].__tablename__)  # type: ignore
 
-        table_data = fetch_table_data(
+        table_data_key, table_data_values = fetch_table_data(
             self.admin_settings.get(        # type: ignore
                 'user',
             ).get('users'),
         )
-        print('TABLE DATA: ', table_data)
+        print('table_data_key DATA: ', table_data_key)
+        print('table_data_values DATA: ', table_data_values)
+
         app_list = fetch_app_list_with_count(self.admin_settings)
         print('app_list DATA: ', app_list)
 

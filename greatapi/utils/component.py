@@ -13,11 +13,10 @@ from greatapi.db.models.default import History
 # from greatapi.utils.helpers import get_models_count
 
 
-def fetch_table_data(TABLE_CLASS: Base) -> list[dict[str, str]]:
+def fetch_table_data(TABLE_CLASS: Base) -> tuple[list[str], list[dict[str, Any]]]:
     query = select(TABLE_CLASS)
-    result = engine.execute(query).fetchall()
-    result_dict = [record._mapping for record in result]
-    return result_dict
+    result = engine.execute(query)
+    return (result._metadata.keys, result.fetchall())
 
 
 def get_models_count(TABLE_CLASS: Base) -> int:
@@ -32,6 +31,10 @@ def fetch_app_list(admin_settings: dict[str, dict[str, Any]]) -> list[str]:
 
 def fetch_app_list_with_count(admin_settings: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     return [{'name': key.capitalize(), 'total_count': len(values)} for key, values in admin_settings.items()]
+
+
+def fetch_models_by_app(admin_settings: dict[str, dict[str, Any]], app_name: str) -> list[str]:
+    return [key for key in admin_settings[app_name].keys()]
 
 
 def fetch_models_by_app_with_count(admin_settings: dict[str, dict[str, Any]], app_name: str) -> list[dict[str, Any]]:
