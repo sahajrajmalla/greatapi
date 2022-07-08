@@ -12,6 +12,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+    username = Column(String)
     email = Column(String)
     password = Column(String)
+    contact_number = Column(String)
     # blogs = relationship("Blog", back_populates="creator")
