@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+from fastapi import Depends
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
 from greatapi.db.database import Base
+from greatapi.db.database import get_db
 from greatapi.utils.component import fetch_admin_by_app
 from greatapi.utils.component import fetch_app_list
 from greatapi.utils.component import fetch_table_data
+from greatapi.utils.component import query_history_table
 from greatapi.utils.inferring_router import InferringRouter
 
 admin_router = InferringRouter(tags=['Admin'])
@@ -19,11 +23,8 @@ class AdminSite:
     admin_settings: dict[str, dict[str, Base]] = {}
 
     @admin_router.get('/', response_class=HTMLResponse)
-    async def fetch_dashboard_page(self, request: Request) -> HTMLResponse:
-        items = [
-            {'type': 'edit', 'date': 'Feb 20, 2022'},
-            {'type': 'create', 'date': 'Feb 20, 2022'},
-        ]
+    async def fetch_dashboard_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+        items = query_history_table(db)
         apps = fetch_app_list(self.admin_settings)
         return templates.TemplateResponse(
             'dashboard/index.html',
@@ -134,7 +135,7 @@ class AdminSite:
         return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
     @admin_router.get('/test_me')
-    async def fetch_test_me(self, request: Request) -> str:
+    async def fetch_test_me(self, request: Request, db: Session = Depends(get_db)) -> str:
         user = self.admin_settings.get('user')
         print('user ----------------------------------------------')
         print(user)
@@ -154,5 +155,8 @@ class AdminSite:
 
         admin_by_app = fetch_admin_by_app(self.admin_settings, 'user')
         print('admin_by_app DATA: ', admin_by_app)
+
+        history = query_history_table(db)
+        print('history DATA: ', history)
 
         return 'HELLO'
