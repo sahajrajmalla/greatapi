@@ -10,7 +10,7 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/greatapi?color=green&style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/greatapi?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/greatapi?style=for-the-badge)
-<hr 
+<hr
 
 Documentation: https://greatapi.readthedocs.io/en/latest/
 
@@ -35,7 +35,7 @@ Some of the major contributors to GreatAPI are:
     - typer
     - jinja2
     - SQLAlchemy
-    
+
 ## **Installation**
 
 ```bash
@@ -68,4 +68,3 @@ Afterwards, you can normally implement your API logic using FastAPI itself.
 ## **License**
 
 This project is licensed under the terms of the MIT license.
-
