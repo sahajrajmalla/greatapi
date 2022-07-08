@@ -6,10 +6,11 @@ from sqlalchemy.orm import Session
 
 from greatapi.core.auth.hashing import Hash
 from greatapi.db.models.user import User
-from greatapi.schemas.user import UserType
+from greatapi.schemas.user import ShowUserSchema
+from greatapi.schemas.user import UserSchema
 
 
-def create_new_user(request: UserType, db: Session) -> list[tuple[int, str]]:
+def create_new_user(request: UserSchema, db: Session) -> UserSchema:
     new_user = User(
         name=request.name,
         email=request.email,
@@ -22,7 +23,7 @@ def create_new_user(request: UserType, db: Session) -> list[tuple[int, str]]:
     return new_user
 
 
-def get_user_by_id(id: int, db: Session) -> list[tuple[int, str]]:
+def get_user_by_id(id: int, db: Session) -> ShowUserSchema:
     user = db.query(User).filter(User.id == id).first()
     if user is None:
         raise HTTPException(
