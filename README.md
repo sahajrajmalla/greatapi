@@ -1,6 +1,4 @@
-
-
-<div style="text-align:center">
+<div align="center">
 
 <img src="docs/_static/logo.svg" alt="GreatAPI"/>
 
