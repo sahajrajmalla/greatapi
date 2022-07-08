@@ -116,13 +116,13 @@ class AdminSite:
         )
 
     @admin_router.get('/history', response_class=HTMLResponse)
-    async def fetch_history_page(self, request: Request) -> HTMLResponse:
+    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         return templates.TemplateResponse(
             'dashboard/history.html',
             {
                 'request': request,
                 'active': 'history',
-                'history_items': [{'type': 'edit', 'date': 'Feb 20, 2022'}, {'type': 'create', 'date': 'Feb 20, 2022'}],
+                'history_items': query_history_table(db, 10),
             },
         )
 
