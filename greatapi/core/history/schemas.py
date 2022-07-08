@@ -5,12 +5,20 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class HistorySchema(BaseModel):
-    id: int | None
+class ShowHistorySchema(BaseModel):
+    id: int
     name: str
     type: str
-    created_date: datetime | None
-    edited_date: datetime | None
+    created_date: datetime
+    edited_date: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class HistorySchema(BaseModel):
+    name: str
+    type: str
 
     class Config:
         orm_mode = True
