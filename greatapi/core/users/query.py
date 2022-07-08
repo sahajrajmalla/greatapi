@@ -15,6 +15,9 @@ def create_new_user(request: UserSchema, db: Session) -> UserSchema:
         name=request.name,
         email=request.email,
         password=Hash.bcrypt(request.password),
+        username=request.username,
+        contact_number=request.contact_number,
+
     )
     db.add(new_user)
     db.commit()
