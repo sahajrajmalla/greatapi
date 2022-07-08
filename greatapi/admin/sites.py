@@ -9,8 +9,9 @@ from sqlalchemy.orm import Session
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
 from greatapi.db.database import Base
 from greatapi.db.database import get_db
-from greatapi.utils.component import fetch_admin_by_app
 from greatapi.utils.component import fetch_app_list
+from greatapi.utils.component import fetch_app_list_with_count
+from greatapi.utils.component import fetch_models_by_app_with_count
 from greatapi.utils.component import fetch_table_data
 from greatapi.utils.component import query_history_table
 from greatapi.utils.inferring_router import InferringRouter
@@ -25,7 +26,7 @@ class AdminSite:
     @admin_router.get('/', response_class=HTMLResponse)
     async def fetch_dashboard_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         items = query_history_table(db)
-        apps = fetch_app_list(self.admin_settings)
+        apps = fetch_app_list_with_count(self.admin_settings)
         return templates.TemplateResponse(
             'dashboard/index.html',
             {
@@ -89,27 +90,18 @@ class AdminSite:
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
 
-    @admin_router.get('/group/{group_name}', response_class=HTMLResponse)
-    async def fetch_app_page(self, request: Request, group_name: str) -> HTMLResponse:
-        items = []
+    @admin_router.get('/group/{app_name}', response_class=HTMLResponse)
+    async def fetch_app_page(self, request: Request, app_name: str) -> HTMLResponse:
+        sidebar_groups = fetch_app_list(self.admin_settings)
 
-        sidebar_groups = ['User', 'Images']
-
-        if group_name == 'User':
-            items = [{'name': 'Users', 'total_count': 2}]
-        else:
-            items = [
-                {'name': 'Blogs', 'total_count': 2},
-                {'name': 'Categories', 'total_count': 2},
-                {'name': 'Comments', 'total_count': 2},
-            ]
+        items = fetch_models_by_app_with_count(self.admin_settings, app_name.lower())
 
         return templates.TemplateResponse(
             'dashboard/group.html',
             {
                 'request': request,
                 'active': 'dashboard',
-                'group_name': group_name,
+                'group_name': app_name,
                 'items': items,
                 'sidebar_groups': sidebar_groups,
             },
@@ -150,11 +142,11 @@ class AdminSite:
             ).get('users'),
         )
         print('TABLE DATA: ', table_data)
-        app_list = fetch_app_list(self.admin_settings)
+        app_list = fetch_app_list_with_count(self.admin_settings)
         print('app_list DATA: ', app_list)
 
-        admin_by_app = fetch_admin_by_app(self.admin_settings, 'user')
-        print('admin_by_app DATA: ', admin_by_app)
+        admin_by_app = fetch_models_by_app_with_count(self.admin_settings, 'user')
+        print('fetch_models_by_app_with_count DATA: ', admin_by_app)
 
         history = query_history_table(db)
         print('history DATA: ', history)
