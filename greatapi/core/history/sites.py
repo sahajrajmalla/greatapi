@@ -8,7 +8,6 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from greatapi.core.history.schemas import HistorySchema
-from greatapi.core.history.schemas import ShowHistorySchema
 from greatapi.db.database import get_db
 from greatapi.db.database import SessionLocal
 from greatapi.db.models.default import History
@@ -22,8 +21,8 @@ history_router = InferringRouter(tags=['History'])
 class HistorySite:
     db = SessionLocal()
 
-    @history_router.get('/get_all_history', response_model=List[ShowHistorySchema], status_code=200)
-    def get_all_history(self, db: Session = Depends(get_db)) -> list[ShowHistorySchema]:
+    @history_router.get('/get_all_history', response_model=List[HistorySchema], status_code=200)
+    def get_all_history(self, db: Session = Depends(get_db)) -> list[HistorySchema]:
         items = db.query(History).all()
         return items
 
