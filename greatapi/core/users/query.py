@@ -5,9 +5,9 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from greatapi.core.auth.hashing import Hash
+from greatapi.core.users.schemas import ShowUserSchema
+from greatapi.core.users.schemas import UserSchema
 from greatapi.db.models.user import User
-from greatapi.schemas.user import ShowUserSchema
-from greatapi.schemas.user import UserSchema
 
 
 def create_new_user(request: UserSchema, db: Session) -> UserSchema:
