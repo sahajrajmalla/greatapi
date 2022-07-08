@@ -6,16 +6,13 @@ from pydantic import BaseModel
 class UserSchema(BaseModel):
     name: str
     email: str
+    password: str
 
     class Config():
         orm_mode = True
 
 
-class UserType(UserSchema):
-    password: str
-
-
-class ShowUser(BaseModel):
+class ShowUserSchema(BaseModel):
     name: str
     email: str
 
