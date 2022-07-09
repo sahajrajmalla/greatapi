@@ -24,7 +24,7 @@ templates = Jinja2Templates(directory=str(GREATAPI_ADMIN_TEMPLATE_PATH))
 class AdminSite:
     admin_settings: dict[str, dict[str, Base]] = {}
 
-    @admin_router.get('/', response_class=HTMLResponse)
+    @admin_router.get('/admin', response_class=HTMLResponse)
     async def fetch_dashboard_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         items = query_history_table(db)
         apps = fetch_app_list_with_count(self.admin_settings)
@@ -38,19 +38,19 @@ class AdminSite:
             },
         )
 
-    @admin_router.get('/login', response_class=HTMLResponse)
+    @admin_router.get('/admin/login', response_class=HTMLResponse)
     async def fetch_login_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('authentication/login.html', {'request': request})
 
-    @admin_router.get('/account', response_class=HTMLResponse)
+    @admin_router.get('/admin/account', response_class=HTMLResponse)
     async def fetch_account_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/account.html', {'request': request})
 
-    @admin_router.get('/settings', response_class=HTMLResponse)
+    @admin_router.get('/admin/settings', response_class=HTMLResponse)
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/settings.html', {'request': request})
 
-    @admin_router.get('/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
+    @admin_router.get('/admin/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
     async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
         titles, items = fetch_table_data(
             self.admin_settings[group_name.lower()][group_item.lower()],
@@ -73,11 +73,11 @@ class AdminSite:
             },
         )
 
-    @admin_router.get('/add_item', response_class=HTMLResponse)
+    @admin_router.get('/admin/add_item', response_class=HTMLResponse)
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
 
-    @admin_router.get('/group/{app_name}', response_class=HTMLResponse)
+    @admin_router.get('/admin/group/{app_name}', response_class=HTMLResponse)
     async def fetch_app_page(self, request: Request, app_name: str) -> HTMLResponse:
         sidebar_groups = fetch_app_list(self.admin_settings)
 
@@ -94,7 +94,7 @@ class AdminSite:
             },
         )
 
-    @admin_router.get('/history', response_class=HTMLResponse)
+    @admin_router.get('/admin/history', response_class=HTMLResponse)
     async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         return templates.TemplateResponse(
             'dashboard/history.html',
@@ -105,11 +105,11 @@ class AdminSite:
             },
         )
 
-    @admin_router.get('/delete_user', response_class=HTMLResponse)
+    @admin_router.get('/admin/delete_user', response_class=HTMLResponse)
     async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
 
-    @admin_router.get('/visualization', response_class=HTMLResponse)
+    @admin_router.get('/admin/visualization', response_class=HTMLResponse)
     async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
