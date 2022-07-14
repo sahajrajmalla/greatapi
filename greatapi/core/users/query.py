@@ -5,15 +5,19 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from greatapi.core.auth.hashing import Hash
+from greatapi.core.users.schemas import ShowUserSchema
+from greatapi.core.users.schemas import UserSchema
 from greatapi.db.models.user import User
-from greatapi.schemas.user import UserType
 
 
-def create_new_user(request: UserType, db: Session) -> list[tuple[int, str]]:
+def create_new_user(request: UserSchema, db: Session) -> UserSchema:
     new_user = User(
         name=request.name,
         email=request.email,
         password=Hash.bcrypt(request.password),
+        username=request.username,
+        contact_number=request.contact_number,
+
     )
     db.add(new_user)
     db.commit()
@@ -22,7 +26,7 @@ def create_new_user(request: UserType, db: Session) -> list[tuple[int, str]]:
     return new_user
 
 
-def get_user_by_id(id: int, db: Session) -> list[tuple[int, str]]:
+def get_user_by_id(id: int, db: Session) -> ShowUserSchema:
     user = db.query(User).filter(User.id == id).first()
     if user is None:
         raise HTTPException(

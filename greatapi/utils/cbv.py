@@ -3,20 +3,22 @@ from __future__ import annotations
 import inspect
 from typing import Any
 from typing import Callable
-from typing import get_type_hints
 from typing import TypeVar
 
 from fastapi import APIRouter
 from fastapi import Depends
-from pydantic.typing import is_classvar
 from starlette.routing import Route
 from starlette.routing import WebSocketRoute
 
 from greatapi.db.database import Base
+from greatapi.db.models.user import User
+# from typing import get_type_hints
+# from pydantic.typing import is_classvar
 
 T = TypeVar('T')
 
 CBV_CLASS_KEY = '__cbv_class__'
+DEFAULT_ADMIN_SETTINGS = {'user': {'users': User}}
 
 
 def cbv(router: APIRouter) -> Callable[[type[T]], type[T]]:
@@ -35,7 +37,7 @@ def cbv(router: APIRouter) -> Callable[[type[T]], type[T]]:
     return decorator
 
 
-def _cbv(router: APIRouter, cls: type[T], admin_settings: dict[str, dict[str, Base]] = {}) -> type[T]:
+def _cbv(router: APIRouter, cls: type[T], admin_settings: dict[str, dict[str, Base]] = DEFAULT_ADMIN_SETTINGS) -> type[T]:
     """
     Replaces any methods of the provided class `cls` that are endpoints of routes in `router` with updated
     function calls that will properly inject an instance of `cls`.
@@ -74,17 +76,17 @@ def _init_cbv(admin_settings: dict[str, dict[str, Base]], cls: type[Any]) -> Non
         x for x in old_parameters if x.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
     ]
     dependency_names: list[str] = []
-    for name, hint in get_type_hints(cls).items():
-        if is_classvar(hint):
-            continue
-        parameter_kwargs = {'default': getattr(cls, name, Ellipsis)}
-        dependency_names.append(name)
-        new_parameters.append(
-            inspect.Parameter(
-                name=name, kind=inspect.Parameter.KEYWORD_ONLY,
-                annotation=hint, **parameter_kwargs,
-            ),
-        )
+    # for name, hint in get_type_hints(cls).items():
+    #     if is_classvar(hint):
+    #         continue
+    #     parameter_kwargs = {'default': getattr(cls, name, Ellipsis)}
+    #     dependency_names.append(name)
+    #     new_parameters.append(
+    #         inspect.Parameter(
+    #             name=name, kind=inspect.Parameter.KEYWORD_ONLY,
+    #             annotation=hint, **parameter_kwargs,
+    #         ),
+    #     )
     new_signature = old_signature.replace(parameters=new_parameters)
 
     def new_init(self: Any, *args: Any, **kwargs: Any) -> None:
