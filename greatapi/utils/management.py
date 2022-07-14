@@ -6,20 +6,23 @@ from jinja2 import Template
 
 
 def jinja_tpl_to_py(input_file_name: str, base_copy_path: Path, base_paste_path: Path, name: str, type: str) -> None:
-    output_file_name = input_file_name.replace('-tpl', '')
+    if '.py-tpl' in input_file_name:
+        output_file_name = input_file_name.replace('-tpl', '')
 
-    with open(base_copy_path.joinpath(input_file_name)) as input_template:
-        template_file_content = Template(input_template.read())
+        with open(base_copy_path.joinpath(input_file_name)) as input_template:
+            template_file_content = Template(input_template.read())
 
-    if type == 'startproject':
-        jinja_template = template_file_content.render(project_name=name)
-    elif type == 'startapp':
-        jinja_template = template_file_content.render()
+        if type == 'startproject':
+            jinja_template = template_file_content.render(project_name=name)
+        elif type == 'startapp':
+            jinja_template = template_file_content.render()
+        else:
+            raise Exception('Unknown type')
+
+        with open(base_paste_path.joinpath(output_file_name), 'w+') as output_template:
+            output_template.write(jinja_template)
     else:
-        raise Exception('Unknown type')
-
-    with open(base_paste_path.joinpath(output_file_name), 'w+') as output_template:
-        output_template.write(jinja_template)
+        pass
 
 
 def setup_app_template(base_copy_path: Path, base_paste_path: Path, app_name: str) -> None:
