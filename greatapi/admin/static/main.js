@@ -46,7 +46,7 @@ function togglePassword(e) {
 
   password.type = password.type == 'text' ? 'password' : 'text'
   eye.innerHTML = password.type == 'text' ? 'Close' : openSvg
-  
+
 }
 
 

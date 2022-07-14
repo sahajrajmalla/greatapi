@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from typing import Any
+
 from fastapi import Depends
+from fastapi import Form
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from fastapi import Form
 
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
 from greatapi.db.database import Base
@@ -46,16 +47,17 @@ class AdminSite:
 
     @admin_router.get('/admin/account', response_class=HTMLResponse)
     async def fetch_account_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/account.html', {
+        return templates.TemplateResponse(
+            'dashboard/account.html', {
                 'request': request,
-                'user_info':{
-                    'name':'Admin',
-                    'username':'admin',
-                    'email':'admin@site.com',
-                    'contact':'980000000'
-                    },
-                }
-            )
+                'user_info': {
+                    'name': 'Admin',
+                    'username': 'admin',
+                    'email': 'admin@site.com',
+                    'contact': '980000000',
+                },
+            },
+        )
 
     @admin_router.get('/admin/settings', response_class=HTMLResponse)
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
@@ -80,13 +82,13 @@ class AdminSite:
                 'sidebar_groups': sidebar_groups,
 
                 # TODO: need to dynamically change the filters
-                'params':'?Draft=True'
+                'params': '?Draft=True',
             },
         )
 
     @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/add_item', response_class=HTMLResponse)
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
-        
+
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
 
     @admin_router.post('/admin/add_item/test')
@@ -107,23 +109,22 @@ class AdminSite:
         # db.commit()
 
         return {
-            "name": name,
-            "price": price,
-            "on_offer": on_offer
+            'name': name,
+            'price': price,
+            'on_offer': on_offer,
         }
 
-    
-
     @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/{id}', response_class=HTMLResponse)
-    async def fetch_details_item_page(self, request: Request, group_name:str, group_item: str, id: str) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/add_item.html',
-        {
+    async def fetch_details_item_page(self, request: Request, group_name: str, group_item: str, id: str) -> HTMLResponse:
+        return templates.TemplateResponse(
+            'dashboard/add_item.html',
+            {
                 'request': request,
                 'group_name': group_name,
                 'group_item': group_item,
                 'id': id,
             },
-        
+
         )
 
     @admin_router.get('/admin/group/{app_name}', response_class=HTMLResponse)

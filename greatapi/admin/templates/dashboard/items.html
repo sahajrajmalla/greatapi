@@ -97,7 +97,7 @@ API{%endblock%} {%block body%}
                       class="w-6 h-6 rounded-md border-primary outline-none focus:ring-0 appearance-none checked:bg-primary" />
                   </td>
                   {%for content in item%}
-                  <td class="text-sm text-primary font-semibold py-3 px-4 cursor-pointer whitespace-nowrap">                   
+                  <td class="text-sm text-primary font-semibold py-3 px-4 cursor-pointer whitespace-nowrap">
                     <a href="{{ '/admin/group/group-item/item-detail/%s/%s/%s' % (group_name, group_item, item.id) }}">
                       {{content}}
                     </a>
