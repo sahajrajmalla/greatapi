@@ -193,13 +193,13 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             <h2 class="text-lg font-semibold text-blacktwo">Status</h2>
             <ul class="flex flex-col gap-1">
               <li>
-                <a href="" class="text-primary font-medium">All</a>
+                <a href="/admin/history" class="text-primary font-medium">All</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">Draft</a>
+                <a href="{%if params %}{{params}}&draft=True{%else%}?Draft=True{%endif%}" class="text-shadeblack font-medium">Draft</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">Published</a>
+                <a href="{%if params %}{{params}}&Published=True{%else%}?Published=True{%endif%}" class="text-shadeblack font-medium">Published</a>
               </li>
             </ul>
           </div>

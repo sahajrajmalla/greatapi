@@ -152,6 +152,7 @@ class AdminSite:
                 'request': request,
                 'active': 'history',
                 'history_items': query_history_table(db, 10),
+                'params': '?Draft=True',
             },
         )
 

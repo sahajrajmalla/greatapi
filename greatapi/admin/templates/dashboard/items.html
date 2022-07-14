@@ -131,7 +131,7 @@ API{%endblock%} {%block body%}
               <h2 class="text-lg font-semibold text-blacktwo">Status</h2>
               <ul class="flex flex-col gap-1">
                 <li>
-                  <a href="" class="text-primary font-medium">All</a>
+                  <a href="{{ '/admin/group/group-item/%s/%s' % (group_name, group_item) }}" class="text-primary font-medium">All</a>
                 </li>
                 <li>
                   <a href="{%if params %}{{params}}&draft=True{%else%}?Draft=True{%endif%}" class="text-shadeblack font-medium">Draft</a>
