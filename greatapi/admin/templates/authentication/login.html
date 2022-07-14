@@ -15,6 +15,7 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
 </head>
 
+
 <body>
   <section class="w-full h-screen flex justify-center items-center p-2">
     <main class="max-w-md w-full flex flex-col gap-6">
@@ -28,10 +29,11 @@
             <input type="text" name="Username" id="" placeholder="Username"
               class="w-full h-12 px-4 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
           </div>
-          <div class="relative">
-            <input type="password" name="Password" id="" placeholder="Password"
+
+          <div class="relative select-none">
+            <input type="password" name="Password" id="user-password-login" placeholder="Password" 
               class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
-            <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+            <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eye" onclick="togglePassword('user-password-login')">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
                 <path
                   d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
@@ -55,10 +57,11 @@
   </section>
 </body>
 <script>
+
   let id = document.getElementById("date");
   var date = new Date().getFullYear();
 
-  id.innerHTML = `© ${date}. GREAT API`;
+  id.innerHTML = `© ${date}. <b>GreatAPI</b>`;
 </script>
 <script src="{{ url_for('static', path='/main.js') }}"></script>
 

@@ -17,7 +17,7 @@ API{%endblock%} {%block body%}
               clip-rule="evenodd" />
           </svg>
         </span>
-        <a href="{{ 'group/%s' % group_name }}" class="text-blacktwo text-sm font-medium">{{group_name}}</a>
+        <a href="{{ '/admin/group/%s' % group_name }}" class="text-blacktwo text-sm font-medium">{{group_name}}</a>
         <span class="text-blacktwo">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
@@ -25,12 +25,12 @@ API{%endblock%} {%block body%}
               clip-rule="evenodd" />
           </svg>
         </span>
-        <a href="{{ 'group-item/%s/%s' % (group_name, group_item) }}"
+        <a href="{{ '/admin/group/group-item/%s/%s' % (group_name, group_item) }}"
           class="text-primary text-sm font-medium">{{group_item}}</a>
       </div>
       <!-- ends -->
 
-      <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4">
+      <div class="w-full flex flex-w  rap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4">
         <div class="w-full xl:w-2/3 h-full grid grid-cols-1 gap-3">
           <div class="block relative w-full h-fit">
             <input type="search" name="search" id="" placeholder="Search contents.."
@@ -54,6 +54,7 @@ API{%endblock%} {%block body%}
               Select All
             </button>
             <div class="flex items-center gap-2 sm:gap-4">
+              <a href="{{ '/admin/group/group-item/item-detail/%s/%s/add_item' % (group_name, group_item) }}">
               <button type="button" class="p-3 bg-white text-success font-semibold flex items-center gap-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -63,6 +64,7 @@ API{%endblock%} {%block body%}
                 </svg>
                 Add
               </button>
+              </a>
               <button type="button" class="p-3 bg-white text-danger font-semibold flex items-center gap-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 32 32">
                   <path fill="currentColor"
@@ -95,13 +97,11 @@ API{%endblock%} {%block body%}
                       class="w-6 h-6 rounded-md border-primary outline-none focus:ring-0 appearance-none checked:bg-primary" />
                   </td>
                   {%for content in item%}
-
-                  <td class="text-sm text-primary font-semibold py-3 px-4 cursor-pointer whitespace-nowrap">
-                    <a href="{{ 'item-detail/%s/%s/%s' % (group_name, group_item, slug) }}">
+                  <td class="text-sm text-primary font-semibold py-3 px-4 cursor-pointer whitespace-nowrap">                   
+                    <a href="{{ '/admin/group/group-item/item-detail/%s/%s/%s' % (group_name, group_item, item.id) }}">
                       {{content}}
                     </a>
                   </td>
-
                   {%endfor%}
                 </tr>
                 {%endfor%}
@@ -134,10 +134,10 @@ API{%endblock%} {%block body%}
                   <a href="" class="text-primary font-medium">All</a>
                 </li>
                 <li>
-                  <a href="" class="text-shadeblack font-medium">Draft</a>
+                  <a href="{%if params %}{{params}}&draft=True{%else%}?Draft=True{%endif%}" class="text-shadeblack font-medium">Draft</a>
                 </li>
                 <li>
-                  <a href="" class="text-shadeblack font-medium">Published</a>
+                  <a href="{%if params %}{{params}}&Published=True{%else%}?Published=True{%endif%}" class="text-shadeblack font-medium">Published</a>
                 </li>
               </ul>
             </div>

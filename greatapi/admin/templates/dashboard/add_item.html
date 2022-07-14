@@ -1,45 +1,85 @@
-{%extends 'base.html'%} {%block title%}Add Blog | Great
-API{%endblock%} {%block body%} {%include 'sidebar.html'%}
+{%extends 'base.html'%} {%block title%}Add Blog | Great API{%endblock%} {%block
+body%} {%include 'sidebar.html'%}
 
 <main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
   {%include 'navbar.html'%}
 
   <div class="w-full h-full overflow-y-scroll px-0.5">
     <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
-      <a href="{{ '/admin' }}" class="text-blacktwo text-sm font-medium">Dashboard</a>
+      <a href="{{ '/admin' }}" class="text-blacktwo text-sm font-medium"
+        >Dashboard</a
+      >
       <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
+            clip-rule="evenodd"
+          />
         </svg>
       </span>
-      <a href="{{ 'group/%s' % group_name }}" class="text-blacktwo text-sm font-medium">Group</a>
+      <a
+        href="{{ '/admin/group/%s' % group_name }}"
+        class="text-blacktwo text-sm font-medium"
+        >Group</a
+      >
       <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
+            clip-rule="evenodd"
+          />
         </svg>
       </span>
-      <a href="{{ 'group-item/%s/%s' % (group_name, group_item) }}" class="text-blacktwo text-sm font-medium">Blogs</a>
+      <a
+        href="{{ '/admin/group/group-item/%s/%s' % (group_name, group_item) }}"
+        class="text-blacktwo text-sm font-medium"
+        >Blogs</a
+      >
       <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
+            clip-rule="evenodd"
+          />
         </svg>
       </span>
-      <a href="{{ 'item-detail/%s/%s/%s' % (group_name, group_item, slug) }}"
-        class="text-primary text-sm font-medium">Add Blog</a>
+      <a
+        href="{{ '/admin/group/group-item/item-detail/%s/%s/%s' % (group_name, group_item, id) }}"
+        class="text-primary text-sm font-medium"
+        >Add Blog</a
+      >
     </div>
     <!-- ends -->
 
-    <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4 pb-4">
+    <div
+      class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4 pb-4"
+    >
       <div class="max-w-lg xxl:max-w-xl mx-auto w-full">
-        <form action="" class="flex flex-col gap-4">
+        <form
+          action="/admin/add_item/test"
+          method="Post"
+          class="flex flex-col gap-4"
+        >
           <h1 class="text-lg text-blacktwo font-bold">Add Blog</h1>
-          <div>
+          <!-- <div>
             <label for="category" class="text-sm font-medium text-blacktwo">Category</label>
             <select id="category" name="Category" required
               class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm">
@@ -47,31 +87,50 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
               <option class="text-blacktwo font-medium">Category one</option>
               <option class="text-blacktwo font-medium">Category two</option>
             </select>
-          </div>
+          </div> -->
 
           <div>
             <label for="title" class="text-sm font-medium text-blacktwo">
-              Title
+              Name
             </label>
-            <input type="text" name="title" id="title" required placeholder="Enter title"
-              class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
+            <input
+              type="text"
+              name="name"
+              id="title"
+              required
+              placeholder="Enter title"
+              class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm"
+            />
+          </div>
+          <div>
+            <label for="price" class="text-sm font-medium text-blacktwo">
+              Price
+            </label>
+            <input
+              type="number"
+              name="price"
+              id="price"
+              required
+              placeholder="Enter title"
+              class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm"
+            />
           </div>
 
-          <div>
+          <!-- <div>
             <label for="slug" class="text-sm font-medium text-blacktwo">
               Slug
             </label>
             <input type="text" name="slug" id="slug" required placeholder="Enter slug"
               class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
-          </div>
+          </div> -->
 
-          <div>
+          <!-- <div>
             <label for="date" class="text-sm font-medium text-blacktwo">
               Date
             </label>
 
             <div class="relative w-full">
-              <input type="text" name="date" id="date" required placeholder="MM/DD/YYYY"
+              <input type="date" name="date" id="date" required placeholder="MM/DD/YYYY"
                 class="mt-1 uppercase block w-full h-12 px-3 pr-24 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
               <div class="absolute inset-y-0 right-3 flex items-center gap-4 cursor-pointer">
                 <span class="flex justify-center items-center cursor-pointer text-primary">
@@ -93,14 +152,14 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                     <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" d="M464 160H48" />
                   </svg>
                 </span>
-                <span class="flex justify-center items-center cursor-pointer text-sm text-primary font-bold">
+                <span class="flex justify-center items-center cursor-pointer text-sm text-primary font-bold" onclick="getCurrentDate(event)">
                   Today
                 </span>
               </div>
             </div>
 
             <div class="relative w-full mt-2">
-              <input type="text" name="date" id="date" required placeholder="00:00"
+              <input type="time" name="date" id="time" required placeholder="00:00"
                 class="mt-1 uppercase block w-full h-12 px-3 pr-24 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
               <div class="absolute inset-y-0 right-3 flex items-center gap-4 cursor-pointer">
                 <span class="flex justify-center items-center cursor-pointer text-primary">
@@ -111,22 +170,22 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                       stroke-width="32" d="M256 128v144h96" />
                   </svg>
                 </span>
-                <span class="flex justify-center items-center cursor-pointer text-sm text-primary font-bold">
+                <span class="flex justify-center items-center cursor-pointer text-sm text-primary font-bold" onclick="getCurrentTime(event)">
                   Now
                 </span>
               </div>
             </div>
-          </div>
-
+          </div> -->
+          <!-- 
           <div>
             <label for="body" class="text-sm font-medium text-blacktwo">
               Body
             </label>
             <textarea type="text" name="body" id="body" required placeholder="Enter text"
               class="mt-1 block w-full h-32 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm"></textarea>
-          </div>
+          </div> -->
 
-          <div>
+          <!-- <div>
             <label for="thumbnail" class="text-sm font-medium text-blacktwo">
               Thumbnail
             </label>
@@ -141,7 +200,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 <div class="flex text-sm text-gray-600">
                   <label class="cursor-pointer w-full h-full outline-none">
                     <span class="w-full h-full absolute inset-0"></span>
-                    <input id="thumbnail" name="file-upload" type="file" required class="sr-only" />
+                    <input  id="thumbnail" name="file-upload" type="file" draggable="true" required class="sr-only" />
                     <p class="text-sm font-medium text-shadeblack mt-2">
                       Upload or Select Image
                     </p>
@@ -149,9 +208,9 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <div>
+          <!-- <div>
             <label for="status" class="text-sm font-medium text-blacktwo">
               Status
             </label>
@@ -171,30 +230,43 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 </label>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="flex items-start gap-3 mt-2">
-            <input id="pinpost" name="offers" type="checkbox" required
+            <input
+              id="pinpost"
+              name="on_offer"
+              type="checkbox"
+              required
               class="w-5 h-5 rounded-md border-primary outline-none focus:ring-0 appearance-none checked:bg-primary"
-              required />
+              required
+            />
             <label for="pinpost" class="text-sm font-medium text-blacktwo">
-              Pin this post
+              On offer
             </label>
           </div>
 
-          <div class="w-full flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mt-4">
-            <button type="button"
-              class="w-full sm:w-1/4 p-3 bg-white text-lg text-danger font-bold flex justify-center items-center gap-2 rounded-lg">
+          <div
+            class="w-full flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mt-4"
+          >
+            <button
+              type="button"
+              class="w-full sm:w-1/4 p-3 bg-white text-lg text-danger font-bold flex justify-center items-center gap-2 rounded-lg"
+            >
               Cancel
             </button>
 
-            <button type="button"
-              class="w-full sm:w-2/4 p-3 bg-white text-lg text-primary font-bold flex justify-center items-center gap-2 rounded-lg">
+            <button
+              type="button"
+              class="w-full sm:w-2/4 p-3 bg-white text-lg text-primary font-bold flex justify-center items-center gap-2 rounded-lg"
+            >
               Save & Add Another
             </button>
 
-            <button type="button"
-              class="w-full sm:w-1/4 p-3 bg-white text-lg text-success font-bold flex justify-center items-center gap-2 rounded-lg">
+            <button
+              type="submit"
+              class="w-full sm:w-1/4 p-3 bg-white text-lg text-success font-bold flex justify-center items-center gap-2 rounded-lg"
+            >
               Save
             </button>
           </div>
