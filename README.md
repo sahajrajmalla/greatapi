@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/_static/logo.svg" alt="GreatAPI"/>
+<img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/greatapi/admin/static/greatapi_readme.svg" alt="GreatAPI"/>
 
 <i>GreatAPI framework, Full-stack FastAPI framework</i>
 
