@@ -7,7 +7,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
 
   <div class="w-full h-full overflow-y-scroll px-0.5">
     <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
-      <a href="#" class="text-blacktwo text-sm font-medium">Dashboard</a>
+      <a href="/admin" class="text-blacktwo text-sm font-medium">Dashboard</a>
       <span class="text-blacktwo">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd"
@@ -15,7 +15,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             clip-rule="evenodd" />
         </svg>
       </span>
-      <a href="#" class="text-primary text-sm font-medium">Account</a>
+      <a href="/admin/account" class="text-primary text-sm font-medium">Account</a>
     </div>
     <!-- ends -->
 
@@ -40,28 +40,28 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Name</dt>
                     <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      Admin
+                      {{user_info.name}}
                     </dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Username</dt>
                     <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      admin
+                      {{user_info.username}}
                     </dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Email</dt>
                     <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      admin@site.com
+                      {{user_info.email}}
                     </dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Phone Number</dt>
                     <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      +977 9876543210
+                      {{user_info.contact}}
                     </dd>
                   </div>
                 </dl>
@@ -90,10 +90,10 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 Enter the old and new password to change your password.
               </h6>
               <form action="" class="flex flex-col gap-3 mt-4">
-                <div class="relative">
-                  <input type="password" name="Password" id="" placeholder="Old password"
+                <div class="relative select-none">
+                  <input type="password" name="Password" id="old-password" placeholder="Old password"
                     class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
-                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eye" onclick="togglePassword('old-password')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
                       <path
                         d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
@@ -102,10 +102,10 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                     </svg>
                   </span>
                 </div>
-                <div class="relative">
-                  <input type="password" name="Password" id="" placeholder="New password"
+                <div class="relative select-none">
+                  <input type="password" name="Password" id="reenter-password" placeholder="New password"
                     class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
-                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer">
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eye" onclick="togglePassword('reenter-password')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
                       <path
                         d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"

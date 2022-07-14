@@ -1,6 +1,7 @@
 <main id="menu-box"
   class="w-fit z-10 lg:max-w-[22vw] w-full h-full absolute lg:static hidden lg:flex flex-col justify-between gap-4 bg-white rounded-2xl p-3">
   <div
+    onclick="toggleMenu()"
     class="absolute right-4 w-8 h-8 bg-primary/10 rounded-lg text-primary lg:hidden flex justify-center items-center">
     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 512 512">
       <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"
@@ -9,7 +10,9 @@
   </div>
   <div class="flex flex-col gap-6">
     <div class="flex justify-center items-center">
-      <img src="{{ url_for('static', path='/logo.svg') }}" alt="" class="w-1/2" />
+      <a href="/admin" class="select-none">
+      <img src="{{ url_for('static', path='/logo.svg') }}" alt="" class="w-2/3 ">
+      </a>
     </div>
     <div class="w-full flex flex-col">
       <a href="{{ '/admin' }}">
@@ -30,7 +33,7 @@
           <h2 class="font-semibold tracking-widest">Dashboard</h2>
         </div>
       </a>
-      <a href="{{ 'visualization' }}">
+      <a href="{{ '/admin/visualization' }}">
         <div
           class="flex items-center gap-5 {% if active == 'visualization' %} bg-shadeblue stroke-primary text-primary {%else%} stroke-blacktwo text-blacktwo {%endif%} px-4 xxl:px-6 py-3 xxl:py-4 rounded-lg cursor-pointer">
           <span>
@@ -47,7 +50,7 @@
         </div>
       </a>
 
-      <a href="{{ 'history' }}">
+      <a href="{{ '/admin/history' }}">
         <div
           class="flex items-center gap-5 {% if active == 'history' %} bg-shadeblue stroke-primary text-primary {%else%} stroke-blacktwo text-blacktwo {%endif%} px-4 xxl:px-6 py-3 xxl:py-4 rounded-lg cursor-pointer">
           <span>
@@ -102,6 +105,6 @@
     </div>
   </div>
   <div class="text-center">
-    <h6 class="text-shadeblack font-medium">© 2022. GREAT API</h6>
+    <h6 class="text-shadeblack font-medium">© 2022. <b>GreatAPI</b></h6>
   </div>
 </main>

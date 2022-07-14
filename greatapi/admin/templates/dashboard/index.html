@@ -27,7 +27,7 @@
     <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4">
       <div class="w-full xl:w-2/3 h-full grid grid-cols-1 xs:grid-cols-2 xxl:grid-cols-3 gap-3">
         {%for group in groups%}
-        <a href="{{ 'group/%s' % group.name }}">
+        <a href="{{ '/admin/group/%s' % group.name }}">
           <div class="w-full bg-white p-4 flex justify-between rounded-2xl cursor-pointer">
             <div class="flex flex-col gap-3">
               <h3 class="font-bold text-blacktwo">{{group.name}}</h3>
@@ -54,7 +54,7 @@
       <div class="w-full xl:w-1/3 h-fit bg-white p-4 rounded-2xl flex flex-col gap-4">
         <div class="flex justify-between items-center">
           <h3 class="text-lg font-semibold text-blacktwo">History</h3>
-          <a href="{{ 'history' }}">
+          <a href="{{ 'admin/history' }}">
             <h6 class="text-sm font-medium text-primary cursor-pointer">
               View All
             </h6>

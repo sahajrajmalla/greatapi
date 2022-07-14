@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Any
 from fastapi import Depends
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from fastapi import Form
 
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
 from greatapi.db.database import Base
@@ -44,7 +46,16 @@ class AdminSite:
 
     @admin_router.get('/admin/account', response_class=HTMLResponse)
     async def fetch_account_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/account.html', {'request': request})
+        return templates.TemplateResponse('dashboard/account.html', {
+                'request': request,
+                'user_info':{
+                    'name':'Admin',
+                    'username':'admin',
+                    'email':'admin@site.com',
+                    'contact':'980000000'
+                    },
+                }
+            )
 
     @admin_router.get('/admin/settings', response_class=HTMLResponse)
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
@@ -57,8 +68,6 @@ class AdminSite:
         )
         sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
 
-        test_slug = 'this-is-static-slug-make-dynamic'
-
         return templates.TemplateResponse(
             'dashboard/items.html',
             {
@@ -68,14 +77,54 @@ class AdminSite:
                 'group_item': group_item,
                 'titles': [title.capitalize() for title in titles],
                 'items': items,
-                'slug': test_slug,
                 'sidebar_groups': sidebar_groups,
+
+                # TODO: need to dynamically change the filters
+                'params':'?Draft=True'
             },
         )
 
-    @admin_router.get('/admin/add_item', response_class=HTMLResponse)
+    @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/add_item', response_class=HTMLResponse)
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
+        
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
+
+    @admin_router.post('/admin/add_item/test')
+    def create_an_item(self, name: str = Form(), price: int = Form(), on_offer: bool = Form()) -> Any:
+        # db_item=db.query(models.Item).filter(models.Item.name==item.name).first()
+
+        # if db_item is not None:
+        #     raise HTTPException(status_code=400,detail="Item already exists")
+
+        # new_item=models.Item(
+        #     name=item.name,
+        #     price=item.price,
+        #     description=item.description,
+        #     on_offer=item.on_offer
+        # )
+
+        # db.add(new_item)
+        # db.commit()
+
+        return {
+            "name": name,
+            "price": price,
+            "on_offer": on_offer
+        }
+
+    
+
+    @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/{id}', response_class=HTMLResponse)
+    async def fetch_details_item_page(self, request: Request, group_name:str, group_item: str, id: str) -> HTMLResponse:
+        return templates.TemplateResponse('dashboard/add_item.html',
+        {
+                'request': request,
+                'group_name': group_name,
+                'group_item': group_item,
+                'id': id,
+            },
+        
+        )
 
     @admin_router.get('/admin/group/{app_name}', response_class=HTMLResponse)
     async def fetch_app_page(self, request: Request, app_name: str) -> HTMLResponse:
