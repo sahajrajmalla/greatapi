@@ -3,8 +3,8 @@ name: (TestPyPI) Publish Python 🐍 distributions 📦 to TestPyPI
 # Controls when the action will run.
 on:
   # Triggers the workflow on push to the master branch
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ test_pypi ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
