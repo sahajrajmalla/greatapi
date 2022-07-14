@@ -9,9 +9,8 @@ from pydantic import BaseModel
 class HistorySchema(BaseModel):
     id: Optional[int]
     name: str
-    type: str
+    category: str
     created_date: Optional[datetime]
-    edited_date: Optional[datetime]
 
     class Config:
         orm_mode = True

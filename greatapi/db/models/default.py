@@ -17,8 +17,7 @@ class History(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    type = Column(String)
+    category = Column(String)
     created_date = Column(DateTime(timezone=True), server_default=func.now())
-    edited_date = Column(DateTime(timezone=True), onupdate=func.now())
 
     # blogs = relationship("Blog", back_populates="creator")

@@ -68,3 +68,16 @@ function togglePopup(){
     let date = eventParentNode.querySelector('#time')
     date.value = new Date().toISOString().split('T')[1].split('.')[0];
   }
+
+
+function onSelectAll(){
+  var table = document.getElementById('item-table')
+  var items = table.querySelectorAll('#checkbox')
+
+    for (var i=0; i<items.length; i++){
+      console.log(items[i])
+      items[i].checked = event.target.checked
+    }
+
+
+}

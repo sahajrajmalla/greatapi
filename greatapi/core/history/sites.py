@@ -35,7 +35,7 @@ class HistorySite:
 
         new_history_item = History(
             name=item.name,
-            type=item.type,
+            category=item.category,
         )
 
         self.db.add(new_history_item)

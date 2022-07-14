@@ -63,33 +63,25 @@ class AdminSite:
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/settings.html', {'request': request})
 
-    @admin_router.get('/admin/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
-    async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
-        titles, items = fetch_table_data(
-            self.admin_settings[group_name.lower()][group_item.lower()],
-        )
-        sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
+    @admin_router.get('/admin/visualization', response_class=HTMLResponse)
+    async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
+        return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
+    @admin_router.get('/admin/history', response_class=HTMLResponse)
+    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         return templates.TemplateResponse(
-            'dashboard/items.html',
+            'dashboard/history.html',
             {
                 'request': request,
-                'active': 'dashboard',
-                'group_name': group_name,
-                'group_item': group_item,
-                'titles': [title.capitalize() for title in titles],
-                'items': items,
-                'sidebar_groups': sidebar_groups,
-
-                # TODO: need to dynamically change the filters
+                'active': 'history',
+                'history_items': query_history_table(db, 10),
                 'params': '?Draft=True',
             },
         )
 
-    @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/add_item', response_class=HTMLResponse)
-    async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
-
-        return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
+    @admin_router.get('/admin/delete_user', response_class=HTMLResponse)
+    async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
+        return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
 
     @admin_router.post('/admin/add_item/test')
     def create_an_item(self, name: str = Form(), price: int = Form(), on_offer: bool = Form()) -> Any:
@@ -114,7 +106,35 @@ class AdminSite:
             'on_offer': on_offer,
         }
 
-    @admin_router.get('/admin/group/group-item/item-detail/{group_name}/{group_item}/{id}', response_class=HTMLResponse)
+    @admin_router.get('/admin/{group_name}/{group_item}', response_class=HTMLResponse)
+    async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
+        titles, items = fetch_table_data(
+            self.admin_settings[group_name.lower()][group_item.lower()],
+        )
+        sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
+
+        return templates.TemplateResponse(
+            'dashboard/items.html',
+            {
+                'request': request,
+                'active': 'dashboard',
+                'group_name': group_name,
+                'group_item': group_item,
+                'titles': [title.capitalize() for title in titles],
+                'items': items,
+                'sidebar_groups': sidebar_groups,
+
+                # TODO: need to dynamically change the filters
+                'params': '?Draft=True',
+            },
+        )
+
+    @admin_router.get('/admin/{group_name}/{group_item}/add_item', response_class=HTMLResponse)
+    async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
+
+        return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
+
+    @admin_router.get('/admin/{group_name}/{group_item}/{id}', response_class=HTMLResponse)
     async def fetch_details_item_page(self, request: Request, group_name: str, group_item: str, id: str) -> HTMLResponse:
         return templates.TemplateResponse(
             'dashboard/add_item.html',
@@ -127,7 +147,7 @@ class AdminSite:
 
         )
 
-    @admin_router.get('/admin/group/{app_name}', response_class=HTMLResponse)
+    @admin_router.get('/admin/{app_name}', response_class=HTMLResponse)
     async def fetch_app_page(self, request: Request, app_name: str) -> HTMLResponse:
         sidebar_groups = fetch_app_list(self.admin_settings)
 
@@ -143,26 +163,6 @@ class AdminSite:
                 'sidebar_groups': sidebar_groups,
             },
         )
-
-    @admin_router.get('/admin/history', response_class=HTMLResponse)
-    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
-        return templates.TemplateResponse(
-            'dashboard/history.html',
-            {
-                'request': request,
-                'active': 'history',
-                'history_items': query_history_table(db, 10),
-                'params': '?Draft=True',
-            },
-        )
-
-    @admin_router.get('/admin/delete_user', response_class=HTMLResponse)
-    async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
-
-    @admin_router.get('/admin/visualization', response_class=HTMLResponse)
-    async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
     @admin_router.get('/test_me')
     async def fetch_test_me(self, request: Request, db: Session = Depends(get_db)) -> str:

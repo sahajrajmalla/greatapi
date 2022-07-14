@@ -24,7 +24,7 @@ body%} {%include 'sidebar.html'%}
         </svg>
       </span>
       <a
-        href="{{ '/admin/group/%s' % group_name }}"
+        href="{{ '/admin/%s' % group_name }}"
         class="text-blacktwo text-sm font-medium"
         >Group</a
       >
@@ -43,7 +43,7 @@ body%} {%include 'sidebar.html'%}
         </svg>
       </span>
       <a
-        href="{{ '/admin/group/group-item/%s/%s' % (group_name, group_item) }}"
+        href="{{ '/admin/%s/%s' % (group_name, group_item) }}"
         class="text-blacktwo text-sm font-medium"
         >Blogs</a
       >
@@ -62,7 +62,7 @@ body%} {%include 'sidebar.html'%}
         </svg>
       </span>
       <a
-        href="{{ '/admin/group/group-item/item-detail/%s/%s/%s' % (group_name, group_item, id) }}"
+        href="{{ '/admin/%s/%s/%s' % (group_name, group_item, id) }}"
         class="text-primary text-sm font-medium"
         >Add Blog</a
       >
