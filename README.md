@@ -24,6 +24,7 @@ PyPI Package: https://pypi.org/project/greatapi/
 Some of the major contributors to GreatAPI are:
 - [@thebrowl](https://github.com/thebrowl) -> [Admin Panel Design]
 - [@lamdiv](https://github.com/lamdiv) -> [Admin Panel Development with Jinja2]
+- [@Avi777](https://github.com/Avi777) -> [Consultant]
 ## **Requirements**
 
 - Python 3.6+
