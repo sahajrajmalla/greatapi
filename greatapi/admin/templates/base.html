@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', path='/favicon.ico') }}"
+    />
+    <title>{%block title%}{%endblock%}</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <body>
+    <section class="w-full h-screen flex gap-2 xxl:gap-3 p-2 xxl:p-3">
+      {%block body%} {%endblock%}
 
-  <title>{%block title%}{%endblock%}</title>
-  <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
-</head>
-
-<body>
-  <section class="w-full h-screen flex gap-2 xxl:gap-3 p-2 xxl:p-3">
-    {%block body%} {%endblock%}
-
-    <!-- Error messages : unhide required one -->
-    <!-- <main
+      <!-- Error messages : unhide required one -->
+      <!-- <main
         class="fixed right-4 bottom-4 w-fit sm:max-w-sm sm:w-full bg-white p-3 sm:p-4 rounded-2xl z-10 flex items-center gap-4 duration-300 border border-success/30">
         <div>
         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-success" viewBox="0 0 512 512">
@@ -61,9 +65,8 @@
         <h6 class="text-sm text-blacktwo">Please check again.</h6>
         </div>
     </main> -->
-    <!-- End Error messages -->
-  </section>
-  <script src="{{ url_for('static', path='/main.js') }}"></script>
-</body>
-
+      <!-- End Error messages -->
+    </section>
+    <script src="{{ url_for('static', path='/main.js') }}"></script>
+  </body>
 </html>

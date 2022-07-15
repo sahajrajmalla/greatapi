@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import Depends
+from fastapi import Form
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -44,20 +47,71 @@ class AdminSite:
 
     @admin_router.get('/admin/account', response_class=HTMLResponse)
     async def fetch_account_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/account.html', {'request': request})
+        return templates.TemplateResponse(
+            'dashboard/account.html', {
+                'request': request,
+                'user_info': {
+                    'name': 'Admin',
+                    'username': 'admin',
+                    'email': 'admin@site.com',
+                    'contact': '980000000',
+                },
+            },
+        )
 
     @admin_router.get('/admin/settings', response_class=HTMLResponse)
     async def fetch_settings_page(self, request: Request) -> HTMLResponse:
         return templates.TemplateResponse('dashboard/settings.html', {'request': request})
 
-    @admin_router.get('/admin/group/group-item/{group_name}/{group_item}', response_class=HTMLResponse)
+    @admin_router.get('/admin/visualization', response_class=HTMLResponse)
+    async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
+        return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
+
+    @admin_router.get('/admin/history', response_class=HTMLResponse)
+    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+        return templates.TemplateResponse(
+            'dashboard/history.html',
+            {
+                'request': request,
+                'active': 'history',
+                'history_items': query_history_table(db, 10),
+                'params': '?Draft=True',
+            },
+        )
+
+    @admin_router.get('/admin/delete_user', response_class=HTMLResponse)
+    async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
+        return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
+
+    @admin_router.post('/admin/add_item/test')
+    def create_an_item(self, name: str = Form(), price: int = Form(), on_offer: bool = Form()) -> Any:
+        # db_item=db.query(models.Item).filter(models.Item.name==item.name).first()
+
+        # if db_item is not None:
+        #     raise HTTPException(status_code=400,detail="Item already exists")
+
+        # new_item=models.Item(
+        #     name=item.name,
+        #     price=item.price,
+        #     description=item.description,
+        #     on_offer=item.on_offer
+        # )
+
+        # db.add(new_item)
+        # db.commit()
+
+        return {
+            'name': name,
+            'price': price,
+            'on_offer': on_offer,
+        }
+
+    @admin_router.get('/admin/{group_name}/{group_item}', response_class=HTMLResponse)
     async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
         titles, items = fetch_table_data(
             self.admin_settings[group_name.lower()][group_item.lower()],
         )
         sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
-
-        test_slug = 'this-is-static-slug-make-dynamic'
 
         return templates.TemplateResponse(
             'dashboard/items.html',
@@ -68,16 +122,32 @@ class AdminSite:
                 'group_item': group_item,
                 'titles': [title.capitalize() for title in titles],
                 'items': items,
-                'slug': test_slug,
                 'sidebar_groups': sidebar_groups,
+
+                # TODO: need to dynamically change the filters
+                'params': '?Draft=True',
             },
         )
 
-    @admin_router.get('/admin/add_item', response_class=HTMLResponse)
+    @admin_router.get('/admin/{group_name}/{group_item}/add_item', response_class=HTMLResponse)
     async def fetch_add_item_page(self, request: Request) -> HTMLResponse:
+
         return templates.TemplateResponse('dashboard/add_item.html', {'request': request})
 
-    @admin_router.get('/admin/group/{app_name}', response_class=HTMLResponse)
+    @admin_router.get('/admin/{group_name}/{group_item}/{id}', response_class=HTMLResponse)
+    async def fetch_details_item_page(self, request: Request, group_name: str, group_item: str, id: str) -> HTMLResponse:
+        return templates.TemplateResponse(
+            'dashboard/add_item.html',
+            {
+                'request': request,
+                'group_name': group_name,
+                'group_item': group_item,
+                'id': id,
+            },
+
+        )
+
+    @admin_router.get('/admin/{app_name}', response_class=HTMLResponse)
     async def fetch_app_page(self, request: Request, app_name: str) -> HTMLResponse:
         sidebar_groups = fetch_app_list(self.admin_settings)
 
@@ -93,25 +163,6 @@ class AdminSite:
                 'sidebar_groups': sidebar_groups,
             },
         )
-
-    @admin_router.get('/admin/history', response_class=HTMLResponse)
-    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
-        return templates.TemplateResponse(
-            'dashboard/history.html',
-            {
-                'request': request,
-                'active': 'history',
-                'history_items': query_history_table(db, 10),
-            },
-        )
-
-    @admin_router.get('/admin/delete_user', response_class=HTMLResponse)
-    async def fetch_delete_user_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/delete_user.html', {'request': request})
-
-    @admin_router.get('/admin/visualization', response_class=HTMLResponse)
-    async def fetch_visualization_page(self, request: Request) -> HTMLResponse:
-        return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
     @admin_router.get('/test_me')
     async def fetch_test_me(self, request: Request, db: Session = Depends(get_db)) -> str:
