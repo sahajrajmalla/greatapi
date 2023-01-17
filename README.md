@@ -4,7 +4,8 @@
 
 <i>GreatAPI framework, Full-stack FastAPI framework</i>
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/sahajrajmalla/greatapi/%F0%9F%8E%A8%20Linter?style=for-the-badge)
+[![🎨 Linter](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml)
+<!-- ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/sahajrajmalla/greatapi/%F0%9F%8E%A8%20Linter?style=for-the-badge) -->
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/greatapi?color=green&style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/greatapi?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/greatapi?style=for-the-badge)
