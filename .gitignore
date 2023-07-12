@@ -96,3 +96,6 @@ venv.bak/
 .vscode
 test.ipynb
 examples
+
+
+.DS_Store
