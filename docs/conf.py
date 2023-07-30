@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'GreatAPI'
-copyright = '2022, Sahaj Raj Malla'
+copyright = '2023, Sahaj Raj Malla'
 author = 'Sahaj Raj Malla'
 
 # The full version, including alpha/beta/rc tags
