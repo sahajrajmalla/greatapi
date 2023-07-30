@@ -181,21 +181,20 @@
               <h4 class="text-blacktwo font-semibold">Account</h4>
             </div>
           </a>
-          <a href="">
+          <!--<a href="">
             <div class="hover:bg-shadegray py-2 xxl:py-3 rounded-lg">
               <h4 class="text-blacktwo font-semibold">Dark</h4>
             </div>
           </a>
-          <a href="">
-            <div class="hover:bg-shadegray py-2 xxl:py-3 rounded-lg">
+        -->
+          <a>
+            <div class="hover:bg-shadegray py-2 xxl:py-3 rounded-lg" onclick="performLogout()">
               <h4 class="text-blacktwo font-semibold">Logout</h4>
             </div>
           </a>
         </div>
       </div>
-      <!-- account settings -->
 
-      <!-- account settings ends -->
     </div>
   </div>
 </div>
@@ -271,3 +270,14 @@
   </div>
 </div>
 <!-- mobile search -->
+
+<script>
+  function performLogout() {
+    // Remove the access_token from localStorage
+    console.log('logout');
+    localStorage.removeItem('access_token');
+
+    // Redirect to the login page or another appropriate page after logout.
+    window.location.href = '/admin/login';
+  }
+</script>
