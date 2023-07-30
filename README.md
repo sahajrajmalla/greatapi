@@ -1,32 +1,31 @@
-<div align="center">
+# GreatAPI - Full-stack FastAPI Framework
 
-<img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/greatapi/admin/static/greatapi_readme.svg" alt="GreatAPI"/>
+![GreatAPI](https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/greatapi/admin/static/greatapi_readme.svg)
 
-<i>GreatAPI framework, Full-stack FastAPI framework</i>
+GreatAPI is a full-stack FastAPI framework designed to simplify and accelerate web application development. It leverages the power of FastAPI and integrates various essential tools to provide a seamless development experience.
 
-[![🎨 Linter](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml)
-<!-- ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/sahajrajmalla/greatapi/%F0%9F%8E%A8%20Linter?style=for-the-badge) -->
+[![Linter](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/greatapi?color=green&style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/greatapi?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/greatapi?style=for-the-badge)
-<hr
 
-Documentation: https://greatapi.readthedocs.io/en/latest/
+## Documentation
+Explore our comprehensive documentation to get started with GreatAPI: [Documentation](https://greatapi.readthedocs.io/en/latest/)
 
-Source Code: https://github.com/sahajrajmalla/greatapi
+## Source Code
+Find the source code on GitHub: [GitHub Repository](https://github.com/sahajrajmalla/greatapi)
 
-PyPI Package: https://pypi.org/project/greatapi/
+## PyPI Package
+Install GreatAPI using PyPI: [PyPI Package](https://pypi.org/project/greatapi/)
 
+## Contributors
+Major contributors to GreatAPI:
 
-<hr>
-</div>
+- [@thebrowl](https://github.com/thebrowl) -> Admin Panel Design
+- [@lamdiv](https://github.com/lamdiv) -> Admin Panel Development with Jinja2
+- [@Avi777](https://github.com/Avi777) -> Consultant
 
-## **Contributors**
-Some of the major contributors to GreatAPI are:
-- [@thebrowl](https://github.com/thebrowl) -> [Admin Panel Design]
-- [@lamdiv](https://github.com/lamdiv) -> [Admin Panel Development with Jinja2]
-- [@Avi777](https://github.com/Avi777) -> [Consultant]
-## **Requirements**
+## Requirements
 
 - Python 3.6+
 - GreatAPI stands on the shoulders of giants:
@@ -36,35 +35,36 @@ Some of the major contributors to GreatAPI are:
     - jinja2
     - SQLAlchemy
 
-## **Installation**
+## Installation
 
 ```bash
 pip install greatapi
 ```
 
-## **Getting Started**
+## Getting Started
 
-### ***Startproject: To create a new project***
+### Startproject: Create a new project
 
 ```bash
 greatapi startproject <project_name>
 ```
 
-### ***Startapp: To create a new app***
+### Startapp: Create a new app
 
 ```bash
 greatapi startapp <app_name>
 ```
 
-### ***Running: To run the server***
+### Running: Run the server
 
 ```bash
 greatapi runserver
 ```
-Then you can access the server at http://localhost:8000/ where you will find a beautiful built-in Admin Panel.
 
-Afterwards, you can normally implement your API logic using FastAPI itself.
+The server will be accessible at http://localhost:8000/, and you will find a beautifully designed built-in Admin Panel.
 
-## **License**
+From there, you can easily implement your API logic using FastAPI.
 
-This project is licensed under the terms of the MIT license.
+## License
+
+This project is licensed under the terms of the MIT license. Feel free to use it and contribute to its development!
