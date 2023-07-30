@@ -96,7 +96,7 @@
             <h2 class="font-semibold tracking-widest">Dashboard</h2>
           </div>
         </a>
-        <a href="{{ '/admin/visualization' }}">
+        <!--<a href="{{ '/admin/visualization' }}">
           <div
             class="flex items-center gap-5 {% if active == 'visualization' %} bg-shadeblue stroke-primary text-primary {%else%} stroke-blacktwo text-blacktwo {%endif%} px-4 xxl:px-6 py-3 xxl:py-4 rounded-lg cursor-pointer"
           >
@@ -185,7 +185,7 @@
             </span>
             <h2 class="font-semibold tracking-widest">History</h2>
           </div>
-        </a>
+        </a> -->
 
         <hr class="border-shadeblack/30 my-2" />
 
@@ -257,7 +257,16 @@
       </div>
     </div>
     <div class="text-center">
-      <h6 class="text-shadeblack font-medium">© 2022. <b>GreatAPI</b></h6>
+      <h6 id="current-year" class="text-shadeblack font-medium"></h6>
     </div>
   </div>
 </main>
+
+<script>
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+
+  // Update the content of the <h6> element with the current year
+  const currentYearElement = document.getElementById('current-year');
+  currentYearElement.innerHTML = `© ${currentYear} <b>GreatAPI</b>`;
+</script>
