@@ -24,9 +24,9 @@
       </div>
       <div class="bg-white px-3 sm:px-4 py-8 rounded-3xl">
         <h2 class="text-xl text-center font-extrabold">Log In</h2>
-        <form action="" class="flex flex-col gap-4 mt-8">
+        <form class="flex flex-col gap-4 mt-8">
           <div>
-            <input type="text" name="Username" id="" placeholder="Username"
+            <input type="text" name="Username" id="username" placeholder="Username"
               class="w-full h-12 px-4 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
           </div>
 
@@ -44,7 +44,7 @@
           </div>
 
           <div class="mt-2">
-            <button type="button" class="w-full h-12 bg-primary text-white text-lg font-bold rounded-xl">
+            <button type="button" id="login-button" class="w-full h-12 bg-primary text-white text-lg font-bold rounded-xl">
               Log In
             </button>
           </div>
@@ -62,6 +62,50 @@
   var date = new Date().getFullYear();
 
   id.innerHTML = `© ${date}. <b>GreatAPI</b>`;
+  document.addEventListener('DOMContentLoaded', () => {
+    // The DOM content has loaded, now you can access the elements safely.
+    const loginButton = document.getElementById('login-button');
+    loginButton.addEventListener('click', performLogin);
+  });
+  
+  function performLogin() {
+    console.log('login');
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('user-password-login').value;
+  
+    console.log('username:', username);
+    console.log('password:', password);
+  
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+  
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the response contains an access_token
+        const access_token = data.access_token; // Access the access_token directly
+
+        // Store the access token in localStorage for future authenticated API calls.
+        localStorage.setItem('access_token', access_token);
+  
+        console.log('Login successful!');
+        // Redirect to the dashboard or another page after successful login.
+        window.location.href = '/admin';
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+        // Handle login failure, show error message, etc.
+      });
+  }
+  
+  
 </script>
 <script src="{{ url_for('static', path='/main.js') }}"></script>
 
