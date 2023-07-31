@@ -39,7 +39,7 @@ body%} {%include 'sidebar.html'%}
           <input
             type="search"
             name="search"
-            id=""
+            id="searchInput"
             placeholder="Search contents.."
             class="w-full h-12 px-4 pl-10 tracking-wider font-medium text-shadeblack bg-white rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300"
           />
@@ -90,5 +90,27 @@ body%} {%include 'sidebar.html'%}
     </div>
   </div>
 </main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const groups = document.querySelectorAll(".w-full.bg-white.p-4"); // Modify this selector to target the elements that represent the groups.
+
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        const searchText = event.target.value.toLowerCase();
+        groups.forEach((group) => {
+          const groupName = group.querySelector(".font-bold.text-blacktwo")
+            .innerText.toLowerCase();
+          if (groupName.includes(searchText)) {
+            group.style.display = "block";
+          } else {
+            group.style.display = "none";
+          }
+        });
+      }
+    });
+  });
+</script>
 
 {%endblock%}

@@ -169,7 +169,7 @@ body%}
               </thead>
               <tbody>
                 {%for item in items%}
-                <tr>
+                <tr class="group-item">
                   <!--<td class="py-3 px-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -266,5 +266,24 @@ body%}
       </div>-->
     </div>
   </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.getElementById("item-search");
+      const groupItems = document.querySelectorAll(".group-item");
 
+      searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          const searchText = event.target.value.toLowerCase();
+          groupItems.forEach((groupItem) => {
+            const groupItemText = groupItem.innerText.toLowerCase();
+            if (groupItemText.includes(searchText)) {
+              groupItem.style.display = "table-row";
+            } else {
+              groupItem.style.display = "none";
+            }
+          });
+        }
+      });
+    });
+  </script>
   {%endblock%}
