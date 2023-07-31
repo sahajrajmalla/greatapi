@@ -30,7 +30,7 @@ def fetch_app_list(admin_settings: dict[str, dict[str, Any]]) -> list[str]:
 
 
 def fetch_app_list_with_count(admin_settings: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
-    return [{'name': key.capitalize(), 'total_count': len(values)} for key, values in admin_settings.items()]
+    return [{'name': key.capitalize(), 'total_count': len(values)} for key, values in admin_settings.items() if key != 'default']
 
 
 def fetch_models_by_app(admin_settings: dict[str, dict[str, Any]], app_name: str) -> list[str]:
