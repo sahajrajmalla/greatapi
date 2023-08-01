@@ -15,6 +15,7 @@ from {{project_name}} import REGISTERED_ADMINS
 
 from greatapi.utils.urls import get_route_dict
 
+# import custom router and Base
 
 app = FastAPI()
 
@@ -22,6 +23,8 @@ app.mount('/static', StaticFiles(directory=GREATAPI_ADMIN_STATIC_PATH), name='st
 
 models.AdminBase.metadata.create_all(engine)
 models.UserBase.metadata.create_all(engine)
+# add custom Base
+
 
 registered_admins = get_route_dict(REGISTERED_ADMINS)
 
@@ -33,3 +36,4 @@ app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(test_auth_router)
 app.include_router(history_router)
+# add custom router
