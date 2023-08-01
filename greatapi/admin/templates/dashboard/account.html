@@ -28,9 +28,9 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             <div class="w-full bg-white rounded-2xl p-4 xxl:p-8">
               <div class="flex justify-between items-center">
                 <h3 class="xxl:text-lg font-bold text-blacktwo">General</h3>
-                <button type="button" class="bg-primary/10 py-1 px-3 font-semibold text-primary rounded-md">
+                <a href="/admin/settings" class="bg-primary/10 py-1 px-3 font-semibold text-primary rounded-md">
                   Edit
-                </button>
+                </a>
               </div>
 
               <hr class="border-shadeblack/30 my-3" />
@@ -39,47 +39,40 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 <dl class="flex flex-col gap-4">
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Name</dt>
-                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      {{user_info.name}}
-                    </dd>
+                    <dd id="name" class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2"></dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Username</dt>
-                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      {{user_info.username}}
-                    </dd>
+                    <dd id="username" class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2"></dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Email</dt>
-                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      {{user_info.email}}
-                    </dd>
+                    <dd id="email" class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2"></dd>
                   </div>
 
                   <div class="sm:grid sm:grid-cols-3 sm:gap-4 px-2">
                     <dt class="font-semibold text-shadeblack">Phone Number</dt>
-                    <dd class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2">
-                      {{user_info.contact}}
-                    </dd>
+                    <dd id="contact" class="mt-1 text-blacktwo font-semibold sm:mt-0 sm:col-span-2"></dd>
                   </div>
                 </dl>
               </div>
             </div>
-            <!-- ends -->
           </div>
 
-          <!--<div class="w-full col-span-full md:col-span-2 bg-white h-fit rounded-2xl p-4 xxl:p-8 order-2 md:order-1">
+          <div class="w-full col-span-full md:col-span-2 bg-white h-fit rounded-2xl p-4 xxl:p-8 order-2 md:order-1">
             <h3 class="xxl:text-lg font-bold text-blacktwo">Delete Account</h3>
             <h6 class="text-sm lg:text-base text-shadeblack font-medium">
               Are you sure you want to delete your account.
             </h6>
-            <button type="button" class="mt-4 px-8 py-3 bg-danger text-white font-bold tracking-wider rounded-xl">
+            <button type="button" onclick="deleteAccount()"
+              class="mt-4 px-8 py-3 bg-danger text-white font-bold tracking-wider rounded-xl">
               Delete
             </button>
           </div>
-        -->
+
+
 
           <div
             class="w-full col-span-full md:col-span-1 bg-white h-fit rounded-2xl p-4 xxl:p-8 order-1 md:order-2 row-span-3">
@@ -90,11 +83,11 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
               <h6 class="text-sm lg:text-base text-shadeblack font-medium">
                 Enter the old and new password to change your password.
               </h6>
-              <form action="" class="flex flex-col gap-3 mt-4">
+              <form id="changePasswordForm" class="flex flex-col gap-3 mt-4">
                 <div class="relative select-none">
-                  <input type="password" name="Password" id="old-password" placeholder="Old password"
+                  <input type="password" name="password" id="old-password" placeholder="Old password"
                     class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
-                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eye" onclick="togglePassword('old-password')">
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eyeOld" onclick="togglePassword('old-password')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
                       <path
                         d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
@@ -104,9 +97,9 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                   </span>
                 </div>
                 <div class="relative select-none">
-                  <input type="password" name="Password" id="reenter-password" placeholder="New password"
+                  <input type="password" name="Password" id="new-password" placeholder="New password"
                     class="w-full h-12 px-4 pr-12 tracking-wider font-medium text-shadeblack bg-shadegray rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
-                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eye" onclick="togglePassword('reenter-password')">
+                  <span class="absolute inset-y-0 right-4 flex justify-center items-center cursor-pointer" id="eyeNew" onclick="togglePassword('new-password')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
                       <path
                         d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
@@ -115,11 +108,12 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                     </svg>
                   </span>
                 </div>
-              </form>
-              <button type="button"
+              <button type="submit"
                 class="mt-4 px-8 py-3 bg-primary w-full text-white font-bold tracking-wider rounded-xl">
                 Change Password
               </button>
+            </form>
+
             </div>
           </div>
         </div>
@@ -127,5 +121,140 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
     </div>
   </div>
 </main>
+<script>
+  async function fetchUserInfo() {
+    try {
+      // Get the access token from wherever you store it
+      const accessToken = localStorage.getItem('access_token');
+
+      // Create a FormData object to send the access token
+      const formData = new FormData();
+      formData.append('access_token', accessToken);
+
+      const response = await fetch('/admin/info', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const userInfo = await response.json();
+        populateUserInfo(userInfo);
+      } else {
+        console.error('Failed to fetch user info.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  function populateUserInfo(userInfo) {
+    const nameElement = document.getElementById('name');
+    const usernameElement = document.getElementById('username');
+    const emailElement = document.getElementById('email');
+    const contactElement = document.getElementById('contact');
+
+    console.log(userInfo);
+
+    if (userInfo) {
+      nameElement.textContent = userInfo.name || '';
+      usernameElement.textContent = userInfo.username || '';
+      emailElement.textContent = userInfo.email || '';
+      contactElement.textContent = userInfo.contact_number || '';
+    } else {
+      console.error('User info is not available.');
+    }
+  }
+
+  // Call the function to fetch and populate user info when the page loads
+  window.addEventListener('DOMContentLoaded', () => {
+    fetchUserInfo();
+  });
+
+  document.getElementById('changePasswordForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const oldPasswordInput = document.getElementById('old-password');
+    const newPasswordInput = document.getElementById('new-password');
+
+    // Get the old and new passwords from the form inputs
+    const oldPassword = oldPasswordInput.value;
+    const newPassword = newPasswordInput.value;
+
+    // Make sure the old and new passwords are not empty
+    if (!oldPassword || !newPassword) {
+      alert('Please enter both old and new passwords.');
+      return;
+    }
+
+    // Get the access token from wherever you store it
+    const accessToken = localStorage.getItem('access_token');
+
+    // Create a FormData object to send the form data
+    const formData = new FormData();
+    formData.append('access_token', accessToken);
+    formData.append('old_password', oldPassword);
+    formData.append('new_password', newPassword);
+
+    try {
+      const response = await fetch('/admin/change_password', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.password_changed) {
+          alert('Password changed successfully!');
+          oldPasswordInput.value = '';
+          newPasswordInput.value = '';
+        } else {
+          alert('Failed to change password. Please check your old password and try again.');
+        }
+      } else {
+        alert('Failed to change password. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while processing the request.');
+    }
+  });
+
+  function deleteAccount() {
+    const access_token = localStorage.getItem('access_token'); // Replace this with your actual access token
+    fetch('/admin/delete_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `access_token=${encodeURIComponent(access_token)}`
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Request failed with status: ' + response.status);
+        }
+      })
+      .then(data => {
+        // Handle the response data here
+        if (data.user_deleted) {
+          // User deleted successfully
+          console.log('User deleted successfully.');
+          window.location.href = '/admin/login';
+          // You can perform any additional actions after successful deletion
+        } else {
+          // User not deleted or access denied
+          console.log('User not deleted or access denied.');
+          // Handle the error case here
+        }
+      })
+      .catch(error => {
+        console.error('Error occurred:', error);
+        // Handle any errors that occurred during the API call
+      });
+  }
+
+</script>
+
 
 {%endblock%}

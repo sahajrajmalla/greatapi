@@ -1,98 +1,152 @@
-{%extends 'base.html'%}
-{%block title%}Edit Account | Great API{%endblock%}
-{%block body%}
-{%include 'sidebar.html'%}
-<!-- ends -->
+{% extends 'base.html' %}
+{% block title %}Edit Account | Great API{% endblock %}
+{% block body %}
+  {% include 'sidebar.html' %}
+  <!-- ends -->
 
-<main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
-  {%include 'navbar.html'%}
+  <main class="w-full h-full rounded-2xl flex flex-col gap-2 xxl:gap-3">
+    {% include 'navbar.html' %}
 
-  <div class="w-full h-full overflow-y-scroll px-0.5">
-    <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
-      <a href="#" class="text-blacktwo text-sm font-medium">Dashboard</a>
-      <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
-        </svg>
-      </span>
-      <a href="#" class="text-blacktwo text-sm font-medium">Group</a>
-      <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
-        </svg>
-      </span>
-      <a href="#" class="text-blacktwo text-sm font-medium">Blogs</a>
-      <span class="text-blacktwo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd" />
-        </svg>
-      </span>
-      <a href="#" class="text-primary text-sm font-medium">Add Blog</a>
-    </div>
-    <!-- ends -->
+    <br>
+    <br>
+    <br>
 
     <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4 pb-4">
       <div class="max-w-lg xxl:max-w-xl mx-auto w-full">
-        <form action="" class="flex flex-col gap-4">
+        <form class="flex flex-col gap-4" id="account-form">
           <h3 class="text-lg text-blacktwo font-bold">
             Edit Your Details
-            </h1>
+          </h3>
 
-            <div>
-              <label for="fullname" class="text-sm font-medium text-blacktwo">
-                Full Name
-              </label>
-              <input type="text" name="fullname" id="fullname" required placeholder="Enter name"
-                class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
-            </div>
+          <div>
+            <label for="email" class="text-sm font-medium text-blacktwo">
+              Email
+            </label>
+            <input type="email" name="email" id="email" required placeholder="Enter email" disabled
+              class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
+          </div>
 
-            <div>
-              <label for="username" class="text-sm font-medium text-blacktwo">
-                Username
-              </label>
-              <input type="text" name="username" id="username" required placeholder="Enter username"
-                class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
-            </div>
+          <div>
+            <label for="fullname" class="text-sm font-medium text-blacktwo">
+              Full Name
+            </label>
+            <input type="text" name="fullname" id="fullname" required placeholder="Enter name"
+              class="mt-1 block w-full h-12 px-3 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
+          </div>
 
-            <div>
-              <label for="email" class="text-sm font-medium text-blacktwo">
-                Email
-              </label>
-              <input type="email" name="email" id="email" required placeholder="Enter email"
-                class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
-            </div>
+          <div>
+            <label for="username" class="text-sm font-medium text-blacktwo">
+              Username
+            </label>
+            <input type="text" name="username" id="username" required placeholder="Enter username"
+              class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
+          </div>
 
-            <div>
-              <label for="number" class="text-sm font-medium text-blacktwo">
-                Mobile Number
-              </label>
-              <input type="tel" name="number" id="number" required placeholder="Enter mobile number"
-                class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
-            </div>
+          <div>
+            <label for="number" class="text-sm font-medium text-blacktwo">
+              Mobile Number
+            </label>
+            <input type="tel" name="number" id="number" required placeholder="Enter mobile number"
+              class="mt-1 block w-full h-12 px-4 font-medium text-shadeblack tracking-wider border-0 bg-white rounded-md outline-none focus:ring-primary/70 text-sm" />
+          </div>
 
-            <div class="w-full flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mt-4">
-              <button type="button"
-                class="w-full p-3 bg-white text-lg text-blacktwo font-bold flex justify-center items-center gap-2 rounded-lg">
-                Cancel
-              </button>
+          <div class="w-full flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mt-4">
+            <a href="/admin/account"
+              class="w-full p-3 bg-white text-lg text-blacktwo font-bold flex justify-center items-center gap-2 rounded-lg">
+              Cancel
+            </a>
 
-              <button type="submit"
-                class="w-full p-3 bg-primary text-lg text-white font-bold flex justify-center items-center gap-2 rounded-lg">
-                Save Change
-              </button>
-            </div>
-            <!-- ends -->
+            <button type="button"
+              class="w-full p-3 bg-primary text-lg text-white font-bold flex justify-center items-center gap-2 rounded-lg"
+              id="save-button">
+              Save Change
+            </button>
+          </div>
+          <!-- ends -->
         </form>
       </div>
     </div>
-  </div>
-</main>
+  </main>
+
+  <script>
+    const saveButton = document.getElementById('save-button');
+    const accountForm = document.getElementById('account-form');
 
 
-{%endblock%}
+
+    // Function to fetch user info and populate the form fields
+    const fillFormWithUserInfo = async () => {
+      try {
+        // Get the access token from wherever you store it
+        const accessToken = localStorage.getItem('access_token');
+
+        // Create a FormData object to send the access token
+        const formData = new FormData();
+        formData.append('access_token', accessToken);
+
+        const response = await fetch('/admin/info', {
+          method: 'POST',
+          body: formData,
+        });
+
+        // Check if the response is successful
+        if (response.ok) {
+          const userInfo = await response.json();
+
+          console.log('User info:', userInfo);
+
+          // Populate the form fields with the user info
+          document.getElementById('fullname').value = userInfo.name;
+          document.getElementById('username').value = userInfo.username;
+          document.getElementById('email').value = userInfo.email;
+          document.getElementById('number').value = userInfo.contact_number;
+        } else {
+          // Handle error if the response is not successful
+          console.error('Failed to fetch user info:', response);
+        }
+      } catch (error) {
+        // Handle any other errors that may occur during the fetch
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    const saveChangesBtn = document.getElementById('save-button');
+  const form = document.getElementById('account-form');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // ...
+
+    // Add a click event listener to the Save Changes button
+    saveChangesBtn.addEventListener('click', () => {
+      // Create an object to store the form data
+      const formData = {
+        name: form.fullname.value,
+        username: form.username.value,
+        email: form.email.value,
+        contact_number: form.number.value,
+        access_token: localStorage.getItem('access_token'), // Replace with the actual access token
+      };
+
+      // Send a POST request to the API with the form data in JSON format
+      fetch('/admin/change_value', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the Content-Type header to application/json
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle the response data here
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle any errors here
+          console.error('Error:', error);
+        });
+    });
+  });
+    // Call the function to fill the form with user info when the page loads
+    fillFormWithUserInfo();
+  </script>
+{% endblock %}
