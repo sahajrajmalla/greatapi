@@ -80,7 +80,7 @@
     formData.append('username', username);
     formData.append('password', password);
 
-    fetch('/login', {
+    fetch('/admin_login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -89,15 +89,21 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        // Assuming the response contains an access_token
-        const access_token = data.access_token; // Access the access_token directly
+        if (data.access_token === undefined) {
+          console.error('Login failed: No access_token received');
+          // Handle login failure, show error message, etc.
+        } else {
+          const access_token = data.access_token; // Access the access_token directly
 
-        // Store the access token in localStorage for future authenticated API calls.
-        localStorage.setItem('access_token', access_token);
+          // Store the access token in localStorage for future authenticated API calls.
+          localStorage.setItem('access_token', access_token);
 
-        console.log('Login successful!');
-        // Redirect to the dashboard or another page after successful login.
-        window.location.href = '/admin';
+          console.log('Login successful!');
+
+          // Redirect to the dashboard or another page after successful login.
+          window.location.href = '/admin';
+        }
+
       })
       .catch((error) => {
         console.error('Login failed:', error);
