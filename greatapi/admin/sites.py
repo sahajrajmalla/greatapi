@@ -1,15 +1,25 @@
 from __future__ import annotations
 
 from typing import Any
+from typing import Dict
+from typing import Union
 
 from fastapi import Depends
 from fastapi import Form
+from fastapi import HTTPException
 from fastapi import Request
+from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from jose import jwt
+from jose.exceptions import ExpiredSignatureError
+from jose.exceptions import JWTError
 from sqlalchemy.orm import Session
 
 from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
+from greatapi.core.auth.hashing import Hash
+from greatapi.core.auth.jwt_token import ALGORITHM
+from greatapi.core.auth.jwt_token import SECRET_KEY
 from greatapi.db.database import Base
 from greatapi.db.database import get_db
 from greatapi.utils.component import fetch_app_list
@@ -17,8 +27,10 @@ from greatapi.utils.component import fetch_app_list_with_count
 from greatapi.utils.component import fetch_models_by_app
 from greatapi.utils.component import fetch_models_by_app_with_count
 from greatapi.utils.component import fetch_table_data
+from greatapi.utils.component import get_user_by_email
 from greatapi.utils.component import query_history_table
 from greatapi.utils.inferring_router import InferringRouter
+
 
 admin_router = InferringRouter(tags=['Admin'])
 templates = Jinja2Templates(directory=str(GREATAPI_ADMIN_TEMPLATE_PATH))
@@ -192,3 +204,149 @@ class AdminSite:
         print('history DATA: ', history)
 
         return 'HELLO'
+
+    def is_user_admin(self, email: str, db: Session) -> bool:
+        user = get_user_by_email(email, db)
+        if user and user.is_admin:  # Assuming there is an "is_admin" property in the User model
+            return True
+        return False
+
+    @admin_router.post('/admin/check_admin')
+    def check_admin(self, access_token: str = Form(...), db: Session = Depends(get_db)) -> Dict[str, Union[bool, str]]:
+        try:
+            decoded_token = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+            email = decoded_token.get('sub')
+            if email:
+                is_admin = self.is_user_admin(email, db)
+                return {'is_admin': is_admin}
+        except ExpiredSignatureError:
+            return {'is_admin': False, 'error': 'Token has expired.'}
+        except JWTError:
+            return {'is_admin': False, 'error': 'Invalid token.'}
+        except Exception as e:
+            print('Error:', e)
+        return {'is_admin': False}
+
+    @admin_router.post('/admin/info')
+    def fetch_admin_info(self, access_token: str = Form(...), db: Session = Depends(get_db)) -> Dict[str, Union[bool, str]]:
+        try:
+            decoded_token = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+            email = decoded_token.get('sub')
+            if email:
+                is_admin = self.is_user_admin(email, db)
+                if is_admin:
+                    user = get_user_by_email(email, db)
+                    return user
+        except ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Token has expired.',
+            )
+        except JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token.',
+            )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Access denied. Only admin users are allowed.',
+        )
+
+    @admin_router.post('/admin/change_password')
+    def change_password(
+        self,
+        access_token: str = Form(...),
+        old_password: str = Form(...),
+        new_password: str = Form(...),
+        db: Session = Depends(get_db),
+    ) -> dict[str, bool]:
+        try:
+            decoded_token = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+            email = decoded_token.get('sub')
+            if email:
+                user = get_user_by_email(email, db)
+                if user and Hash.verify(user.password, old_password):
+                    # Assuming you have a method Hash.bcrypt() to hash the password
+                    user.password = Hash.bcrypt(new_password)
+                    db.commit()
+                    return {'password_changed': True}
+        except ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Token has expired.',
+            )
+        except JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token.',
+            )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Access denied or old password incorrect.',
+        )
+
+    @admin_router.post('/admin/delete_user')
+    def delete_user(self, access_token: str = Form(...), db: Session = Depends(get_db)) -> dict[str, bool]:
+        try:
+            decoded_token = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+            email = decoded_token.get('sub')
+            if email:
+                user = get_user_by_email(email, db)
+                if user and self.is_user_admin(email, db):
+                    db.delete(user)
+                    db.commit()
+                    return {'user_deleted': True}
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail='Access denied or user not found.',
+                    )
+        except ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Token has expired.',
+            )
+        except JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token.',
+            )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Access denied or user not found.',
+        )
+
+    @admin_router.post('/admin/change_value')
+    async def change_value(self, request: Request, db: Session = Depends(get_db)) -> dict[str, bool]:
+        try:
+            # Parse the JSON payload from the request body
+            fields = await request.json()
+            print('fields DATA: ', fields)
+            access_token = fields.get('access_token')
+            if access_token:
+                decoded_token = jwt.decode(
+                    access_token, SECRET_KEY, algorithms=[ALGORITHM],
+                )
+                email = decoded_token.get('sub')
+                if email:
+                    user = get_user_by_email(email, db)
+                    if user:
+                        for field, new_value in fields.items():
+                            if field in user.__dict__ and field != 'access_token':
+                                setattr(user, field, new_value)
+                        db.commit()
+                        return {'values_changed': True}
+                    else:
+                        raise HTTPException(
+                            status_code=status.HTTP_404_NOT_FOUND, detail='User not found.',
+                        )
+        except ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Token has expired.',
+            )
+        except JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token.',
+            )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Access denied.',
+        )

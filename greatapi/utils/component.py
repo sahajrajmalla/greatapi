@@ -10,6 +10,7 @@ from greatapi.core.history.schemas import HistorySchema
 from greatapi.db.database import Base
 from greatapi.db.database import engine
 from greatapi.db.models.default import History
+from greatapi.db.models.user import User
 # from greatapi.utils.helpers import get_models_count
 
 
@@ -44,3 +45,8 @@ def fetch_models_by_app_with_count(admin_settings: dict[str, dict[str, Any]], ap
 def query_history_table(db: Session, limit: int = 3) -> list[HistorySchema]:
     history = db.query(History).order_by(History.created_date.desc()).limit(limit).all()
     return history
+
+
+def get_user_by_email(email: str, db: Session) -> User:
+    user = db.query(User).filter(User.email == email).first()
+    return user
