@@ -10,8 +10,8 @@ from fastapi import Depends
 from starlette.routing import Route
 from starlette.routing import WebSocketRoute
 
+from greatapi.db.admin.user import User
 from greatapi.db.database import Base
-from greatapi.db.models.user import User
 # from typing import get_type_hints
 # from pydantic.typing import is_classvar
 

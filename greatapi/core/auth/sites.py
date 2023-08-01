@@ -9,8 +9,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from greatapi.core.auth.hashing import Hash
 from greatapi.core.auth.jwt_token import create_access_token
+from greatapi.db.admin.user import User
 from greatapi.db.database import SessionLocal
-from greatapi.db.models.user import User
 from greatapi.utils.cbv import cbv
 from greatapi.utils.inferring_router import InferringRouter
 

@@ -7,10 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from greatapi.core.history.schemas import HistorySchema
+from greatapi.db.admin.default import History
+from greatapi.db.admin.user import User
 from greatapi.db.database import Base
 from greatapi.db.database import engine
-from greatapi.db.models.default import History
-from greatapi.db.models.user import User
 # from greatapi.utils.helpers import get_models_count
 
 

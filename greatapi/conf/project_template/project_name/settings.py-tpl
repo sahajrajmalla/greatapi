@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from greatapi.db.models.user import User
-from greatapi.db.models.default import History
+from greatapi.db.admin.user import User
+from greatapi.db.admin.default import History
 
 
 REGISTERED_ADMINS = [

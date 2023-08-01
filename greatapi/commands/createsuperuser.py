@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from greatapi.core.auth.hashing import Hash
 from greatapi.core.users.schemas import UserSchema
+from greatapi.db.admin.user import User
 from greatapi.db.database import SessionLocal
-from greatapi.db.models.user import User
 
 db = SessionLocal()
 

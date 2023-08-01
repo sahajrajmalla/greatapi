@@ -7,8 +7,8 @@ from fastapi import Depends
 
 from greatapi.core.auth.jwt_token import get_current_user
 from greatapi.core.users.query import get_user_by_id
+from greatapi.db.admin.user import User
 from greatapi.db.database import SessionLocal
-from greatapi.db.models.user import User
 from greatapi.utils.cbv import cbv
 from greatapi.utils.inferring_router import InferringRouter
 

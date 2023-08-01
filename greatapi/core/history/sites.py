@@ -8,9 +8,9 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from greatapi.core.history.schemas import HistorySchema
+from greatapi.db.admin.default import History
 from greatapi.db.database import get_db
 from greatapi.db.database import SessionLocal
-from greatapi.db.models.default import History
 from greatapi.utils.cbv import cbv
 from greatapi.utils.inferring_router import InferringRouter
 

@@ -11,10 +11,7 @@ from greatapi.db.database import Base
 def get_route_app(class_name: Any) -> str:
     module_path = inspect.getmodule(class_name).__name__  # type: ignore
     split_by_dot = module_path.split('.')
-    if split_by_dot[-1] == 'admin':
-        return split_by_dot[-2]
-    else:
-        return split_by_dot[-1]
+    return split_by_dot[-2]
 
 
 def get_route_dict(REGISTERED_ADMINS: list[Any]) -> dict[str, dict[str, Base]]:
