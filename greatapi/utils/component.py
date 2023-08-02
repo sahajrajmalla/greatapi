@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from typing import Any
+from typing import Optional
 
+from sqlalchemy import cast
 from sqlalchemy import func
+from sqlalchemy import inspect
+from sqlalchemy import or_
 from sqlalchemy import select
+from sqlalchemy import String
 from sqlalchemy.orm import Session
 
 from greatapi.core.history.schemas import HistorySchema
@@ -14,10 +19,39 @@ from greatapi.db.database import engine
 # from greatapi.utils.helpers import get_models_count
 
 
-def fetch_table_data(TABLE_CLASS: Base) -> tuple[list[str], list[dict[str, Any]]]:
+def fetch_table_data(TABLE_CLASS: Base, page: int = 1, name: Optional[str] = None) -> tuple[list[str], list[dict[str, Any]]]:
     query = select(TABLE_CLASS)
+
+    if name is not None and name != 'all_history':
+        # Get all columns in the TABLE_CLASS
+        columns = [
+            getattr(TABLE_CLASS, c_attr.key)
+            for c_attr in inspect(TABLE_CLASS).attrs
+        ]
+
+        # Create a list of filter conditions for each column containing the 'name' value
+        filter_conditions = [
+            cast(column, String).ilike(f'%{name}%') for column in columns
+        ]
+
+        # Combine the filter conditions using the 'or_' operator
+        query = query.filter(or_(*filter_conditions))
+
+    # Add DISTINCT clause to the query to eliminate duplicate rows
+    query = query.distinct()
+
+    # Calculate the offset and limit for pagination
+    PAGE_SIZE = 10
+    offset = (page - 1) * PAGE_SIZE
+    query = query.offset(offset).limit(PAGE_SIZE)
+
     result = engine.execute(query)
-    return (result._metadata.keys, result.fetchall())
+
+    # Extract specific attributes from the query result and convert them into a list of dictionaries
+    keys = result._metadata.keys
+    items = [(row) for row in result]
+
+    return (keys, items)
 
 
 def get_models_count(TABLE_CLASS: Base) -> int:

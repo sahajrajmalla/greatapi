@@ -134,9 +134,19 @@ class AdminSite:
         }
 
     @admin_router.get('/admin/{group_name}/{group_item}', response_class=HTMLResponse)
-    async def fetch_model_items_page(self, request: Request, group_name: str, group_item: str) -> HTMLResponse:
+    async def fetch_model_items_page(
+        self,
+        request: Request,
+        group_name: str,
+        group_item: str,
+        page: int = Query(1, ge=1),
+        name: Optional[str] = Query(None, max_length=100),
+    ) -> HTMLResponse:
+
         titles, items = fetch_table_data(
             self.admin_settings[group_name.lower()][group_item.lower()],
+            page,
+            name,
         )
         sidebar_groups = fetch_models_by_app(self.admin_settings, group_name.lower())
 

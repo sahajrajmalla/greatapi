@@ -171,7 +171,11 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
   }
 
   function prevPage() {
-    window.location.href = `/admin/history?page=${currentPage - 1}&name=${name}&category=${category}&date_filter=${date_filter}`;
+    // go previous only when currentPage > 1
+    if (currentPage > 1) {
+      window.location.href = `/admin/history?page=${currentPage - 1}&name=${name}&category=${category}&date_filter=${date_filter}`;
+
+    }
   }
 
   function changeCategory(new_category)  {
@@ -192,8 +196,9 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
     searchInput.addEventListener("keypress", function (event) {
       if (event.key === "Enter") {
         const searchText = event.target.value.toLowerCase();
+        name = searchText;
         currentPage = 1;
-        window.location.href = `/admin/history?page=${currentPage}&name=${searchText}&category=${category}&date_filter=${date_filter}`;
+        window.location.href = `/admin/history?page=${currentPage}&name=${name}&category=${category}&date_filter=${date_filter}`;
       }
     });
   });

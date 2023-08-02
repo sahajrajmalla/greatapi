@@ -203,7 +203,35 @@ body%}
               </tbody>
             </table>
           </div>
+          <div class="flex gap-2 mt-8 justify-between sm:justify-end">
+            <a onclick="prevPage()"
+              class="px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline cursor-not-allowed">
+              <div class="flex items-center -mx-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 512 512">
+                  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48"
+                    d="M328 112L184 256l144 144" />
+                </svg>
+
+                <span class="mx-1">Prev</span>
+              </div>
+            </a>
+
+
+            <a onclick="nextPage()"
+              class="px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
+              <div class="flex items-center -mx-1">
+                <span class="mx-1"> Next </span>
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 512 512">
+                  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48"
+                    d="M184 112l144 144-144 144" />
+                </svg>
+              </div>
+            </a>
+          </div>
         </div>
+        </div>
+
         <!--
         <div
           class="w-full xl:w-1/3 h-fit bg-white p-4 rounded-2xl flex flex-col gap-4"
@@ -267,21 +295,33 @@ body%}
     </div>
   </main>
   <script>
+    let currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
+    let name = new URLSearchParams(window.location.search).get('name') || "all_history";
+    const groupName = "{{ group_name|lower }}";
+    const groupItem = "{{ group_item|lower }}";
+
+    function nextPage() {
+      window.location.href = `/admin/${groupName}/${groupItem}?page=${currentPage + 1}&name=${name}`;
+
+    }
+
+
+    function prevPage() {
+      if (currentPage > 1) {
+        window.location.href = `/admin/${groupName}/${groupItem}?page=${currentPage - 1}&name=${name}`;
+      }
+    }
+
+
     document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.getElementById("item-search");
-      const groupItems = document.querySelectorAll(".group-item");
 
       searchInput.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
           const searchText = event.target.value.toLowerCase();
-          groupItems.forEach((groupItem) => {
-            const groupItemText = groupItem.innerText.toLowerCase();
-            if (groupItemText.includes(searchText)) {
-              groupItem.style.display = "table-row";
-            } else {
-              groupItem.style.display = "none";
-            }
-          });
+          name = searchText;
+          currentPage = 1;
+          window.location.href = `/admin/${groupName}/${groupItem}?page=${currentPage}&name=${name}`;
         }
       });
     });
