@@ -27,44 +27,91 @@ Major contributors to GreatAPI:
 
 ## Requirements
 
-- Python 3.6+
-- GreatAPI stands on the shoulders of giants:
-    - FastAPI
-    - uvicorn
-    - typer
-    - jinja2
-    - SQLAlchemy
+Before we dive into the tutorial, make sure you have the following requirements in place:
+
+- Python 3.6 or higher installed on your system.
+- Familiarity with Python programming language concepts.
+
+GreatAPI is built upon the foundation of the following robust libraries:
+
+- FastAPI: A modern, fast, web framework for building APIs with Python.
+- uvicorn: ASGI server that runs FastAPI applications.
+- typer: A command-line interface library for building CLI applications.
+- jinja2: A templating engine for Python.
+- SQLAlchemy: A powerful Object-Relational Mapping (ORM) library for Python.
 
 ## Installation
 
+To install GreatAPI and its dependencies, use `pip`:
+
 ```bash
 pip install greatapi
+
 ```
 
 ## Getting Started
 
-### Startproject: Create a new project
+### Step 1: Start a New Project
+
+To begin working with GreatAPI, let's create a new project. Open your terminal and execute the following command:
 
 ```bash
-greatapi startproject <project_name>
+greatapi startproject myproject
+
 ```
 
-### Startapp: Create a new app
+This will create a new directory named "myproject" with the basic structure to get you started.
+
+    myproject/
+
+    ├──__init__.py
+
+    ├──settings.py
+
+    main.py
+
+### Step 2: Create a New App
+
+An app in GreatAPI is a modular unit that encapsulates specific functionality of your project. To create a new app, run the following command:
 
 ```bash
-greatapi startapp <app_name>
+greatapi startapp myapp
+
 ```
 
-### Running: Run the server
+This will generate a new directory named "myapp" containing the necessary files and folders for your app.
+
+    myapp/
+
+    ├──__init__.py
+
+    ├──models.py
+
+    ├──repository.py
+
+    ├──router.py
+
+    ├──schemas.py
+
+### Step 3: Run the Server
+
+Now, it's time to run the development server. Execute the following command:
 
 ```bash
 greatapi runserver
+
+```
+### Step 4: Creating a Superuser
+
+After running the server, let's create a superuser to manage the administration of your project. Execute the following command:
+
+```bash
+greatapi createsuperuser
+
 ```
 
-The server will be accessible at http://localhost:8000/, and you will find a beautifully designed built-in Admin Panel.
+Follow the prompts to create the superuser account.
 
-From there, you can easily implement your API logic using FastAPI.
 
-## License
 
-This project is licensed under the terms of the MIT license. Feel free to use it and contribute to its development!
+The server will start, and you can access your application at http://localhost:8000/. Additionally, GreatAPI provides a beautifully designed built-in Admin Panel accessible at http://localhost:8000/admin.
