@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 
 from greatapi.config import GREATAPI_ADMIN_STATIC_PATH
 from greatapi.db.database import engine
-from greatapi.db import models
+from greatapi.db import admin
 from greatapi.admin.sites import admin_router
 from greatapi.admin.sites import AdminSite
 from greatapi.utils.cbv import _cbv
@@ -21,8 +21,8 @@ app = FastAPI()
 
 app.mount('/static', StaticFiles(directory=GREATAPI_ADMIN_STATIC_PATH), name='static')
 
-models.AdminBase.metadata.create_all(engine)
-models.UserBase.metadata.create_all(engine)
+admin.AdminBase.metadata.create_all(engine)
+admin.UserBase.metadata.create_all(engine)
 # add custom Base
 
 

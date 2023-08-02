@@ -90,9 +90,17 @@ This will generate a new directory named "myapp" containing the necessary files 
 
     ├──schemas.py
 
-### Step 3: Creating a Superuser
+### Step 3: Run the Server
 
-Before running the server, let's create a superuser to manage the administration of your project. Execute the following command:
+Now, it's time to run the development server. Execute the following command:
+
+```bash
+greatapi runserver
+
+```
+### Step 4: Creating a Superuser
+
+After running the server, let's create a superuser to manage the administration of your project. Execute the following command:
 
 ```bash
 greatapi createsuperuser
@@ -101,14 +109,7 @@ greatapi createsuperuser
 
 Follow the prompts to create the superuser account.
 
-### Step 4: Run the Server
 
-Now, it's time to run the development server. Execute the following command:
-
-```bash
-greatapi runserver
-
-```
 
 The server will start, and you can access your application at http://localhost:8000/. Additionally, GreatAPI provides a beautifully designed built-in Admin Panel accessible at http://localhost:8000/admin.
 
@@ -256,7 +257,7 @@ from myapp.models import Base as MyAppBase
 # ... (existing code)
 admin.AdminBase.metadata.create_all(engine)
 admin.UserBase.metadata.create_all(engine)
-MeroAppBase.metadata.create_all(engine) # new code added
+MyAppBase.metadata.create_all(engine) # new code added
 
 # ... (existing code)
 app.include_router(admin_router)
@@ -264,7 +265,7 @@ app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(test_auth_router)
 app.include_router(history_router)
-app.include_router(meroapp_router) # new code added
+app.include_router(myapp_router) # new code added
 
 ```
 
