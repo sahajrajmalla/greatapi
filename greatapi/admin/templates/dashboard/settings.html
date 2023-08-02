@@ -93,8 +93,6 @@
         if (response.ok) {
           const userInfo = await response.json();
 
-          console.log('User info:', userInfo);
-
           // Populate the form fields with the user info
           document.getElementById('fullname').value = userInfo.name;
           document.getElementById('username').value = userInfo.username;
@@ -138,7 +136,7 @@
         .then((response) => response.json())
         .then((data) => {
           // Handle the response data here
-          console.log(data);
+          window.location.href = '/admin/account';
         })
         .catch((error) => {
           // Handle any errors here

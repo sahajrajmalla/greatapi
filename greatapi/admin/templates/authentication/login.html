@@ -69,12 +69,8 @@
   });
 
   function performLogin() {
-    console.log('login');
     const username = document.getElementById('username').value;
     const password = document.getElementById('user-password-login').value;
-
-    console.log('username:', username);
-    console.log('password:', password);
 
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -97,8 +93,6 @@
 
           // Store the access token in localStorage for future authenticated API calls.
           localStorage.setItem('access_token', access_token);
-
-          console.log('Login successful!');
 
           // Redirect to the dashboard or another page after successful login.
           window.location.href = '/admin';

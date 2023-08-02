@@ -153,8 +153,6 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
     const emailElement = document.getElementById('email');
     const contactElement = document.getElementById('contact');
 
-    console.log(userInfo);
-
     if (userInfo) {
       nameElement.textContent = userInfo.name || '';
       usernameElement.textContent = userInfo.username || '';
@@ -239,12 +237,10 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
         // Handle the response data here
         if (data.user_deleted) {
           // User deleted successfully
-          console.log('User deleted successfully.');
           window.location.href = '/admin/login';
           // You can perform any additional actions after successful deletion
         } else {
           // User not deleted or access denied
-          console.log('User not deleted or access denied.');
           // Handle the error case here
         }
       })

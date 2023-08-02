@@ -77,7 +77,6 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
               };
 
-              console.log('access_token', access_token);
               const bodyContent = 'access_token=' + encodeURIComponent(access_token); // Encode the token
 
               const response = await fetch('/admin/check_admin', {
@@ -92,7 +91,6 @@
                 // User is an admin, continue with the normal page rendering
               } else {
                 // User is not an admin, redirect to the login page
-                console.log(data);
                 window.location.href = '/admin/login';
               }
             } catch (error) {

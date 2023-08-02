@@ -75,7 +75,6 @@ function onSelectAll(){
   var items = table.querySelectorAll('#checkbox')
 
     for (var i=0; i<items.length; i++){
-      console.log(items[i])
       items[i].checked = event.target.checked
     }
 
