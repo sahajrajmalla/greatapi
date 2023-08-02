@@ -150,8 +150,8 @@
             <h2 class="font-semibold tracking-widest">Visualization</h2>
           </div>
         </a>
-
-        <a href="{{ '/admin/history' }}">
+      -->
+        <a href="{{ '/admin/history?page=1' }}">
           <div
             class="flex items-center gap-5 {% if active == 'history' %} bg-shadeblue stroke-primary text-primary {%else%} stroke-blacktwo text-blacktwo {%endif%} px-4 xxl:px-6 py-3 xxl:py-4 rounded-lg cursor-pointer"
           >
@@ -185,9 +185,9 @@
             </span>
             <h2 class="font-semibold tracking-widest">History</h2>
           </div>
-        </a> -->
+        </a>
 
-       <!-- <hr class="border-shadeblack/30 my-2" />
+       <hr class="border-shadeblack/30 my-2" />
        {%for group in sidebar_groups%} {%if group_name and group_item%}
         <a href="{{ '/admin/%s/%s' % (group_name, group) }}">
           <div
@@ -252,7 +252,7 @@
             <h2 class="font-semibold tracking-widest">{{group}}</h2>
           </div>
         </a>
-        {%endif%} {%endfor%} -->
+        {%endif%} {%endfor%}
       </div>
     </div>
     <div class="text-center">

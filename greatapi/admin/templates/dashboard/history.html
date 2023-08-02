@@ -7,28 +7,14 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
 
   <div class="w-full h-full overflow-y-scroll">
     <div class="flex items-center gap-3 py-4 overflow-y-auto whitespace-nowrap">
-      <a href="#" class="text-blacktwo text-sm font-medium">History</a>
-      <!-- <span class="text-blacktwo">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-            <a href="#" class="text-primary text-sm font-medium">Overall</a> -->
+      <a class="text-blacktwo text-sm font-medium">History</a>
+
     </div>
     <!-- ends -->
     <div class="w-full flex flex-wrap xl:flex-nowrap gap-2 gap-y-8 xxl:gap-4">
       <div class="w-full xl:w-2/3 h-full">
         <div class="block relative w-full h-fit">
-          <input type="search" name="search" id="" placeholder="Search history.."
+          <input type="search" name="search" id="item-search" placeholder="Search history.."
             class="w-full h-12 px-4 pl-10 tracking-wider font-medium text-shadeblack bg-white rounded-lg outline-none border-0 focus:ring-1 focus:ring-primary/70 duration-300" />
           <span class="absolute inset-y-0 left-2 flex justify-center items-center cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-shadeblack" viewBox="0 0 512 512">
@@ -54,7 +40,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 </svg>
               </div>
               <div>
-                <h4 class="text-blacktwo font-semibold">{{item.name}} Edited</h4>
+                <h4 class="text-blacktwo font-semibold">{{item.name}}</h4>
                 <h6 class="text-xs xxl:text-sm font-medium text-shadeblack">
                   {{item.created_date}}
                 </h6>
@@ -68,7 +54,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
                 </svg>
               </div>
               <div>
-                <h4 class="text-blacktwo font-semibold">{{item.name}} Added</h4>
+                <h4 class="text-blacktwo font-semibold">{{item.name}}</h4>
                 <h6 class="text-xs xxl:text-sm font-medium text-shadeblack">
                   {{item.created_date}}
                 </h6>
@@ -81,7 +67,7 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
             </div>
             <div>
-              <h4 class="text-blacktwo font-semibold">{{item.name}} Deleted</h4>
+              <h4 class="text-blacktwo font-semibold">{{item.name}}</h4>
               <h6 class="text-xs xxl:text-sm font-medium text-shadeblack">
                 {{item.created_date}}
               </h6>
@@ -91,64 +77,10 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
 
             {%endfor%}
           </div>
-
-          <!-- <div class="flex items-start gap-4 bg-white p-4 rounded-lg mt-12">
-            <div
-              class="w-10 h-10 flex justify-center items-center rounded-lg bg-shadegray text-warning cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="32"
-                  d="M364.13 125.25L87 403l-23 45 44.99-23 277.76-277.13-22.62-22.62zM420.69 68.69l-22.62 22.62 22.62 22.63 22.62-22.63a16 16 0 000-22.62h0a16 16 0 00-22.62 0z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h4 class="text-blacktwo font-semibold">Item Edited</h4>
-              <h6 class="text-xs xxl:text-sm font-medium text-shadeblack">
-                Feb 20, 2022
-              </h6>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4 bg-white p-4 rounded-lg">
-            <div
-              class="w-10 h-10 flex justify-center items-center rounded-lg text-success bg-shadegray cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="32"
-                  d="M416 128L192 384l-96-96"
-                />
-              </svg>
-            </div>
-            <div>
-              <h4 class="text-blacktwo font-semibold">New Item Added</h4>
-              <h6 class="text-xs xxl:text-sm font-medium text-shadeblack">
-                Feb 20, 2022
-              </h6>
-            </div>
-          </div> -->
         </div>
 
         <div class="flex gap-2 mt-8 justify-between sm:justify-end">
-          <a href="#"
+          <a onclick="prevPage()"
             class="px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline cursor-not-allowed">
             <div class="flex items-center -mx-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 512 512">
@@ -160,27 +92,8 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             </div>
           </a>
 
-          <a href="#"
-            class="hidden px-4 py-2 font-semibold text-primary hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
-            1
-          </a>
 
-          <a href="#"
-            class="hidden px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
-            2
-          </a>
-
-          <a href="#"
-            class="hidden px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
-            3
-          </a>
-
-          <a href="#"
-            class="hidden px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
-            4
-          </a>
-
-          <a href="#"
+          <a onclick="nextPage()"
             class="px-4 py-2 font-semibold text-blacktwo hover:text-white bg-white hover:bg-primary duration-300 rounded-md sm:inline">
             <div class="flex items-center -mx-1">
               <span class="mx-1"> Next </span>
@@ -203,16 +116,19 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
 
         <div class="flex flex-col gap-3">
           <div class="flex flex-col gap-2">
-            <h2 class="text-lg font-semibold text-blacktwo">Status</h2>
+            <h2 class="text-lg font-semibold text-blacktwo">Category</h2>
             <ul class="flex flex-col gap-1">
               <li>
-                <a href="/admin/history" class="text-primary font-medium">All</a>
+                <a onclick="changeCategory('all_category')" class="text-shadeblack font-medium">All</a>
               </li>
               <li>
-                <a href="{%if params %}{{params}}&draft=True{%else%}?Draft=True{%endif%}" class="text-shadeblack font-medium">Draft</a>
+                <a onclick="changeCategory('create')" class="text-shadeblack font-medium">Create</a>
               </li>
               <li>
-                <a href="{%if params %}{{params}}&Published=True{%else%}?Published=True{%endif%}" class="text-shadeblack font-medium">Published</a>
+                <a onclick="changeCategory('edit')" class="text-shadeblack font-medium">Edit</a>
+              </li>
+              <li>
+                <a onclick="changeCategory('delete')" class="text-shadeblack font-medium">Delete</a>
               </li>
             </ul>
           </div>
@@ -220,19 +136,19 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
             <h2 class="text-lg font-semibold text-blacktwo">Date</h2>
             <ul class="flex flex-col gap-1">
               <li>
-                <a href="" class="text-primary font-medium">Any Date</a>
+                <a onclick="changeDateFilter('all_date')" class="text-shadeblack font-medium">All</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">Today</a>
+                <a onclick="changeDateFilter('today')" class="text-shadeblack font-medium">Today</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">This Week</a>
+                <a onclick="changeDateFilter('week')" class="text-shadeblack font-medium">This Week</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">This Month</a>
+                <a onclick="changeDateFilter('month')" class="text-shadeblack font-medium">This Month</a>
               </li>
               <li>
-                <a href="" class="text-shadeblack font-medium">This Year</a>
+                <a onclick="changeDateFilter('year')" class="text-shadeblack font-medium">This Year</a>
               </li>
             </ul>
           </div>
@@ -241,5 +157,48 @@ API{%endblock%} {%block body%} {%include 'sidebar.html'%}
     </div>
   </div>
 </main>
+
+<script>
+  let currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
+  let name = new URLSearchParams(window.location.search).get('name') || "all_history";
+  let category = new URLSearchParams(window.location.search).get('category') || "all_category";
+  let date_filter = new URLSearchParams(window.location.search).get('date_filter') || "all_date";
+
+
+  function nextPage() {
+    window.location.href = `/admin/history?page=${currentPage + 1}&name=${name}&category=${category}&date_filter=${date_filter}`;
+
+  }
+
+  function prevPage() {
+    window.location.href = `/admin/history?page=${currentPage - 1}&name=${name}&category=${category}&date_filter=${date_filter}`;
+  }
+
+  function changeCategory(new_category)  {
+    category = new_category;
+    currentPage = 1;
+    window.location.href = `/admin/history?page=${currentPage}&name=${name}&category=${category}&date_filter=${date_filter}`;
+  }
+
+  function changeDateFilter(new_date_filter) {
+    date_filter = new_date_filter;
+    currentPage = 1;
+    window.location.href = `/admin/history?page=${currentPage}&name=${name}&category=${category}&date_filter=${date_filter}`;
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("item-search");
+
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        const searchText = event.target.value.toLowerCase();
+        currentPage = 1;
+        window.location.href = `/admin/history?page=${currentPage}&name=${searchText}&category=${category}&date_filter=${date_filter}`;
+      }
+    });
+  });
+</script>
+
+</script>
 
 {%endblock%}

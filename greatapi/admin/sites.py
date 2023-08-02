@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from typing import Any
 from typing import Dict
+from typing import Optional
 from typing import Union
 
 from fastapi import Depends
 from fastapi import Form
 from fastapi import HTTPException
+from fastapi import Query
 from fastapi import Request
 from fastapi import status
 from fastapi.responses import HTMLResponse
@@ -20,6 +22,9 @@ from greatapi.config import GREATAPI_ADMIN_TEMPLATE_PATH
 from greatapi.core.auth.hashing import Hash
 from greatapi.core.auth.jwt_token import ALGORITHM
 from greatapi.core.auth.jwt_token import SECRET_KEY
+from greatapi.core.history.repository import create_history
+from greatapi.core.history.repository import fetch_filtered_paginated_results
+from greatapi.core.history.schemas import CategoryEnum
 from greatapi.db.database import Base
 from greatapi.db.database import get_db
 from greatapi.utils.component import fetch_app_list
@@ -80,14 +85,24 @@ class AdminSite:
         return templates.TemplateResponse('dashboard/visualization.html', {'request': request, 'active': 'visualization'})
 
     @admin_router.get('/admin/history', response_class=HTMLResponse)
-    async def fetch_history_page(self, request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+    async def fetch_history_page(
+        self,
+        request: Request,
+        page: int = Query(1, ge=1),
+        db: Session = Depends(get_db),
+        name: Optional[str] = Query(None, max_length=100),
+        category: Optional[str] = Query(None),
+        date_filter: Optional[str] = Query(None, max_length=50),
+    ) -> HTMLResponse:
+        PAGE_SIZE = 10
         return templates.TemplateResponse(
             'dashboard/history.html',
             {
                 'request': request,
                 'active': 'history',
-                'history_items': query_history_table(db, 10),
-                'params': '?Draft=True',
+                'history_items': fetch_filtered_paginated_results(
+                    page, PAGE_SIZE, name, category, date_filter,
+                ),
             },
         )
 
@@ -134,10 +149,7 @@ class AdminSite:
                 'group_item': group_item,
                 'titles': [title.capitalize() for title in titles],
                 'items': items,
-                'sidebar_groups': sidebar_groups,
-
-                # TODO: need to dynamically change the filters
-                'params': '?Draft=True',
+                'sidebar_groups': [groups.capitalize() for groups in sidebar_groups],
             },
         )
 
@@ -268,6 +280,11 @@ class AdminSite:
                     # Assuming you have a method Hash.bcrypt() to hash the password
                     user.password = Hash.bcrypt(new_password)
                     db.commit()
+
+                    create_history(
+                        name=f"{email}'s password changed successfully.", category=CategoryEnum.edit,
+                    )
+
                     return {'password_changed': True}
         except ExpiredSignatureError:
             raise HTTPException(
@@ -293,6 +310,9 @@ class AdminSite:
                 if user and self.is_user_admin(email, db):
                     db.delete(user)
                     db.commit()
+                    create_history(
+                        name=f"{email}'s user deleted successfully.", category=CategoryEnum.delete,
+                    )
                     return {'user_deleted': True}
                 else:
                     raise HTTPException(
@@ -332,6 +352,9 @@ class AdminSite:
                             if field in user.__dict__ and field != 'access_token':
                                 setattr(user, field, new_value)
                         db.commit()
+                        create_history(
+                            name=f"{email}'s field changed successfully.", category=CategoryEnum.edit,
+                        )
                         return {'values_changed': True}
                     else:
                         raise HTTPException(

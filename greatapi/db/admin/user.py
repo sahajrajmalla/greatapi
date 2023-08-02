@@ -11,7 +11,7 @@ from greatapi.db.database import Base
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     username = Column(String)
     email = Column(String)
