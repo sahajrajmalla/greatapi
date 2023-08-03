@@ -1,5 +1,6 @@
 # Contributing to GreatAPI
 
+## Reporting Issues
 As an open source project, GreatAPI welcomes contributions of many forms.
 
 Examples of contributions include:

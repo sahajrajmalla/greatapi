@@ -4,7 +4,7 @@ Security is very important for GreatAPI and its community. 🔒
 
 Learn more about it below. 👇
 
-## Versions
+## Supported Versions
 
 The latest versions of GreatAPI are supported.
 
