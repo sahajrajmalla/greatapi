@@ -110,7 +110,7 @@ greatapi createsuperuser
 
 ```
 
-Follow the prompts to create the superuser account.
+Follow the prompts to create the superuser account and again run the server.
 
 
 
