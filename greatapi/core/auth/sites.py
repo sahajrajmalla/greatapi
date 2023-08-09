@@ -45,7 +45,7 @@ class AuthSite:
 
     @auth_router.post('/admin_login')
     def admin_login(self, request: OAuth2PasswordRequestForm = Depends()) -> dict[str, Any]:
-        user = self.db.query(User).filter(User.email == request.username).first()
+        user = self.db.query(User).filter(User.username == request.username).first()
         plain_password = request.password
         if not user:
             raise HTTPException(
