@@ -53,7 +53,13 @@ pip install greatapi
 
 ### Step 1: Start a New Project
 
-To begin working with GreatAPI, let's create a new project. Open your terminal and execute the following command:
+To begin working with GreatAPI, let's create a new project. Open your terminal, and create a directory for your project:
+```bash
+mkdir myprojectname
+cd myprojectname
+```
+
+and then execute the following command:
 
 ```bash
 greatapi startproject myproject
