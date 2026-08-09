@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sign in &middot; {{ site_title }}</title>
+    <link rel="icon" href="{{ static_path }}/favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="{{ static_path }}/greatapi.css" />
+    <script src="{{ static_path }}/greatapi.js"></script>
+  </head>
+  <body>
+    <main class="login-page">
+      <div class="login-card">
+        <p class="login-brand">
+          <span class="brand-mark" aria-hidden="true">G</span>
+          <span>{{ site_title }}</span>
+        </p>
+        <p class="login-sub">Sign in to the admin</p>
+
+        {% if error %}
+        <div class="flash flash-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ admin_path }}/login">
+          <input type="hidden" name="next" value="{{ next }}" />
+
+          <div class="field">
+            <label for="username">Username or email</label>
+            <input type="text" id="username" name="username" autocomplete="username"
+                   required autofocus />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"
+                   autocomplete="current-password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+
+        <p class="login-footer">Powered by GreatAPI</p>
+      </div>
+    </main>
+  </body>
+</html>

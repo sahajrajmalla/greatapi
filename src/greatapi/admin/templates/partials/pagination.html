@@ -1,0 +1,24 @@
+{% if page.pages > 1 %}
+{% set qs = '&q=' ~ query if query is defined and query else '' %}
+<nav class="pager" aria-label="Pagination">
+  <span>
+    Showing {{ "{:,}".format(page.start_index) }}–{{ "{:,}".format(page.end_index) }}
+    of {{ "{:,}".format(page.total) }}
+  </span>
+  <div class="pager-links">
+    {% if page.has_previous %}
+    <a class="btn btn-sm" href="?page={{ page.number - 1 }}{{ qs }}" rel="prev">Previous</a>
+    {% else %}
+    <button type="button" class="btn btn-sm" disabled>Previous</button>
+    {% endif %}
+    <span class="btn btn-sm btn-ghost" aria-current="page">
+      Page {{ page.number }} of {{ page.pages }}
+    </span>
+    {% if page.has_next %}
+    <a class="btn btn-sm" href="?page={{ page.number + 1 }}{{ qs }}" rel="next">Next</a>
+    {% else %}
+    <button type="button" class="btn btn-sm" disabled>Next</button>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

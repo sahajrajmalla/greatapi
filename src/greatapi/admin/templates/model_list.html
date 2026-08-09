@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+
+{% block title %}{{ model_admin.label }} &middot; {{ site_title }}{% endblock %}
+{% block heading %}{{ model_admin.label }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ admin_path }}">Dashboard</a>
+  <span aria-hidden="true">/</span>
+  <span>{{ model_admin.group }}</span>
+  <span aria-hidden="true">/</span>
+  <span>{{ model_admin.label }}</span>
+</nav>
+
+<div class="page-header">
+  <div>
+    <h1>{{ model_admin.label }}</h1>
+    <p>{{ "{:,}".format(page.total) }} record{{ '' if page.total == 1 else 's' }}</p>
+  </div>
+  <div class="page-header-actions">
+    {% if searchable %}
+    <form class="search-form" method="get" action="{{ base_url }}" role="search">
+      <input type="search" name="q" value="{{ query }}" data-autosubmit
+             placeholder="Search {{ model_admin.label|lower }}…"
+             aria-label="Search {{ model_admin.label }}" />
+      <button type="submit" class="btn">{{ icon('search') }}<span class="visually-hidden">Search</span></button>
+    </form>
+    {% endif %}
+    {% if model_admin.can_create %}
+    <a class="btn btn-primary" href="{{ base_url }}/new">{{ icon('plus') }} Add</a>
+    {% endif %}
+  </div>
+</div>
+
+<section class="card">
+  {% if page.items %}
+  <div class="table-wrap">
+    <table class="table-stack">
+      <thead>
+        <tr>
+          {% for header in headers %}<th>{{ header }}</th>{% endfor %}
+          <th class="actions"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in page.items %}
+        <tr>
+          {% for column in columns %}
+          {% set value = model_admin.display_value(row, column) %}
+          <td data-label="{{ headers[loop.index0] }}">
+            {% if value is none %}
+            <span class="redacted">—</span>
+            {% elif value is boolean %}
+            <span class="badge badge-{{ 'success' if value else 'neutral' }}">
+              {{ 'Yes' if value else 'No' }}
+            </span>
+            {% elif value is string and value|length > 40 %}
+            <span class="cell-truncate" title="{{ value }}">{{ value }}</span>
+            {% else %}
+            {{ value }}
+            {% endif %}
+          </td>
+          {% endfor %}
+          <td class="actions">
+            <a class="btn btn-sm btn-ghost" href="{{ base_url }}/{{ row.id }}">
+              {{ 'Edit' if model_admin.can_edit else 'View' }}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "partials/pagination.html" %}
+  {% else %}
+  <div class="empty-state">
+    <h3>{% if query %}No matches{% else %}Nothing here yet{% endif %}</h3>
+    {% if query %}
+    <p>No {{ model_admin.label|lower }} matched “{{ query }}”.
+      <a href="{{ base_url }}">Clear the search</a>.</p>
+    {% elif model_admin.can_create %}
+    <p><a href="{{ base_url }}/new">Add the first one</a>.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

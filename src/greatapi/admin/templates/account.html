@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Account &middot; {{ site_title }}{% endblock %}
+{% block heading %}Account{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Your account</h1>
+    <p>{{ current_user.email }}</p>
+  </div>
+</div>
+
+<div class="grid grid-halves">
+  <section class="card">
+    <div class="card-header"><h2>Details</h2></div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table class="table-stack">
+          <tbody>
+            <tr>
+              <td data-label="Field"><strong>Username</strong></td>
+              <td data-label="Value">{{ current_user.username }}</td>
+            </tr>
+            <tr>
+              <td data-label="Field"><strong>Email</strong></td>
+              <td data-label="Value">{{ current_user.email }}</td>
+            </tr>
+            <tr>
+              <td data-label="Field"><strong>Full name</strong></td>
+              <td data-label="Value">{{ current_user.full_name or '—' }}</td>
+            </tr>
+            <tr>
+              <td data-label="Field"><strong>Role</strong></td>
+              <td data-label="Value">
+                <span class="badge badge-{{ 'success' if current_user.is_admin else 'neutral' }}">
+                  {{ 'Administrator' if current_user.is_admin else 'User' }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Field"><strong>Last sign-in</strong></td>
+              <td data-label="Value">
+                {{ current_user.last_login_at.strftime("%d %b %Y, %H:%M") if current_user.last_login_at else '—' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Change password</h2></div>
+    <div class="card-body">
+      <form method="post" action="{{ admin_path }}/account/password">
+        <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+
+        <div class="field">
+          <label for="current_password">Current password</label>
+          <input type="password" id="current_password" name="current_password"
+                 autocomplete="current-password" required />
+        </div>
+        <div class="field">
+          <label for="new_password">New password</label>
+          <input type="password" id="new_password" name="new_password"
+                 autocomplete="new-password" required
+                 minlength="{{ settings.password_min_length }}" />
+          <span class="field-help">
+            At least {{ settings.password_min_length }} characters, with a letter and a digit.
+          </span>
+        </div>
+        <div class="field">
+          <label for="confirm_password">Confirm new password</label>
+          <input type="password" id="confirm_password" name="confirm_password"
+                 autocomplete="new-password" required />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update password</button>
+        </div>
+      </form>
+      <p class="field-help">
+        Changing your password signs out your other sessions.
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+
+{% set is_new = instance is none %}
+{% block title %}{{ 'Add' if is_new else 'Edit' }} {{ model_admin.label }} &middot; {{ site_title }}{% endblock %}
+{% block heading %}{{ 'Add' if is_new else 'Edit' }} {{ model_admin.label }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ admin_path }}">Dashboard</a>
+  <span aria-hidden="true">/</span>
+  <a href="{{ base_url }}">{{ model_admin.label }}</a>
+  <span aria-hidden="true">/</span>
+  <span>{{ 'New' if is_new else instance.id }}</span>
+</nav>
+
+<div class="page-header">
+  <div>
+    <h1>{{ 'Add' if is_new else 'Edit' }} {{ model_admin.label }}</h1>
+    {% if not is_new %}<p>Record #{{ instance.id }}</p>{% endif %}
+  </div>
+  <div class="page-header-actions">
+    <a class="btn btn-ghost" href="{{ base_url }}">{{ icon('back') }} Back</a>
+  </div>
+</div>
+
+{% if errors.get('__all__') %}
+<div class="flash flash-error" role="alert">{{ errors['__all__'] }}</div>
+{% endif %}
+
+<section class="card">
+  <div class="card-body">
+    {% if fields %}
+    <form method="post" action="{{ base_url }}{{ '/new' if is_new else '/' ~ instance.id }}">
+      <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+      <div class="form-grid">
+        {% for field in fields %}
+        {% set value = values.get(field.name) %}
+        <div class="field {% if field.input_type == 'checkbox' %}field-checkbox{% endif %}
+                    {% if errors.get(field.name) %}has-error{% endif %}">
+          {% if field.input_type == 'checkbox' %}
+          <input type="checkbox" id="f-{{ field.name }}" name="{{ field.name }}"
+                 {% if value %}checked{% endif %} />
+          <label for="f-{{ field.name }}">{{ field.label }}</label>
+
+          {% else %}
+          <label for="f-{{ field.name }}">
+            {{ field.label }}
+            {% if field.required %}<span class="required-mark" aria-hidden="true">*</span>{% endif %}
+          </label>
+
+          {% if field.choices %}
+          <select id="f-{{ field.name }}" name="{{ field.name }}"
+                  {% if field.required %}required{% endif %}>
+            {% if not field.required %}<option value="">—</option>{% endif %}
+            {% for choice in field.choices %}
+            <option value="{{ choice }}" {% if value and value|string == choice %}selected{% endif %}>
+              {{ choice }}
+            </option>
+            {% endfor %}
+          </select>
+
+          {% elif field.input_type == 'textarea' %}
+          <textarea id="f-{{ field.name }}" name="{{ field.name }}"
+                    {% if field.required %}required{% endif %}>{{ value if value is not none }}</textarea>
+
+          {% else %}
+          {% set html_type = {'number-float': 'number', 'number': 'number'}.get(field.input_type, field.input_type) %}
+          <input type="{{ html_type }}" id="f-{{ field.name }}" name="{{ field.name }}"
+                 value="{{ value if value is not none }}"
+                 {% if field.input_type == 'number-float' %}step="any"{% endif %}
+                 {% if field.max_length %}maxlength="{{ field.max_length }}"{% endif %}
+                 {% if field.required %}required{% endif %} />
+          {% endif %}
+          {% endif %}
+
+          {% if errors.get(field.name) %}
+          <span class="field-error">{{ errors[field.name] }}</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"
+                {% if not is_new and not model_admin.can_edit %}disabled{% endif %}>
+          {{ 'Create' if is_new else 'Save changes' }}
+        </button>
+        <a class="btn btn-ghost" href="{{ base_url }}">Cancel</a>
+      </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+      <h3>Read-only</h3>
+      <p>This model has no editable fields in the admin.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if not is_new and readonly %}
+<section class="card">
+  <div class="card-header"><h2>Read-only</h2></div>
+  <div class="card-body">
+    <div class="table-wrap">
+      <table class="table-stack">
+        <tbody>
+          {% for label, value in readonly %}
+          <tr>
+            <td data-label="Field"><strong>{{ label }}</strong></td>
+            <td data-label="Value">{{ value if value is not none else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if not is_new and supports_password %}
+<section class="card">
+  <div class="card-header"><h2>Password</h2></div>
+  <div class="card-body">
+    <p class="field-help">
+      Passwords are stored as Argon2 hashes and cannot be read back. Setting a new
+      one here replaces it immediately.
+    </p>
+    <form method="post" action="{{ base_url }}/{{ instance.id }}/set-password"
+          data-confirm="Set a new password for this user?">
+      <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+      <div class="field">
+        <label for="new_password">New password</label>
+        <input type="password" id="new_password" name="new_password"
+               autocomplete="new-password" required />
+      </div>
+      <button type="submit" class="btn">Set password</button>
+    </form>
+  </div>
+</section>
+{% endif %}
+
+{% if not is_new and model_admin.can_delete %}
+<section class="card">
+  <div class="card-header"><h2>Danger zone</h2></div>
+  <div class="card-body">
+    <p class="field-help">Deleting is permanent and cannot be undone.</p>
+    <form method="post" action="{{ base_url }}/{{ instance.id }}/delete"
+          data-confirm="Permanently delete this {{ model_admin.label|lower }}?">
+      <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+      <button type="submit" class="btn btn-danger">{{ icon('trash') }} Delete</button>
+    </form>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
