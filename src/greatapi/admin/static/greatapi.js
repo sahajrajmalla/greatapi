@@ -27,13 +27,7 @@
       : "light";
   }
 
-  function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch (err) {
-      /* Not fatal: the theme just will not persist. */
-    }
+  function syncToggles(theme) {
     document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
       button.setAttribute("aria-pressed", String(theme === "dark"));
       var label = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
@@ -42,13 +36,41 @@
     });
   }
 
+  /* Only an explicit click is stored. Persisting the auto-detected theme on
+     first load would pin the admin to whatever the OS happened to prefer that
+     day, and later OS changes would be ignored. */
+  function chooseTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch (err) {
+      /* Not fatal: the choice just will not persist. */
+    }
+    syncToggles(theme);
+  }
+
   function initTheme() {
-    applyTheme(currentTheme());
+    syncToggles(currentTheme());
     document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
       button.addEventListener("click", function () {
-        applyTheme(currentTheme() === "dark" ? "light" : "dark");
+        chooseTheme(currentTheme() === "dark" ? "light" : "dark");
       });
     });
+
+    /* Follow the OS while the user has not chosen for themselves. */
+    var media = window.matchMedia("(prefers-color-scheme: dark)");
+    var onChange = function () {
+      var stored = null;
+      try {
+        stored = localStorage.getItem(STORAGE_KEY);
+      } catch (err) {
+        /* ignore */
+      }
+      if (stored !== "light" && stored !== "dark") {
+        syncToggles(media.matches ? "dark" : "light");
+      }
+    };
+    if (media.addEventListener) media.addEventListener("change", onChange);
   }
 
   function initSidebar() {

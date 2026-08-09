@@ -11,9 +11,12 @@ the default and the unsafe thing is not reachable by accident.
 
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
+from datetime import date, datetime
+from enum import Enum
 from typing import Any, TypeVar
 
 from sqlalchemy import Boolean, Date, DateTime, Float, Integer, Numeric, String, Text, inspect
@@ -26,7 +29,9 @@ __all__ = [
     "REDACTED",
     "FieldSpec",
     "ModelAdmin",
+    "format_value",
     "get_registry",
+    "humanise",
     "is_sensitive",
     "register",
     "unregister_all",
@@ -195,7 +200,7 @@ class ModelAdmin:
         """Render one cell, redacting anything credential-shaped."""
         if is_sensitive(name):
             return REDACTED
-        return getattr(instance, name, None)
+        return format_value(getattr(instance, name, None))
 
 
 @dataclass
@@ -278,9 +283,38 @@ def unregister_all() -> None:
 # -- helpers --------------------------------------------------------------
 
 
-def _humanise(name: str) -> str:
-    spaced = re.sub(r"(?<!^)(?=[A-Z])", " ", name.replace("_", " ")).strip()
-    return spaced[:1].upper() + spaced[1:]
+#: Words with a fixed casing, so `cost_usd` reads "Cost USD" not "Cost Usd",
+#: and `latency_ms` reads "Latency ms" rather than shouting a unit symbol.
+_SPECIAL_CASE = {
+    "id": "ID",
+    "api": "API",
+    "llm": "LLM",
+    "ai": "AI",
+    "url": "URL",
+    "uri": "URI",
+    "usd": "USD",
+    "ip": "IP",
+    "ms": "ms",
+    "csrf": "CSRF",
+    "jwt": "JWT",
+    "sql": "SQL",
+    "ok": "OK",
+}
+
+# Split before a capital that starts a new word, but keep runs of capitals
+# together, so LLMCall reads "LLM Call" rather than "L L M Call".
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
+
+
+def humanise(name: str) -> str:
+    """Turn ``llm_call`` or ``LLMCall`` into a readable label."""
+    spaced = _CAMEL_BOUNDARY.sub(" ", name.replace("_", " ")).strip()
+    return " ".join(
+        _SPECIAL_CASE.get(word.lower(), word[:1].upper() + word[1:]) for word in spaced.split()
+    )
+
+
+_humanise = humanise
 
 
 def _input_type(column: Any) -> str:
@@ -300,6 +334,29 @@ def _input_type(column: Any) -> str:
     if isinstance(column_type, String) and (column_type.length or 0) > 255:
         return "textarea"
     return "text"
+
+
+def format_value(value: Any) -> Any:
+    """Make a column value readable in a list or detail view.
+
+    Booleans stay booleans so the template can badge them; everything else is
+    rendered here, so a timestamp does not reach the page as
+    ``2026-08-09 14:38:45.399992``.
+    """
+    if value is None or isinstance(value, bool):
+        return value
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M")
+    if isinstance(value, date):
+        return value.strftime("%Y-%m-%d")
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, float):
+        # Costs are small and the fractions matter; trim trailing zeros.
+        return f"{value:.6f}".rstrip("0").rstrip(".") or "0"
+    if isinstance(value, list | dict):
+        return json.dumps(value, default=str)
+    return value
 
 
 def _choices(column: Any) -> tuple[str, ...] | None:

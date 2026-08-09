@@ -18,7 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from greatapi.admin.registry import FieldSpec, ModelAdmin, get_registry
+from greatapi.admin.registry import FieldSpec, ModelAdmin, get_registry, humanise
 from greatapi.admin.templating import flash_url, paginate, render
 from greatapi.conf.settings import get_settings
 from greatapi.db.base import Base
@@ -295,7 +295,7 @@ async def _admin_count(session: Any) -> int:
 
 
 def _label(name: str) -> str:
-    return name.replace("_", " ").title()
+    return humanise(name)
 
 
 def _read_form(fields: list[FieldSpec], form: Any) -> tuple[dict[str, Any], dict[str, str]]:

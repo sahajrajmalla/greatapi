@@ -9,8 +9,10 @@ theme for free.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from html import escape
+from math import ceil
 
 from markupsafe import Markup
 
@@ -76,10 +78,15 @@ def bar_chart(series: Series, *, height: int = 200, unit: str = "") -> Markup:
             f'rx="3"/></g>'
         )
 
+    # A label needs roughly 6px per character. When the bars are narrower than
+    # that, print every Nth instead of letting them overlap into mush.
+    per_label_width = bar_width + gap
+    stride = max(1, ceil(38 / per_label_width))
     labels = "".join(
-        f'<text x="{index * (bar_width + gap) + bar_width / 2:.2f}" y="{height - 6}" '
+        f'<text x="{index * per_label_width + bar_width / 2:.2f}" y="{height - 6}" '
         f'text-anchor="middle" class="chart-label">{escape(_short(label))}</text>'
         for index, label in enumerate(series.labels)
+        if index % stride == 0 or index == count - 1
     )
 
     return Markup(
@@ -136,5 +143,12 @@ def _format(value: float) -> str:
     return f"{value:.4f}".rstrip("0").rstrip(".")
 
 
-def _short(label: str, limit: int = 10) -> str:
+#: ISO dates dominate these axes, and the year is identical on every tick.
+_ISO_DATE = re.compile(r"^\d{4}-(\d{2})-(\d{2})$")
+
+
+def _short(label: str, limit: int = 8) -> str:
+    match = _ISO_DATE.match(label)
+    if match:
+        return f"{match.group(2)}/{match.group(1)}"
     return label if len(label) <= limit else label[: limit - 1] + "…"
