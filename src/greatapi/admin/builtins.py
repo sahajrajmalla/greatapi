@@ -39,6 +39,10 @@ def register_builtin_admins() -> None:
         fields = ("username", "email", "full_name", "contact_number", "is_active", "is_admin")
         readonly_fields = ("created_at", "updated_at", "last_login_at")
         ordering = "-created_at"
+        # A user needs a password, and a password is never a writable form
+        # field. Accounts come from `greatapi createsuperuser` or your own
+        # sign-up flow; the admin edits them and can reset a password.
+        can_create = False
 
     @register(APIKey)
     class APIKeyAdmin(ModelAdmin):

@@ -86,8 +86,10 @@ async def verify_api_key(session: AsyncSession, raw_key: str) -> APIKey | KeyRej
     """Resolve a plaintext key to its record, or explain why it was refused."""
     invalid = KeyRejection("invalid", "Invalid API key.")
 
-    parts = raw_key.split("_")
-    if len(parts) != 3 or parts[0] != KEY_PREFIX:
+    # maxsplit=2, because token_urlsafe emits '-' and '_' -- a plain split
+    # would shred any secret containing an underscore, which is most of them.
+    parts = raw_key.split("_", 2)
+    if len(parts) != 3 or parts[0] != KEY_PREFIX or not parts[1] or not parts[2]:
         return invalid
 
     result = await session.execute(select(APIKey).where(APIKey.prefix == parts[1]))

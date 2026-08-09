@@ -15,7 +15,6 @@ from typing import Any
 from sqlalchemy import (
     JSON,
     Boolean,
-    DateTime,
     Float,
     ForeignKey,
     Index,
@@ -26,7 +25,7 @@ from sqlalchemy import (
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from greatapi.db.base import Base, TimestampMixin
+from greatapi.db.base import Base, TimestampMixin, UTCDateTime
 
 __all__ = [
     "APIKey",
@@ -61,7 +60,7 @@ class User(TimestampMixin, Base):
     contact_number: Mapped[str | None] = mapped_column(String(50))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_login_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
 
     api_keys: Mapped[list[APIKey]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
@@ -88,8 +87,8 @@ class APIKey(TimestampMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     rate_limit_per_minute: Mapped[int | None] = mapped_column(Integer)
     monthly_budget_usd: Mapped[float | None] = mapped_column(Float)
-    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    last_used_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
 
     user_id: Mapped[int | None] = mapped_column(
         ForeignKey("greatapi_user.id", ondelete="CASCADE"), index=True
@@ -123,9 +122,9 @@ class Job(TimestampMixin, Base):
     error: Mapped[str | None] = mapped_column(Text)
     attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     max_attempts: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
-    run_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    run_at: Mapped[datetime] = mapped_column(UTCDateTime, nullable=False, index=True)
+    started_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    finished_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
 
     __table_args__ = (Index("ix_greatapi_job_claim", "status", "run_at"),)
 

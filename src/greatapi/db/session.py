@@ -79,8 +79,14 @@ def configure_engine(url: str | None = None, **overrides: Any) -> AsyncEngine:
 
 
 def get_engine() -> AsyncEngine:
-    """Return the process-wide engine, creating it on first use."""
-    if _engine is None or _configured_url != get_settings().database_url:
+    """Return the process-wide engine, creating it on first use.
+
+    Once built, it is kept. Rebuilding whenever it disagreed with the settings
+    would silently discard an explicit ``configure_engine(url)`` -- and, worse,
+    hand out a second engine pointed somewhere else while sessions from the
+    first are still open. Call :func:`configure_engine` to change the target.
+    """
+    if _engine is None:
         return configure_engine()
     return _engine
 

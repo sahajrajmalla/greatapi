@@ -20,7 +20,7 @@ import json
 import logging
 from collections.abc import AsyncIterable, AsyncIterator
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from starlette.requests import Request
 from starlette.responses import StreamingResponse
@@ -190,9 +190,29 @@ async def _watch_disconnect(request: Request) -> None:
         await asyncio.sleep(_DISCONNECT_POLL_SECONDS)
 
 
+@runtime_checkable
+class SSESerialisable(Protocol):
+    """Anything that knows how to render itself as an SSE payload.
+
+    :class:`greatapi.ai.types.Chunk` satisfies this, which is what lets
+    ``sse(ai.stream(...))`` produce clean JSON frames named by chunk type
+    without this module importing anything from :mod:`greatapi.ai`.
+    """
+
+    type: str
+
+    def to_dict(self) -> dict[str, Any]: ...
+
+
 def _as_event(item: Any, default_event: str | None) -> StreamEvent:
     if isinstance(item, StreamEvent):
         if item.event is None and default_event is not None:
             item.event = default_event
         return item
+
+    if isinstance(item, SSESerialisable):
+        # Name the frame after the chunk type, so a browser can subscribe per
+        # kind: source.addEventListener("tool_call", ...).
+        return StreamEvent(data=item.to_dict(), event=default_event or str(item.type))
+
     return StreamEvent(data=item, event=default_event)

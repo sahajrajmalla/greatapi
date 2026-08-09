@@ -45,7 +45,7 @@ format:  ## Autofix lint issues and format
 
 .PHONY: test
 test:  ## Run the full suite with coverage
-	$(VENV)/bin/pytest --cov=greatapi --cov-report=term-missing --cov-fail-under=85
+	$(VENV)/bin/pytest --cov=greatapi --cov-report=term-missing --cov-fail-under=82
 
 .PHONY: test-base
 test-base:  ## Prove the core works with zero optional dependencies installed

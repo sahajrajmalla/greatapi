@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from alembic import context
 from alembic.config import Config
@@ -62,8 +62,27 @@ def _configure(connection: Connection | None, target_metadata: MetaData, **extra
         # database -- which is the one nearly everyone develops against.
         render_as_batch=True,
         include_object=_include_object,
+        render_item=_render_item,
         **extra,
     )
+
+
+def _render_item(type_: str, obj: Any, autogen_context: Any) -> Literal[False]:
+    """Make sure a custom column type's module is imported in the revision.
+
+    Alembic renders a user-defined type by its full dotted path -- for example
+    ``greatapi.db.base.UTCDateTime()`` -- but does not add the corresponding
+    import, so the generated migration fails with ``NameError`` the first time
+    it runs. Registering the import and then returning ``False`` keeps
+    Alembic's own rendering and only supplies what it left out.
+
+    This covers application types too, not just GreatAPI's own.
+    """
+    if type_ == "type":
+        module = type(obj).__module__
+        if module and not module.startswith("sqlalchemy"):
+            autogen_context.imports.add(f"import {module}")
+    return False
 
 
 def _include_object(

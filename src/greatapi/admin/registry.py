@@ -177,6 +177,37 @@ class ModelAdmin:
             if name in columns and not is_sensitive(name) and name not in self.exclude
         ]
 
+    def creation_blocked_reason(self) -> str | None:
+        """Why the generic create form cannot work for this model, if it cannot.
+
+        A required column that is not editable -- because it is sensitive, or
+        excluded, or read-only -- would make every submission fail on a NOT NULL
+        constraint. Better to disable the button and explain than to hand the
+        user a 500.
+        """
+        editable = set(self.editable_field_names())
+        blockers = [
+            name
+            for name, column in self._columns().items()
+            if name not in editable
+            and not column.nullable
+            and not column.primary_key
+            and column.default is None
+            and column.server_default is None
+            and name not in {"created_at", "updated_at"}
+        ]
+        if not blockers:
+            return None
+        return (
+            f"{self.label} cannot be created here: "
+            f"{', '.join(sorted(blockers))} {'is' if len(blockers) == 1 else 'are'} "
+            "required but not editable in the admin."
+        )
+
+    @property
+    def creatable(self) -> bool:
+        return self.can_create and self.creation_blocked_reason() is None
+
     def form_fields(self) -> list[FieldSpec]:
         columns = self._columns()
         specs: list[FieldSpec] = []
@@ -331,7 +362,9 @@ def _input_type(column: Any) -> str:
         return "number-float"
     if isinstance(column_type, Text):
         return "textarea"
-    if isinstance(column_type, String) and (column_type.length or 0) > 255:
+    # An unbounded String is prose; a long-but-bounded one is still a single
+    # line -- an email column is String(320) and must not become a textarea.
+    if isinstance(column_type, String) and column_type.length is None:
         return "textarea"
     return "text"
 

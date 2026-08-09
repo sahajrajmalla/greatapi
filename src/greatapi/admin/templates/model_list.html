@@ -27,7 +27,7 @@
       <button type="submit" class="btn">{{ icon('search') }}<span class="visually-hidden">Search</span></button>
     </form>
     {% endif %}
-    {% if model_admin.can_create %}
+    {% if model_admin.creatable %}
     <a class="btn btn-primary" href="{{ base_url }}/new">{{ icon('plus') }} Add</a>
     {% endif %}
   </div>
@@ -79,7 +79,7 @@
     {% if query %}
     <p>No {{ model_admin.label|lower }} matched “{{ query }}”.
       <a href="{{ base_url }}">Clear the search</a>.</p>
-    {% elif model_admin.can_create %}
+    {% elif model_admin.creatable %}
     <p><a href="{{ base_url }}/new">Add the first one</a>.</p>
     {% endif %}
   </div>

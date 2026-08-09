@@ -14,6 +14,7 @@ from typing import Any
 from fastapi import APIRouter, Form, HTTPException, Query, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy import String, cast, func, or_, select
+from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
@@ -104,8 +105,7 @@ async def list_view(
 @models_router.get("/{group}/{slug}/new")
 async def create_form(request: Request, user: AdminUser, group: str, slug: str) -> Response:
     model_admin = _lookup(group, slug)
-    if not model_admin.can_create:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "This model is read-only.")
+    _assert_creatable(model_admin)
     return render(
         request,
         "model_form.html",
@@ -127,8 +127,7 @@ async def create_submit(
     request: Request, session: DbSession, user: AdminUser, group: str, slug: str
 ) -> Response:
     model_admin = _lookup(group, slug)
-    if not model_admin.can_create:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "This model is read-only.")
+    _assert_creatable(model_admin)
 
     form = await request.form()
     values, errors = _read_form(model_admin.form_fields(), form)
@@ -141,6 +140,7 @@ async def create_submit(
         await session.commit()
     except IntegrityError as exc:
         await session.rollback()
+        user, _ = await _recover(session, user, None)
         return _form_with_errors(
             request, user, model_admin, None, values, {"__all__": _integrity_message(exc)}
         )
@@ -200,8 +200,9 @@ async def edit_submit(
         await session.commit()
     except IntegrityError as exc:
         await session.rollback()
+        user, recovered = await _recover(session, user, instance)
         return _form_with_errors(
-            request, user, model_admin, instance, values, {"__all__": _integrity_message(exc)}
+            request, user, model_admin, recovered, values, {"__all__": _integrity_message(exc)}
         )
 
     await _audit(session, user, AuditAction.update, model_admin, instance)
@@ -296,6 +297,46 @@ async def _admin_count(session: Any) -> int:
 
 def _label(name: str) -> str:
     return humanise(name)
+
+
+def _assert_creatable(model_admin: ModelAdmin) -> None:
+    if not model_admin.can_create:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "This model is read-only.")
+    reason = model_admin.creation_blocked_reason()
+    if reason is not None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, reason)
+
+
+def _identity(obj: Any) -> Any | None:
+    """The primary key of a persistent object, without triggering a load.
+
+    Reading `obj.id` on an expired instance would itself need IO, which is the
+    very thing this exists to avoid.
+    """
+    identity = sa_inspect(obj).identity
+    return identity[0] if identity else None
+
+
+async def _recover(
+    session: AsyncSession, user: User, instance: Base | None
+) -> tuple[User, Base | None]:
+    """Re-load what the template needs after a rollback.
+
+    A rollback expires every object in the session. The admin shell renders
+    `current_user.username` and the form renders `instance.id`; touching an
+    expired attribute from Jinja needs database IO outside the async context,
+    which surfaces as SQLAlchemy's MissingGreenlet rather than as anything that
+    names the real problem.
+    """
+    user_id = _identity(user)
+    reloaded_user = (await session.get(User, user_id) if user_id is not None else None) or user
+
+    reloaded_instance = instance
+    if instance is not None:
+        identifier = _identity(instance)
+        if identifier is not None:
+            reloaded_instance = await session.get(type(instance), identifier) or instance
+    return reloaded_user, reloaded_instance
 
 
 def _read_form(fields: list[FieldSpec], form: Any) -> tuple[dict[str, Any], dict[str, str]]:
