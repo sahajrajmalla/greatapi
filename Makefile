@@ -61,8 +61,15 @@ build:  ## Build the sdist + wheel and validate the metadata
 	$(VENV)/bin/twine check dist/*
 
 .PHONY: demo
-demo:  ## Run the example app (streaming chat + agent + admin, no API key needed)
-	cd examples/chat && ../../$(PY) -m greatapi.cli runserver --reload
+demo: $(VENV)  ## Run the example app (streaming chat + agent + admin, no API key needed)
+	@cd examples/chat && [ -f .env ] || cp .env.example .env
+	@cd examples/chat && ../../$(PY) -m greatapi.cli createsuperuser --noinput \
+		--email demo@example.com --username demo --password demopassword1 2>/dev/null || true
+	@echo ""
+	@echo "  http://127.0.0.1:8000/         streaming chat + agent"
+	@echo "  http://127.0.0.1:8000/admin    sign in as demo / demopassword1"
+	@echo ""
+	cd examples/chat && ../../$(PY) -m greatapi.cli runserver --app app:app --no-reload
 
 .PHONY: docs
 docs:  ## Serve the documentation site on :8001

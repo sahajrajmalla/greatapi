@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to publish
+        required: true
+        default: testpypi
+        type: choice
+        options: [testpypi, pypi]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*
+      - name: Check the tag matches the package version
+        if: github.event_name == 'release'
+        run: |
+          version=$(python -c "import re,pathlib; \
+            print(re.search(r'__version__ = \"([^\"]+)\"', \
+            pathlib.Path('src/greatapi/__init__.py').read_text()).group(1))")
+          tag="${GITHUB_REF_NAME#v}"
+          echo "tag=$tag package=$version"
+          test "$tag" = "$version" || {
+            echo "::error::Tag $tag does not match __version__ $version"; exit 1;
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+
+  publish:
+    name: Publish to ${{ github.event_name == 'release' && 'PyPI' || inputs.target }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event_name == 'release' && 'pypi' || inputs.target }}
+    # Trusted Publishing: PyPI verifies this workflow's OIDC identity, so there
+    # is no long-lived API token in repository secrets to leak or rotate.
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - name: Publish to TestPyPI
+        if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+      - name: Publish to PyPI
+        if: github.event_name == 'release' || inputs.target == 'pypi'
+        uses: pypa/gh-action-pypi-publish@release/v1

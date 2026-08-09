@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GreatAPI chat demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f6f7fb;
+        --surface: #fff;
+        --border: #e2e6ef;
+        --text: #171a21;
+        --muted: #5f6675;
+        --accent: #4f46e5;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1117;
+          --surface: #161a23;
+          --border: #272e3b;
+          --text: #e8eaf0;
+          --muted: #9aa3b4;
+          --accent: #818cf8;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 2rem 1rem;
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { font-size: 1.4rem; margin: 0 0 .25rem; letter-spacing: -.02em; }
+      .sub { color: var(--muted); margin: 0 0 1.5rem; font-size: .9rem; }
+      .sub a { color: var(--accent); }
+      form { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+      input[type="text"] {
+        flex: 1 1 260px; padding: .6rem .8rem; font: inherit;
+        background: var(--surface); color: var(--text);
+        border: 1px solid var(--border); border-radius: 8px;
+      }
+      input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+      button {
+        padding: .6rem 1rem; font: inherit; font-weight: 600; cursor: pointer;
+        background: var(--accent); color: #fff; border: 0; border-radius: 8px;
+      }
+      button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+      button:disabled { opacity: .55; cursor: not-allowed; }
+      #output {
+        min-height: 12rem; padding: 1rem; white-space: pre-wrap; word-break: break-word;
+        background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      }
+      .event {
+        display: block; margin: .4rem 0; padding: .3rem .55rem; border-radius: 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem;
+        background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent);
+      }
+      .status { margin-top: .75rem; color: var(--muted); font-size: .82rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>GreatAPI chat demo</h1>
+      <p class="sub">
+        Streaming over SSE from the offline <code>echo</code> provider.
+        Every call is recorded &mdash; see <a href="/admin/usage">/admin/usage</a>.
+      </p>
+
+      <form id="form">
+        <input type="text" id="prompt" value="Tell me what GreatAPI does"
+               aria-label="Prompt" required />
+        <button type="submit" id="send">Stream</button>
+        <button type="button" id="agent" class="secondary">Run agent</button>
+      </form>
+
+      <div id="output" role="log" aria-live="polite"></div>
+      <p class="status" id="status">Ready.</p>
+    </main>
+
+    <script>
+      const output = document.getElementById("output");
+      const status = document.getElementById("status");
+      const send = document.getElementById("send");
+      const agent = document.getElementById("agent");
+
+      let controller = null;
+
+      async function stream(endpoint) {
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        output.textContent = "";
+        status.textContent = "Streaming…";
+        send.disabled = agent.disabled = true;
+        const started = performance.now();
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ prompt: document.getElementById("prompt").value }),
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          /* Frames are `event: <type>` + `data: <json>`, so the same parser
+             handles text, tool calls and the terminal done event. */
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+
+            const frames = buffer.split("\n\n");
+            buffer = frames.pop();
+
+            for (const frame of frames) {
+              if (!frame.trim() || frame.startsWith(":")) continue;
+
+              let name = "message";
+              const dataLines = [];
+              for (const line of frame.split("\n")) {
+                if (line.startsWith("event: ")) name = line.slice(7);
+                else if (line.startsWith("data: ")) dataLines.push(line.slice(6));
+              }
+              const raw = dataLines.join("\n");
+              if (name === "done") continue;
+
+              let payload;
+              try { payload = JSON.parse(raw); } catch { payload = raw; }
+              render(name, payload);
+            }
+          }
+
+          const seconds = ((performance.now() - started) / 1000).toFixed(2);
+          status.textContent = `Done in ${seconds}s. Recorded at /admin/usage.`;
+        } catch (error) {
+          if (error.name === "AbortError") return;
+          status.textContent = `Failed: ${error.message}`;
+        } finally {
+          send.disabled = agent.disabled = false;
+          controller = null;
+        }
+      }
+
+      function render(name, payload) {
+        if (name === "text" || payload?.type === "text") {
+          output.append(document.createTextNode(payload.text ?? payload));
+          return;
+        }
+        const tag = document.createElement("span");
+        tag.className = "event";
+        if (payload?.tool_call) {
+          tag.textContent =
+            `→ ${payload.tool_call.name}(${JSON.stringify(payload.tool_call.arguments)})`;
+        } else if (payload?.event === "tool_result") {
+          tag.textContent = `← ${payload.tool}: ${payload.output}`;
+        } else if (name === "error") {
+          tag.textContent = `error: ${payload.error ?? payload}`;
+        } else {
+          return;
+        }
+        output.append(tag);
+      }
+
+      document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        stream("/chat");
+      });
+      agent.addEventListener("click", () => stream("/agent"));
+    </script>
+  </body>
+</html>
