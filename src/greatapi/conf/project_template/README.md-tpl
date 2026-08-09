@@ -1,0 +1,48 @@
+# {{ project_name }}
+
+Built with [GreatAPI](https://github.com/sahajrajmalla/greatapi).
+
+## Run it
+
+```bash
+cp .env.example .env          # already contains a generated secret key
+greatapi migrate              # create the database schema
+greatapi createsuperuser      # an account for the admin
+greatapi runserver
+```
+
+| URL | What |
+|---|---|
+| <http://127.0.0.1:8000/> | your API |
+| <http://127.0.0.1:8000/docs> | OpenAPI docs |
+| <http://127.0.0.1:8000/admin> | the admin |
+
+## Add an app
+
+```bash
+greatapi startapp blog
+greatapi makemigrations -m "add blog"
+greatapi migrate
+```
+
+`startapp` registers the app in `{{ project_name }}/settings.py`, so its models,
+admin classes and router are picked up with no further wiring.
+
+## Layout
+
+```
+{{ project_name }}/settings.py   INSTALLED_APPS
+main.py                          the application
+migrations/                      Alembic revisions
+.env                             configuration (git-ignored)
+```
+
+## Useful commands
+
+```bash
+greatapi routes                        # every route in the app
+greatapi makemigrations -m "message"   # generate a migration from model changes
+greatapi migrate                       # apply migrations
+greatapi downgrade -1                  # roll one back
+greatapi generate-secret               # a fresh signing key
+```

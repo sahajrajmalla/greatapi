@@ -1,0 +1,44 @@
+"""Database access for the {{ app_name }} app.
+
+Keeping queries here rather than in route handlers means they can be tested
+without HTTP, and reused from jobs and the CLI.
+"""
+
+from __future__ import annotations
+
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from {{ app_name }}.models import {{ app_name.capitalize() }}Item
+from {{ app_name }}.schemas import {{ app_name.capitalize() }}ItemIn
+
+
+async def create_item(
+    session: AsyncSession, data: {{ app_name.capitalize() }}ItemIn
+) -> {{ app_name.capitalize() }}Item:
+    item = {{ app_name.capitalize() }}Item(**data.model_dump())
+    session.add(item)
+    await session.commit()
+    await session.refresh(item)
+    return item
+
+
+async def get_item(session: AsyncSession, item_id: int) -> {{ app_name.capitalize() }}Item | None:
+    return await session.get({{ app_name.capitalize() }}Item, item_id)
+
+
+async def list_items(
+    session: AsyncSession, *, limit: int = 50, offset: int = 0
+) -> list[{{ app_name.capitalize() }}Item]:
+    result = await session.execute(
+        select({{ app_name.capitalize() }}Item)
+        .order_by({{ app_name.capitalize() }}Item.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    return list(result.scalars())
+
+
+async def count_items(session: AsyncSession) -> int:
+    total = await session.scalar(select(func.count()).select_from({{ app_name.capitalize() }}Item))
+    return int(total or 0)

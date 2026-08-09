@@ -1,0 +1,20 @@
+"""Admin configuration for the {{ app_name }} app.
+
+Imported automatically for every app in INSTALLED_APPS, so registering here is
+all it takes to get a list view, search, pagination and an edit form.
+"""
+
+from __future__ import annotations
+
+from greatapi import admin
+
+from {{ app_name }}.models import {{ app_name.capitalize() }}Item
+
+
+@admin.register({{ app_name.capitalize() }}Item)
+class {{ app_name.capitalize() }}ItemAdmin(admin.ModelAdmin):
+    app_label = "{{ app_name }}"
+    list_display = ("id", "title", "is_published", "created_at")
+    search_fields = ("title", "body")
+    readonly_fields = ("created_at", "updated_at")
+    ordering = "-created_at"

@@ -1,0 +1,30 @@
+"""{{ project_name }} - a GreatAPI application."""
+
+from __future__ import annotations
+
+from greatapi import GreatAPI
+
+from {{ project_name }}.settings import INSTALLED_APPS
+
+app = GreatAPI(
+    title="{{ project_name }}",
+    version="0.1.0",
+    # Each app's models, admin classes and router are wired automatically.
+    installed_apps=INSTALLED_APPS,
+)
+
+
+@app.get("/", tags=["Meta"])
+async def index() -> dict[str, str]:
+    """A friendly root, so a fresh project is obviously alive."""
+    return {
+        "service": "{{ project_name }}",
+        "docs": "/docs",
+        "admin": "/admin",
+    }
+
+
+@app.get("/health", tags=["Meta"])
+async def health() -> dict[str, str]:
+    """Liveness probe for your orchestrator."""
+    return {"status": "ok"}
