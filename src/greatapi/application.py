@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from greatapi import __version__
+from greatapi.apps import load_apps
 from greatapi.conf.settings import ADMIN_STATIC_DIR, Settings, get_settings
 from greatapi.db.session import create_all, dispose_engine, get_engine
 from greatapi.jobs.router import jobs_router
@@ -45,11 +46,15 @@ class GreatAPI(FastAPI):
 
         from greatapi import GreatAPI
 
-        app = GreatAPI(title="My Backend")
+        app = GreatAPI(title="My Backend", installed_apps=["blog"])
 
     On top of FastAPI this adds the admin site, the job worker, job status
     endpoints, security headers and managed database lifecycle. Everything is
     opt-out: pass ``admin=False`` or ``jobs=False`` to leave a piece behind.
+
+    ``installed_apps`` wires each app by convention -- its models, its admin
+    registrations and its router -- so ``greatapi startapp`` produces something
+    that runs instead of something you then have to hand-register.
     """
 
     def __init__(
@@ -57,6 +62,7 @@ class GreatAPI(FastAPI):
         *,
         title: str | None = None,
         version: str = "0.1.0",
+        installed_apps: list[str] | None = None,
         admin: bool | None = None,
         jobs: bool | None = None,
         create_tables: bool | None = None,
@@ -65,6 +71,7 @@ class GreatAPI(FastAPI):
         **kwargs: Any,
     ) -> None:
         self.settings = settings or get_settings()
+        self.installed_apps = list(installed_apps or [])
         self.enable_admin = self.settings.admin_enabled if admin is None else admin
         self.enable_jobs = self.settings.jobs_enabled if jobs is None else jobs
         # Creating tables on boot is a development convenience. With debug off,
@@ -83,6 +90,10 @@ class GreatAPI(FastAPI):
 
         self.middleware("http")(self._security_headers)
         self.add_exception_handler(NotAuthenticated, self._handle_not_authenticated)
+
+        # Apps first: their models must be imported and their admin classes
+        # registered before the admin router enumerates the registry.
+        load_apps(self.installed_apps, self)
 
         if self.enable_admin:
             self._mount_admin()
