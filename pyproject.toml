@@ -167,7 +167,7 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = "-q --strict-markers --strict-config"
-filterwarnings = ["error", "ignore::DeprecationWarning:passlib.*"]
+filterwarnings = ["error"]
 markers = [
     "requires_ai: needs the optional AI dependencies (greatapi[ai])",
     "slow: excluded from the default fast run",
