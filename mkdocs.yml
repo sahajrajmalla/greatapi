@@ -1,0 +1,93 @@
+site_name: GreatAPI
+site_description: The batteries-included FastAPI framework.
+site_url: https://greatapi.readthedocs.io
+repo_url: https://github.com/sahajrajmalla/greatapi
+repo_name: sahajrajmalla/greatapi
+edit_uri: edit/master/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+    - search.suggest
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: [.]
+      check_paths: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: sphinx
+            show_source: false
+            show_root_heading: true
+            members_order: source
+            separate_signature: true
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Quickstart: quickstart.md
+      - Tutorial: tutorial.md
+  - Guides:
+      - Admin: admin.md
+      - Models and migrations: migrations.md
+      - Background jobs: jobs.md
+      - API keys and quotas: api-keys.md
+      - Streaming: streaming.md
+  - AI:
+      - Providers: ai/providers.md
+      - Agents: ai/agents.md
+      - Usage and cost: ai/usage.md
+  - Reference:
+      - Settings: settings.md
+      - CLI: cli.md
+      - API: reference.md
+  - Project:
+      - Deployment: deployment.md
+      - Upgrading from 1.x: migration.md
+      - Contributing: contributing.md
+      - Changelog: changelog.md
+
+watch: [src/greatapi]

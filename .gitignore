@@ -101,3 +101,4 @@ venv.bak/
 *.sqlite3
 
 .DS_Store
+site/

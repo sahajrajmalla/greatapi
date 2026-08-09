@@ -1,117 +1,192 @@
-# GreatAPI - Full-stack FastAPI Framework
+<div align="center">
 
-![GreatAPI](https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/greatapi/admin/static/greatapi_readme.svg)
+# GreatAPI
 
-GreatAPI is a full-stack FastAPI framework designed to simplify and accelerate web application development. It leverages the power of FastAPI and integrates various essential tools to provide a seamless development experience.
+**The batteries-included FastAPI framework.**
+Admin, auth, migrations, jobs and streaming out of the box — so you ship the
+backend instead of the plumbing.
 
-[![Linter](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/linter.yml)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/greatapi?color=green&style=for-the-badge)
-![PyPI](https://img.shields.io/pypi/v/greatapi?style=for-the-badge)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/greatapi?style=for-the-badge)
+[![CI](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/greatapi)](https://pypi.org/project/greatapi/)
+[![Python](https://img.shields.io/pypi/pyversions/greatapi)](https://pypi.org/project/greatapi/)
+[![License](https://img.shields.io/pypi/l/greatapi)](LICENSE)
 
-## Documentation
-Explore our comprehensive documentation to get started with GreatAPI: [Documentation](https://greatapi.readthedocs.io/en/latest/)
+</div>
 
-## Source Code
-Find the source code on GitHub: [GitHub Repository](https://github.com/sahajrajmalla/greatapi)
+---
 
-## PyPI Package
-Install GreatAPI using PyPI: [PyPI Package](https://pypi.org/project/greatapi/)
-
-## Contributors
-Major contributors to GreatAPI:
-
-- [@thebrowl](https://github.com/thebrowl) -> Admin Panel Design
-- [@lamdiv](https://github.com/lamdiv) -> Admin Panel Development with Jinja2
-- [@Avi777](https://github.com/Avi777) -> Consultant
-
-## Requirements
-
-Before we dive into the tutorial, make sure you have the following requirements in place:
-
-- Python 3.6 or higher installed on your system.
-- Familiarity with Python programming language concepts.
-
-GreatAPI is built upon the foundation of the following robust libraries:
-
-- FastAPI: A modern, fast, web framework for building APIs with Python.
-- uvicorn: ASGI server that runs FastAPI applications.
-- typer: A command-line interface library for building CLI applications.
-- jinja2: A templating engine for Python.
-- SQLAlchemy: A powerful Object-Relational Mapping (ORM) library for Python.
-
-## Installation
-
-To install GreatAPI and its dependencies, use `pip`:
+FastAPI gives you a superb routing and validation layer and then stops. Every
+team builds the same next thing by hand: an admin, a login, Alembic wiring, a
+job queue, API keys. GreatAPI is that layer, and it is the same one whether
+you are serving a CRUD API or an LLM.
 
 ```bash
 pip install greatapi
-
-```
-
-## Getting Started
-
-### Step 1: Start a New Project
-
-To begin working with GreatAPI, let's create a new project. Open your terminal and execute the following command:
-
-```bash
-greatapi startproject myproject
-
-```
-
-This will create a new directory named "myproject" with the basic structure to get you started.
-
-    myproject/
-
-    ├──__init__.py
-
-    ├──settings.py
-
-    main.py
-
-### Step 2: Create a New App
-
-An app in GreatAPI is a modular unit that encapsulates specific functionality of your project. To create a new app, run the following command:
-
-```bash
-greatapi startapp myapp
-
-```
-
-This will generate a new directory named "myapp" containing the necessary files and folders for your app.
-
-    myapp/
-
-    ├──__init__.py
-
-    ├──models.py
-
-    ├──repository.py
-
-    ├──router.py
-
-    ├──schemas.py
-
-### Step 3: Run the Server
-
-Now, it's time to run the development server. Execute the following command:
-
-```bash
+greatapi startproject myapp && cd myapp
+cp .env.example .env
+greatapi migrate && greatapi createsuperuser
 greatapi runserver
-
 ```
-### Step 4: Creating a Superuser
 
-After running the server, let's create a superuser to manage the administration of your project. Execute the following command:
+You now have an API on <http://127.0.0.1:8000>, OpenAPI docs at `/docs`, and a
+working admin at `/admin`.
+
+```python
+# main.py
+from greatapi import GreatAPI
+
+app = GreatAPI(title="myapp", installed_apps=["blog"])
+```
+
+```python
+# blog/admin.py
+from greatapi import admin
+from blog.models import Post
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "published", "created_at")
+    search_fields = ("title", "body")
+```
+
+That is the whole registration. `greatapi startapp blog` writes the model,
+schemas, repository, router and admin file, and adds the app to
+`INSTALLED_APPS`, so it serves requests and appears in the admin without
+another edit.
+
+## What you get
+
+| | |
+|---|---|
+| **Admin** | Real CRUD over any model, with search, pagination, forms generated from your columns, light/dark, and no CDN. |
+| **Auth** | Argon2 passwords, `HttpOnly` sessions, CSRF, and a login that is not an account-enumeration oracle. |
+| **Migrations** | Alembic behind `greatapi makemigrations` and `greatapi migrate`. |
+| **Jobs** | A database-backed queue with retries and backoff, running in-process. No Redis, no Celery. |
+| **API keys** | Scopes, per-key rate limits and monthly spend caps, managed from the admin. |
+| **Streaming** | SSE done properly: heartbeats, correct framing, and cancellation when the client leaves. |
+| **Async** | SQLAlchemy 2.0 `AsyncSession` throughout, so long-lived connections do not eat a thread each. |
+
+## The AI extra
 
 ```bash
-greatapi createsuperuser
-
+pip install "greatapi[ai]"
 ```
 
-Follow the prompts to create the superuser account and again run the server.
+```python
+from greatapi import ai
 
+@app.post("/chat")
+async def chat(request: Request, body: ChatIn):
+    return ai.sse(ai.stream("anthropic:claude-sonnet-5", body.prompt), request=request)
+```
 
+```python
+@ai.tool
+async def lookup_order(order_id: int) -> dict:
+    """Fetch an order by its id."""
+    ...
 
-The server will start, and you can access your application at http://localhost:8000/. Additionally, GreatAPI provides a beautifully designed built-in Admin Panel accessible at http://localhost:8000/admin.
+agent = ai.Agent(model="anthropic:claude-sonnet-5", tools=[lookup_order], max_steps=8)
+
+@app.post("/agent")
+async def run(request: Request, body: ChatIn):
+    return ai.sse(agent.stream(body.prompt), request=request)
+```
+
+Tool schemas come from your type hints, so there is one source of truth. Every
+call and every agent step is recorded with its model, tokens, cost, latency and
+outcome, and shows up at `/admin/usage` — an agent run opens as a trace rather
+than a number in a log line.
+
+Models are addressed as `provider:model`:
+
+| String | Needs |
+|---|---|
+| `echo:demo` | nothing — offline, deterministic, no API key |
+| `anthropic:claude-sonnet-5` | `greatapi[anthropic]` |
+| `openai:gpt-5` | `greatapi[openai]` |
+| `local:llama3.2` | `greatapi[local]` — httpx only; Ollama, vLLM, LM Studio, llama.cpp |
+
+Try it without signing up for anything:
+
+```bash
+git clone https://github.com/sahajrajmalla/greatapi && cd greatapi
+make install && make demo
+```
+
+## Installing
+
+```bash
+pip install greatapi              # the framework. no LLM dependency at all
+pip install "greatapi[ai]"        # + every provider and the agent tooling
+pip install "greatapi[anthropic]" # + one provider
+pip install "greatapi[local]"     # + self-hosted models, httpx only
+pip install "greatapi[postgres]"  # + asyncpg
+```
+
+The AI code ships in the base wheel; only third-party SDKs live in the extras.
+`import greatapi.ai` always works, and reaching for a provider you have not
+installed tells you exactly what to install rather than raising an `ImportError`
+from four frames down.
+
+## Commands
+
+```bash
+greatapi startproject <name>          # a project that runs
+greatapi startapp <name>              # an app, registered for you
+greatapi runserver --port 8000        # the dev server
+greatapi makemigrations -m "message"  # a migration from your model changes
+greatapi migrate                      # apply them
+greatapi createsuperuser              # an admin account
+greatapi routes                       # every route in the app
+greatapi generate-secret              # a signing key
+```
+
+## Configuration
+
+Everything is read from the environment or `.env`, prefixed `GREATAPI_`:
+
+```bash
+GREATAPI_SECRET_KEY=...                                  # required; greatapi generate-secret
+GREATAPI_DATABASE_URL=postgresql+asyncpg://u:p@host/db    # any async SQLAlchemy URL
+GREATAPI_DEBUG=false
+```
+
+`SECRET_KEY` has no default. With `DEBUG` off, a missing one stops the app
+starting and tells you how to make one.
+
+## Documentation
+
+<https://greatapi.readthedocs.io> — quickstart, tutorial, admin, migrations,
+jobs, API keys, AI providers, agents, deployment, and the full settings
+reference.
+
+Upgrading from 1.x? See [MIGRATION.md](MIGRATION.md).
+
+## Contributing
+
+```bash
+git clone https://github.com/sahajrajmalla/greatapi && cd greatapi
+make install
+make check       # ruff, mypy, and the test suite
+make demo        # see it work
+```
+
+Details in [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are
+welcome; good first issues are labelled.
+
+## Security
+
+Please report vulnerabilities privately — see [SECURITY.md](SECURITY.md).
+
+## Credits
+
+Built by [Sahaj Raj Malla](https://github.com/sahajrajmalla), with
+[@thebrowl](https://github.com/thebrowl), [@lamdiv](https://github.com/lamdiv)
+and [@Avi777](https://github.com/Avi777) on the original admin panel.
+
+Standing on [FastAPI](https://fastapi.tiangolo.com),
+[Starlette](https://www.starlette.io), [Pydantic](https://docs.pydantic.dev),
+[SQLAlchemy](https://www.sqlalchemy.org) and [Alembic](https://alembic.sqlalchemy.org).
+
+MIT licensed.
