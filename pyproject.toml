@@ -142,7 +142,8 @@ ignore = [
 "tests/conftest.py" = ["E402"]
 "tests/**" = ["S105", "S106", "S311", "T20", "ARG001", "ARG002"]
 "src/greatapi/conf/**/*.py-tpl" = ["ALL"]
-"examples/**" = ["T20"]
+# Sample code prints, and seeds data with `random` -- neither is a defect here.
+"examples/**" = ["T20", "S311", "INP001"]
 # Charts build SVG from values this module escapes itself; Markup is the point.
 "src/greatapi/admin/charts.py" = ["S704"]
 

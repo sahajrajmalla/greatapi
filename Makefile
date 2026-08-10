@@ -34,14 +34,14 @@ endif
 
 .PHONY: lint
 lint:  ## Ruff lint + format check, then strict mypy
-	$(VENV)/bin/ruff check src tests
-	$(VENV)/bin/ruff format --check src tests
+	$(VENV)/bin/ruff check src tests examples
+	$(VENV)/bin/ruff format --check src tests examples
 	$(VENV)/bin/mypy
 
 .PHONY: format
 format:  ## Autofix lint issues and format
-	$(VENV)/bin/ruff check --fix src tests
-	$(VENV)/bin/ruff format src tests
+	$(VENV)/bin/ruff check --fix src tests examples
+	$(VENV)/bin/ruff format src tests examples
 
 .PHONY: test
 test:  ## Run the full suite with coverage
@@ -59,6 +59,11 @@ build:  ## Build the sdist + wheel and validate the metadata
 	rm -rf dist
 	$(PY) -m build
 	$(VENV)/bin/twine check dist/*
+
+.PHONY: seed
+seed: $(VENV)  ## Fill the demo with sample data, so the dashboards show something
+	@cd examples/chat && [ -f .env ] || cp .env.example .env
+	cd examples/chat && ../../$(PY) seed_demo.py
 
 .PHONY: demo
 demo: $(VENV)  ## Run the example app (streaming chat + agent + admin, no API key needed)

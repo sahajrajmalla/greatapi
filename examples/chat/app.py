@@ -10,7 +10,6 @@ up for. Swap ``GREATAPI_AI_DEFAULT_MODEL`` for ``anthropic:claude-sonnet-5`` or
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
 
 from fastapi import Depends, Request
 from fastapi.responses import FileResponse
@@ -21,7 +20,7 @@ from starlette.responses import Response
 
 from greatapi import GreatAPI, admin, ai
 from greatapi.conf.settings import get_settings
-from greatapi.db import Base, TimestampMixin
+from greatapi.db import Base, TimestampMixin, utcnow
 from greatapi.jobs import enqueue, job
 from greatapi.security import DbSession
 
@@ -57,7 +56,7 @@ class ConversationAdmin(admin.ModelAdmin):
 @ai.tool
 async def current_time() -> str:
     """The current UTC time, ISO-8601."""
-    return datetime.now().isoformat(timespec="seconds")
+    return utcnow().isoformat(timespec="seconds")
 
 
 @ai.tool

@@ -4,6 +4,7 @@ Everything here runs offline against the built-in `echo` provider: no API key,
 no network, no cost.
 
 ```bash
+make seed          # sample data, so the dashboards show something
 make demo          # from the repository root
 ```
 
