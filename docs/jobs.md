@@ -53,6 +53,11 @@ curl localhost:8000/jobs/1
 
 `queued` → `running` → `succeeded` | `failed` | `cancelled`.
 
+`/admin/jobs` shows the queue with counts per state, a status filter, and Retry
+and Cancel on the rows where they apply.
+
+![The background jobs page](assets/admin-jobs.png)
+
 ## Retries
 
 A failure is retried with quadratic backoff — 1s, 4s, 9s, capped at five minutes

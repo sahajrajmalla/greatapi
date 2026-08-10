@@ -127,7 +127,7 @@ async def main() -> None:
             ("summarise_conversation", JobStatus.succeeded, None),
             ("summarise_conversation", JobStatus.succeeded, None),
             ("rebuild_search_index", JobStatus.running, None),
-            ("send_weekly_digest", JobStatus.queued, None),
+            ("summarise_conversation", JobStatus.queued, None),
             ("transcode_upload", JobStatus.failed, "ValueError: unsupported codec 'av1'"),
             ("export_report", JobStatus.cancelled, None),
         ]:

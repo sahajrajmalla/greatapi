@@ -1,3 +1,10 @@
+# Ruff and mypy run from the project's own environment rather than from pinned
+# mirror repositories. A pinned mirror drifts from the versions in the `dev`
+# extra, and then `pre-commit` and `make lint` disagree -- which is worse than
+# either being wrong, because the contributor cannot tell which to believe.
+#
+# Run `make install` first; these hooks need the dev extra on PATH.
+
 default_language_version:
   python: python3
 
@@ -8,29 +15,38 @@ repos:
       - id: trailing-whitespace
         exclude: \.py-tpl$
       - id: end-of-file-fixer
-        exclude: \.(py-tpl|svg|ico)$
+        exclude: \.(py-tpl|svg|ico|png)$
       - id: check-yaml
       - id: check-toml
       - id: check-merge-conflict
       - id: check-added-large-files
+        args: [--maxkb=512]
       - id: debug-statements
       - id: detect-private-key
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.4
+  - repo: local
     hooks:
       - id: ruff
-        args: [--fix]
-      - id: ruff-format
+        name: ruff (lint)
+        entry: ruff check --fix
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.1
-    hooks:
+      - id: ruff-format
+        name: ruff (format)
+        entry: ruff format
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
       - id: mypy
+        name: mypy (strict)
+        # Checks the whole package, not just the staged files: a change in one
+        # module routinely breaks typing in another that was not touched.
+        entry: mypy
+        args: []
+        language: system
+        types: [python]
         pass_filenames: false
-        additional_dependencies:
-          - pydantic>=2.7
-          - pydantic-settings>=2.3
-          - sqlalchemy[asyncio]>=2.0.30
-          - fastapi>=0.115
-          - types-PyYAML
+        require_serial: true

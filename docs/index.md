@@ -13,6 +13,8 @@ greatapi runserver
 
 An API on <http://127.0.0.1:8000>, docs at `/docs`, a working admin at `/admin`.
 
+![The GreatAPI admin dashboard](assets/admin-dashboard.png)
+
 ## Why
 
 FastAPI gives you an excellent routing and validation layer and then stops.

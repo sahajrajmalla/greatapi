@@ -5,7 +5,11 @@ session. GreatAPI keys carry scopes, a rate limit and a monthly spend cap.
 
 ## Issuing
 
-From `/admin/api-keys`, or in code:
+From `/admin/api-keys`:
+
+![Creating and managing API keys](assets/admin-api-keys.png)
+
+or in code:
 
 ```python
 from greatapi.keys import create_api_key

@@ -17,6 +17,8 @@ and a failure to record must never break a request.
 - a per-model breakdown, most expensive first
 - recent agent runs, with their step counts
 
+![Tokens, cost and latency per model](../assets/admin-ai-usage.png)
+
 Charts are server-rendered inline SVG. No chart library and no CDN, so the admin
 works offline and under a strict CSP.
 

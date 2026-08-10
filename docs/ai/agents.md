@@ -110,6 +110,8 @@ Each run is an `AgentRun` row, and each step is an `LLMCall` linked to it. A
 finished run opens in the admin under `/admin/usage` with its steps, tokens,
 cost and latency — rather than being a number in a log line.
 
+![Agent runs, with steps and cost](../assets/admin-agent-runs.png)
+
 ```python
 support = ai.Agent(model="echo:demo", track=False)   # opt out
 ```

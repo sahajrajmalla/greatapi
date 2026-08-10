@@ -3,6 +3,8 @@
 Register a model and you get a list view, search, pagination, an edit form
 generated from your columns, and delete — with an audit trail.
 
+![A registered model's list view, sorted by a column](assets/admin-llm-calls.png)
+
 ```python title="blog/admin.py"
 from greatapi import admin
 from blog.models import Post
@@ -17,6 +19,9 @@ class PostAdmin(admin.ModelAdmin):
 
 Any app in `INSTALLED_APPS` has its `admin.py` imported automatically, so that
 is all the wiring there is.
+
+Click any column header to sort; the direction is reflected in `aria-sort` and
+survives paging and search. `/` focuses the search box.
 
 ## Options
 
@@ -58,6 +63,8 @@ password, and a password is never writable — the Add button is hidden and the
 route explains why, rather than failing on a `NOT NULL` constraint.
 
 ## Everything is authenticated on the server
+
+![The admin sign-in page](assets/admin-login.png)
 
 Every admin view sits behind a router-level `require_admin`, so a view added
 tomorrow is protected by default rather than by remembering to protect it.

@@ -11,6 +11,8 @@ backend instead of the plumbing.
 [![Python](https://img.shields.io/pypi/pyversions/greatapi)](https://pypi.org/project/greatapi/)
 [![License](https://img.shields.io/pypi/l/greatapi)](LICENSE)
 
+<img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-dashboard.png" alt="The GreatAPI admin dashboard" width="900" />
+
 </div>
 
 ---
@@ -66,6 +68,17 @@ another edit.
 | **Streaming** | SSE done properly: heartbeats, correct framing, and cancellation when the client leaves. |
 | **Async** | SQLAlchemy 2.0 `AsyncSession` throughout, so long-lived connections do not eat a thread each. |
 
+<table>
+<tr>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-ai-usage.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-ai-usage.png" alt="Tokens, cost and latency per model" /></a><br /><sub><b>AI usage</b> — tokens, cost and latency, recorded on every call</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-jobs.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-jobs.png" alt="The background job queue" /></a><br /><sub><b>Jobs</b> — a durable queue with retries, right in the admin</sub></td>
+</tr>
+<tr>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-api-keys.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-api-keys.png" alt="API keys with scopes and spend caps" /></a><br /><sub><b>API keys</b> — scopes, rate limits and monthly spend caps</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-llm-calls.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-llm-calls.png" alt="Sortable list view over any model" /></a><br /><sub><b>List views</b> — search, sort and paginate any model you register</sub></td>
+</tr>
+</table>
+
 ## The AI extra
 
 ```bash
@@ -97,6 +110,8 @@ Tool schemas come from your type hints, so there is one source of truth. Every
 call and every agent step is recorded with its model, tokens, cost, latency and
 outcome, and shows up at `/admin/usage` — an agent run opens as a trace rather
 than a number in a log line.
+
+<a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-agent-runs.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-agent-runs.png" alt="Agent runs, with steps and cost" width="900" /></a>
 
 Models are addressed as `provider:model`:
 
