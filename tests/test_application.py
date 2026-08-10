@@ -17,6 +17,11 @@ from greatapi.jobs import enqueue, job
 
 runner = CliRunner()
 
+#: Generous on purpose. These wait on a background worker, and a shared CI
+#: runner is slow and unpredictable; a tight bound tests the runner's load
+#: rather than the code.
+WORKER_TIMEOUT = 30.0
+
 
 class TestWiring:
     def test_the_admin_is_mounted_by_default(self, engine: Any) -> None:
@@ -66,6 +71,7 @@ class TestSecurityHeaders:
 
 class TestLifespan:
     async def test_it_creates_tables_and_starts_the_worker(self, tmp_path: Path) -> None:
+        from greatapi.conf.settings import override_settings
         from greatapi.db.session import configure_engine, dispose_engine
 
         configure_engine(f"sqlite+aiosqlite:///{tmp_path / 'life.db'}")
@@ -76,12 +82,17 @@ class TestLifespan:
             ran.set()
             return "done"
 
-        app = GreatAPI(title="life", admin=False, jobs=True, create_tables=True)
+        # The worker polls on an interval, so at the default one second this
+        # test is a race against a loaded CI runner rather than an assertion
+        # about wiring. Poll fast and wait generously: what is being checked is
+        # that the lifespan starts a worker at all, not how quickly it ticks.
+        with override_settings(jobs_poll_interval_seconds=0.01):
+            app = GreatAPI(title="life", admin=False, jobs=True, create_tables=True)
 
-        async with app.router.lifespan_context(app):
-            assert app.worker is not None, "the worker should be running"
-            await enqueue(handler)
-            await asyncio.wait_for(ran.wait(), timeout=5.0)
+            async with app.router.lifespan_context(app):
+                assert app.worker is not None, "the worker should be running"
+                await enqueue(handler)
+                await asyncio.wait_for(ran.wait(), timeout=WORKER_TIMEOUT)
 
         # Shutdown stops the worker and releases the pool.
         assert app.worker is None
@@ -136,7 +147,7 @@ class TestLifespan:
             claimed = await claim_jobs(session, 1)
 
         task = asyncio.create_task(run_job(claimed[0]))
-        await asyncio.wait_for(started.wait(), timeout=5.0)
+        await asyncio.wait_for(started.wait(), timeout=WORKER_TIMEOUT)
         task.cancel()
         with pytest.raises(asyncio.CancelledError):
             await task

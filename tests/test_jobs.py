@@ -179,13 +179,51 @@ class TestWorker:
         worker = Worker(concurrency=2, poll_interval=0.01)
         worker.start()
         try:
-            await asyncio.wait_for(done.wait(), timeout=3.0)
+            # Generous: this waits on a background worker, and a shared CI
+            # runner is slow enough that a tight bound tests its load.
+            await asyncio.wait_for(done.wait(), timeout=30.0)
         finally:
             await worker.stop()
 
         record = (await session.execute(select(Job))).scalar_one()
         await session.refresh(record)
         assert record.status is JobStatus.succeeded
+
+    async def test_the_worker_survives_an_idle_poll(self, session: AsyncSession) -> None:
+        """It must keep running when there is nothing to do.
+
+        On Python 3.10 `asyncio.TimeoutError` is not the builtin `TimeoutError`,
+        so the idle-poll timeout escaped the loop and the worker died silently
+        after its first empty tick -- jobs never ran at all on that version.
+        """
+        worker = Worker(concurrency=1, poll_interval=0.01)
+        task = worker.start()
+        try:
+            # Several poll intervals with an empty queue.
+            await asyncio.sleep(0.2)
+            assert not task.done(), "the worker stopped while idle"
+
+            # And it still picks work up afterwards.
+            done = asyncio.Event()
+
+            @job("after-idle")
+            async def handler() -> str:
+                done.set()
+                return "ran"
+
+            await enqueue(handler)
+            await asyncio.wait_for(done.wait(), timeout=30.0)
+        finally:
+            await worker.stop()
+
+    async def test_stop_is_graceful_and_leaves_no_task(self, session: AsyncSession) -> None:
+        worker = Worker(concurrency=1, poll_interval=0.01)
+        task = worker.start()
+        await asyncio.sleep(0.05)
+
+        await worker.stop(timeout=10.0)
+        assert task.done()
+        assert not task.cancelled(), "a quiet worker should stop cleanly, not be cancelled"
 
 
 class TestStatusEndpoint:

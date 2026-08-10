@@ -78,7 +78,8 @@ async def complete(
                 ),
                 timeout=deadline,
             )
-        except (TransientProviderError, TimeoutError) as exc:
+        # asyncio.TimeoutError, not the builtin: identical only from 3.11.
+        except (TransientProviderError, asyncio.TimeoutError) as exc:
             last_error = exc
             if attempt >= attempts:
                 break
@@ -181,7 +182,8 @@ async def stream(
                         usage = chunk.usage
                         continue
                     yield chunk
-            except (TransientProviderError, TimeoutError) as exc:
+            # asyncio.TimeoutError, not the builtin: identical only from 3.11.
+            except (TransientProviderError, asyncio.TimeoutError) as exc:
                 await _aclose(iterator)
                 if emitted or attempt >= attempts:
                     failure = exc

@@ -134,7 +134,11 @@ class Worker:
                     processed = 0
                 # Only sleep when the queue was empty, so a backlog drains fast.
                 if processed == 0:
-                    with contextlib.suppress(TimeoutError):
+                    # asyncio.TimeoutError, not the builtin: they are only the
+                    # same class from Python 3.11. On 3.10 a bare TimeoutError
+                    # catches nothing here, the timeout escapes the loop, and
+                    # the worker dies silently after its first idle poll.
+                    with contextlib.suppress(asyncio.TimeoutError):
                         await asyncio.wait_for(self._stopping.wait(), self.poll_interval)
         except asyncio.CancelledError:
             logger.info("Job worker cancelled")
@@ -160,7 +164,7 @@ class Worker:
         self._stopping.set()
         try:
             await asyncio.wait_for(asyncio.shield(self._task), timeout)
-        except TimeoutError:
+        except asyncio.TimeoutError:  # not the builtin; see run()
             logger.warning("Job worker did not stop within %ss; cancelling", timeout)
             self._task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
