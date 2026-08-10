@@ -21,7 +21,7 @@ import logging
 import time
 from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
-from typing import Any, TypeVar, get_type_hints
+from typing import Any, get_type_hints
 
 from pydantic import TypeAdapter
 
@@ -36,7 +36,6 @@ __all__ = ["Agent", "AgentResult", "Tool", "tool"]
 
 logger = logging.getLogger("greatapi.ai.agents")
 
-F = TypeVar("F", bound=Callable[..., Any])
 
 _JSON_TYPES: dict[Any, str] = {
     str: "string",

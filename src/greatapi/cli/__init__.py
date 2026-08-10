@@ -30,8 +30,6 @@ app = typer.Typer(
     add_completion=True,
 )
 
-err = typer.style
-
 
 def _fail(message: str) -> None:
     typer.secho(f"Error: {message}", fg=typer.colors.RED, err=True)

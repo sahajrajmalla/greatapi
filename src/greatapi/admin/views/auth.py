@@ -7,6 +7,8 @@ before the check ran -- ``curl`` skipped it entirely.
 
 from __future__ import annotations
 
+import re
+
 from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
 from starlette.responses import Response
@@ -28,10 +30,24 @@ auth_router = APIRouter(include_in_schema=False)
 _LOGIN_FAILED = "Incorrect username or password."
 
 
+#: A same-site destination: one leading slash, then nothing that could turn it
+#: into an absolute or protocol-relative URL. Anything else falls back to the
+#: admin root rather than being cleaned up -- a redirect target is not worth
+#: guessing at.
+_SAFE_NEXT = re.compile(r"^/(?![/\\])[^\\\s]*$")
+
+
 def _safe_next(raw: str | None) -> str:
-    """Only allow same-site relative redirects, so ``?next=`` is not an open redirect."""
+    r"""Return ``raw`` only if it is a same-site path, else the admin root.
+
+    Rejects ``//evil.com`` and ``/\evil.com`` alike: browsers normalise a
+    backslash to a forward slash, so the second is protocol-relative too and a
+    naive ``startswith("//")`` check misses it. Whitespace and control
+    characters are rejected for the same reason -- a browser may strip them and
+    change what the URL means.
+    """
     settings = get_settings()
-    if raw and raw.startswith("/") and not raw.startswith("//"):
+    if raw and len(raw) <= 512 and _SAFE_NEXT.match(raw) and "\x00" not in raw:
         return raw
     return settings.admin_path
 

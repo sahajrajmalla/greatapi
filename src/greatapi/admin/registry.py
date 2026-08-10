@@ -17,7 +17,7 @@ from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, TypeVar
+from typing import Any
 
 from sqlalchemy import Boolean, Date, DateTime, Float, Integer, Numeric, String, Text, inspect
 from sqlalchemy.orm import ColumnProperty
@@ -52,8 +52,6 @@ _SENSITIVE_PATTERNS = (
     r"private",
 )
 _SENSITIVE_RE = re.compile("|".join(_SENSITIVE_PATTERNS), re.IGNORECASE)
-
-M = TypeVar("M", bound=type[Base])
 
 
 def is_sensitive(name: str) -> bool:

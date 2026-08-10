@@ -8,20 +8,21 @@ are the first of two independent defences, not the only one.
 
 from __future__ import annotations
 
-from greatapi.admin.registry import ModelAdmin, register
+from greatapi.admin.registry import ModelAdmin, get_registry, register
 from greatapi.db.models import AgentRun, APIKey, AuditLog, Job, LLMCall, User
 
 __all__ = ["register_builtin_admins"]
 
-_registered = False
-
 
 def register_builtin_admins() -> None:
-    """Register the framework models. Idempotent."""
-    global _registered
-    if _registered:
+    """Register the framework models. Idempotent.
+
+    The registry itself is the source of truth for whether this has run; a
+    separate module-level flag would be a second piece of state that could
+    disagree with it after `unregister_all()`.
+    """
+    if User in get_registry().entries:
         return
-    _registered = True
 
     @register(User)
     class UserAdmin(ModelAdmin):

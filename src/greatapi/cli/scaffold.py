@@ -13,7 +13,7 @@ import re
 import secrets
 from pathlib import Path
 
-from jinja2 import Template
+from jinja2 import Environment
 
 from greatapi.conf.settings import PACKAGE_DIR
 from greatapi.exceptions import GreatAPIError
@@ -32,6 +32,19 @@ APP_TEMPLATE_DIR = PACKAGE_DIR / "conf" / "app_template"
 
 TEMPLATE_SUFFIX = ".py-tpl"
 GENERIC_SUFFIX = "-tpl"
+
+# Autoescaping is off deliberately, and must stay off: these templates render
+# Python source, .env files and an alembic.ini -- HTML-escaping them would turn
+# a quote in a docstring into `&#34;` and produce a project that does not parse.
+#
+# It is not an XSS surface. The only variables are `project_name` and
+# `app_name`, both already checked by `validate_name` to be plain Python
+# identifiers, and the output is written to disk rather than served. The admin
+# templates, which *are* served, use Jinja2Templates with autoescaping on.
+_TEMPLATES = Environment(
+    autoescape=False,  # noqa: S701 - renders source files, not markup; see above
+    keep_trailing_newline=True,
+)
 
 #: Names that would shadow the framework or a standard module the templates use.
 RESERVED_NAMES = {
@@ -100,11 +113,7 @@ def render_tree(source: Path, destination: Path, context: dict[str, str]) -> lis
             continue
 
         raw = entry.read_text()
-        content = (
-            raw
-            if entry.suffix == ".mako"
-            else Template(raw, keep_trailing_newline=True).render(**context)
-        )
+        content = raw if entry.suffix == ".mako" else _TEMPLATES.from_string(raw).render(**context)
 
         target = destination / target_name
         target.write_text(content)

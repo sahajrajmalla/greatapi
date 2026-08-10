@@ -284,7 +284,21 @@ class TestTokens:
 
 
 class TestOpenRedirect:
-    @pytest.mark.parametrize("target", ["https://evil.example.com", "//evil.example.com"])
+    @pytest.mark.parametrize(
+        "target",
+        [
+            "https://evil.example.com",
+            "//evil.example.com",
+            # A browser normalises the backslash to a slash, so this is
+            # protocol-relative too -- a plain startswith("//") check misses it.
+            "/\\evil.example.com",
+            "\\\\evil.example.com",
+            "/\tevil",
+            "javascript:alert(1)",
+            "http:/evil.example.com",
+            "/ /evil.example.com",
+        ],
+    )
     async def test_next_cannot_leave_the_site(
         self, client: httpx.AsyncClient, admin_user: User, target: str
     ) -> None:
@@ -293,7 +307,18 @@ class TestOpenRedirect:
             data={"username": "admin", "password": ADMIN_PASSWORD, "next": target},
         )
         assert response.status_code == 303
-        assert response.headers["location"] == "/admin"
+        assert response.headers["location"] == "/admin", target
+
+    @pytest.mark.parametrize("target", ["/admin/usage", "/admin/jobs?status=failed", "/"])
+    async def test_same_site_targets_are_honoured(
+        self, client: httpx.AsyncClient, admin_user: User, target: str
+    ) -> None:
+        response = await client.post(
+            "/admin/login",
+            data={"username": "admin", "password": ADMIN_PASSWORD, "next": target},
+        )
+        assert response.status_code == 303
+        assert response.headers["location"] == target
 
 
 class TestLastAdminProtection:

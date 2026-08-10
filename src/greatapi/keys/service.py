@@ -34,8 +34,24 @@ _SECRET_LENGTH = 32
 _SPEND_CACHE_TTL_SECONDS = 60.0
 
 
-def hash_key(raw_key: str) -> str:
-    return hashlib.sha256(raw_key.encode()).hexdigest()
+def hash_key(raw_token: str) -> str:
+    """Fingerprint an API token for storage.
+
+    SHA-256, not Argon2, and that is deliberate. This is **not** a password
+    hash: the input is a 256-bit value from ``secrets.token_urlsafe`` -- not
+    something a human chose, and not something that appears in any wordlist. A
+    dictionary or brute-force attack against it is not feasible, so the reason
+    to use a slow KDF does not apply, while the cost would: a token is verified
+    on every single API request, and a deliberately slow hash there is a
+    denial-of-service vector against your own service.
+
+    This is the same approach GitHub and Stripe use for their API tokens.
+    Passwords, which *are* human-chosen and low-entropy, go through Argon2id in
+    :mod:`greatapi.security.passwords`.
+    """
+    # codeql[py/weak-sensitive-data-hashing] -- see the docstring: the input is
+    # a 256-bit random token, not a password.
+    return hashlib.sha256(raw_token.encode()).hexdigest()
 
 
 async def create_api_key(

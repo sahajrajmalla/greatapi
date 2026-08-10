@@ -215,7 +215,8 @@ async def edit_submit(
 
     await _audit(session, user, AuditAction.update, model_admin, instance)
     return RedirectResponse(
-        flash_url(f"{_base_url(model_admin)}/{pk}", "saved"), status_code=status.HTTP_303_SEE_OTHER
+        flash_url(f"{_base_url(model_admin)}/{_identity(instance)}", "saved"),
+        status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
