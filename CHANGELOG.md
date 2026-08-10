@@ -47,6 +47,11 @@ of security defects along the way. See [MIGRATION.md](https://github.com/sahajra
 
 ### Added
 
+- Sortable columns in the admin list view. `sort` is only honoured when it names
+  a column already visible on the page, so it cannot be used to order by -- and
+  thereby infer -- a redacted one.
+- `make qa`: builds the wheel, installs it into a clean virtualenv, boots it in
+  production mode and asserts ~40 security and packaging properties end to end.
 - `greatapi.ai` with provider adapters (Anthropic, OpenAI, any OpenAI-compatible
   endpoint, and an offline `echo` provider), a tool-calling `Agent`, and
   token/cost/latency accounting surfaced at `/admin/usage`.
@@ -78,6 +83,8 @@ of security defects along the way. See [MIGRATION.md](https://github.com/sahajra
 - Model CRUD moved to `/admin/model/{group}/{slug}`, so an application model
   named `usage` or `jobs` cannot shadow a built-in page.
 - Framework tables are prefixed `greatapi_`.
+- Admin assets are cache-busted by version, so upgrading GreatAPI no longer
+  leaves browsers on the previous stylesheet.
 - Packaging moved to `pyproject.toml`; `pre-commit` is no longer a runtime
   dependency; `py.typed` now backs the `Typing :: Typed` classifier.
 - Python 3.10–3.14. FastAPI 0.115+, Pydantic v2, SQLAlchemy 2.0.

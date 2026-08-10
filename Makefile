@@ -54,6 +54,10 @@ test-base:  ## Prove the core works with zero optional dependencies installed
 .PHONY: check
 check: lint test  ## Everything CI runs on a pull request
 
+.PHONY: qa
+qa:  ## Production-readiness check: build, install clean, boot, assert everything
+	./scripts/qa.sh
+
 .PHONY: build
 build:  ## Build the sdist + wheel and validate the metadata
 	rm -rf dist
