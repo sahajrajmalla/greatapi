@@ -7,17 +7,22 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>{% block title %}{{ site_title }}{% endblock %}</title>
     <link rel="icon" href="{{ static_path }}/favicon.ico" sizes="any" />
-    <link rel="stylesheet" href="{{ static_path }}/greatapi.css" />
+    <link rel="stylesheet" href="{{ static_path }}/greatapi.css?v={{ asset_version }}" />
     {# Loaded synchronously so the saved theme applies before first paint. #}
-    <script src="{{ static_path }}/greatapi.js"></script>
+    <script src="{{ static_path }}/greatapi.js?v={{ asset_version }}"></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="shell">
       <nav class="sidebar" data-sidebar aria-label="Admin sections">
-        <a class="brand" href="{{ admin_path }}">
-          <span class="brand-mark" aria-hidden="true">G</span>
-          <span>{{ site_title }}</span>
+        <a class="brand" href="{{ admin_path }}" aria-label="{{ site_title }}">
+          {# The brand wordmark already reads "GreatAPI", so showing the title
+             next to it would say it twice. A customised title wins instead. #}
+          {% if site_title == "GreatAPI" %}
+          <img class="brand-logo" src="{{ static_path }}/logo.svg" alt="GreatAPI" />
+          {% else %}
+          <span class="brand-text">{{ site_title }}</span>
+          {% endif %}
         </a>
 
         <div class="nav-group">

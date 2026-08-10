@@ -21,6 +21,8 @@
   <div class="page-header-actions">
     {% if searchable %}
     <form class="search-form" method="get" action="{{ base_url }}" role="search">
+      <input type="hidden" name="sort" value="{{ sort }}" />
+      <input type="hidden" name="dir" value="{{ direction }}" />
       <input type="search" name="q" value="{{ query }}" data-autosubmit
              placeholder="Search {{ model_admin.label|lower }}…"
              aria-label="Search {{ model_admin.label }}" />
@@ -39,7 +41,19 @@
     <table class="table-stack">
       <thead>
         <tr>
-          {% for header in headers %}<th>{{ header }}</th>{% endfor %}
+          {% for header in headers %}
+          {% set column = columns[loop.index0] %}
+          {% set active_sort = sort == column %}
+          {% set next_dir = 'desc' if active_sort and direction == 'asc' else 'asc' %}
+          <th {% if active_sort %}aria-sort="{{ 'ascending' if direction == 'asc' else 'descending' }}"{% endif %}>
+            <a class="th-sort{% if active_sort %} is-sorted{% endif %}"
+               href="?sort={{ column }}&dir={{ next_dir }}{% if query %}&q={{ query|urlencode }}{% endif %}"
+               title="Sort by {{ header }}">
+              {{ header }}
+              <span class="th-arrow" aria-hidden="true">{{ '↑' if active_sort and direction == 'asc' else ('↓' if active_sort else '↕') }}</span>
+            </a>
+          </th>
+          {% endfor %}
           <th class="actions"><span class="visually-hidden">Actions</span></th>
         </tr>
       </thead>

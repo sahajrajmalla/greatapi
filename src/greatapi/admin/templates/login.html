@@ -6,15 +6,18 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Sign in &middot; {{ site_title }}</title>
     <link rel="icon" href="{{ static_path }}/favicon.ico" sizes="any" />
-    <link rel="stylesheet" href="{{ static_path }}/greatapi.css" />
-    <script src="{{ static_path }}/greatapi.js"></script>
+    <link rel="stylesheet" href="{{ static_path }}/greatapi.css?v={{ asset_version }}" />
+    <script src="{{ static_path }}/greatapi.js?v={{ asset_version }}"></script>
   </head>
   <body>
     <main class="login-page">
       <div class="login-card">
         <p class="login-brand">
-          <span class="brand-mark" aria-hidden="true">G</span>
-          <span>{{ site_title }}</span>
+          {% if site_title == "GreatAPI" %}
+          <img class="brand-logo" src="{{ static_path }}/logo.svg" alt="GreatAPI" />
+          {% else %}
+          <span class="brand-text">{{ site_title }}</span>
+          {% endif %}
         </p>
         <p class="login-sub">Sign in to the admin</p>
 

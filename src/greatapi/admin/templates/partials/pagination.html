@@ -1,5 +1,6 @@
 {% if page.pages > 1 %}
-{% set qs = '&q=' ~ query if query is defined and query else '' %}
+{% set qs = ('&q=' ~ query|urlencode if query is defined and query else '')
+             ~ ('&sort=' ~ sort ~ '&dir=' ~ direction if sort is defined and sort else '') %}
 <nav class="pager" aria-label="Pagination">
   <span>
     Showing {{ "{:,}".format(page.start_index) }}–{{ "{:,}".format(page.end_index) }}

@@ -53,6 +53,8 @@ async def list_view(
     slug: str,
     page: int = Query(1, ge=1),
     q: str = Query("", max_length=200),
+    sort: str = Query("", max_length=64),
+    direction: str = Query("", alias="dir", pattern="^(asc|desc)?$"),
 ) -> Response:
     model_admin = _lookup(group, slug)
     settings = get_settings()
@@ -76,12 +78,16 @@ async def list_view(
 
     total = await session.scalar(select(func.count()).select_from(query.subquery()))
 
-    order_column = model_admin.ordering.lstrip("-")
-    if hasattr(model_admin.model, order_column):
-        attribute = getattr(model_admin.model, order_column)
-        query = query.order_by(
-            attribute.desc() if model_admin.ordering.startswith("-") else attribute.asc()
-        )
+    # `sort` comes from the query string, so it is only honoured when it names a
+    # column already visible on this page -- otherwise it would be a way to
+    # order by, and thereby infer, a redacted one.
+    sort_column, descending = model_admin.ordering.lstrip("-"), model_admin.ordering.startswith("-")
+    if sort and sort in columns:
+        sort_column, descending = sort, direction == "desc"
+
+    if hasattr(model_admin.model, sort_column):
+        attribute = getattr(model_admin.model, sort_column)
+        query = query.order_by(attribute.desc() if descending else attribute.asc())
 
     rows = list((await session.execute(query.offset((page - 1) * size).limit(size))).scalars())
 
@@ -96,6 +102,8 @@ async def list_view(
             "query": q,
             "searchable": bool(searchable),
             "base_url": _base_url(model_admin),
+            "sort": sort_column,
+            "direction": "desc" if descending else "asc",
         },
         user=user,
         active=f"model:{model_admin.group}:{model_admin.slug}",

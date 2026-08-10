@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import httpx
 import pytest
 from sqlalchemy import String, select
@@ -242,6 +244,108 @@ class TestCrud:
         assert any("updated" in message for message in messages)
 
 
+class TestSorting:
+    async def test_clicking_a_header_sorts(
+        self, admin_client: httpx.AsyncClient, session: AsyncSession
+    ) -> None:
+        from greatapi.security.passwords import hash_password
+
+        for name in ("carol", "alice", "bob"):
+            session.add(
+                User(
+                    email=f"{name}@example.com",
+                    username=name,
+                    hashed_password=hash_password("hunter2hunter2"),
+                )
+            )
+        await session.commit()
+
+        ascending = await admin_client.get(
+            "/admin/model/auth/greatapi_user", params={"sort": "username", "dir": "asc"}
+        )
+        assert ascending.status_code == 200
+        order = _usernames(ascending.text)
+        assert order == sorted(order), order
+
+        descending = await admin_client.get(
+            "/admin/model/auth/greatapi_user", params={"sort": "username", "dir": "desc"}
+        )
+        assert _usernames(descending.text) == sorted(order, reverse=True)
+
+    async def test_the_active_column_is_announced(self, admin_client: httpx.AsyncClient) -> None:
+        response = await admin_client.get(
+            "/admin/model/auth/greatapi_user", params={"sort": "username", "dir": "asc"}
+        )
+        assert 'aria-sort="ascending"' in response.text
+
+    async def test_a_redacted_column_cannot_be_sorted_on(
+        self, admin_client: httpx.AsyncClient
+    ) -> None:
+        """Ordering by a hash would leak information about it."""
+        response = await admin_client.get(
+            "/admin/model/auth/greatapi_user",
+            params={"sort": "hashed_password", "dir": "asc"},
+        )
+        assert response.status_code == 200
+        # Silently ignored, falling back to the ModelAdmin's own ordering.
+        assert "hashed_password" not in response.text
+
+    async def test_an_unknown_column_is_ignored(self, admin_client: httpx.AsyncClient) -> None:
+        response = await admin_client.get(
+            "/admin/model/auth/greatapi_user", params={"sort": "not_a_column"}
+        )
+        assert response.status_code == 200
+
+    async def test_a_malformed_direction_is_rejected(self, admin_client: httpx.AsyncClient) -> None:
+        response = await admin_client.get(
+            "/admin/model/auth/greatapi_user", params={"sort": "username", "dir": "; DROP TABLE"}
+        )
+        assert response.status_code == 422
+
+    async def test_sorting_survives_paging_and_search(
+        self, admin_client: httpx.AsyncClient
+    ) -> None:
+        response = await admin_client.get(
+            "/admin/model/auth/greatapi_user",
+            params={"sort": "username", "dir": "desc", "q": "admin"},
+        )
+        assert response.status_code == 200
+        assert 'name="sort" value="username"' in response.text
+        assert 'name="dir" value="desc"' in response.text
+
+
+class TestAssetCaching:
+    async def test_asset_urls_carry_the_version(self, admin_client: httpx.AsyncClient) -> None:
+        """Without this, upgrading GreatAPI leaves browsers on the old stylesheet."""
+        from greatapi import __version__
+
+        body = (await admin_client.get("/admin")).text
+        assert f"greatapi.css?v={__version__}" in body
+        assert f"greatapi.js?v={__version__}" in body
+
+    async def test_the_login_page_too(self, client: httpx.AsyncClient) -> None:
+        from greatapi import __version__
+
+        assert f"greatapi.css?v={__version__}" in (await client.get("/admin/login")).text
+
+
+class TestBranding:
+    async def test_the_wordmark_is_used_when_the_title_is_the_default(
+        self, client: httpx.AsyncClient
+    ) -> None:
+        body = (await client.get("/admin/login")).text
+        assert "logo.svg" in body
+
+    async def test_a_custom_title_replaces_the_wordmark(self, client: httpx.AsyncClient) -> None:
+        """The logo reads "GreatAPI", so it must not sit above someone else's name."""
+        from greatapi.conf.settings import override_settings
+
+        with override_settings(admin_title="Acme Internal"):
+            body = (await client.get("/admin/login")).text
+        assert "Acme Internal" in body
+        assert "logo.svg" not in body
+
+
 class TestPasswordReset:
     async def test_an_admin_can_set_another_password(
         self, admin_client: httpx.AsyncClient, plain_user: User, session: AsyncSession
@@ -423,3 +527,7 @@ class TestCustomModel:
         assert "Widget" in response.text
 
         Base.metadata.remove(Widget.__table__)
+
+
+def _usernames(html: str) -> list[str]:
+    return re.findall(r'<td data-label="Username">\s*([a-z]+)\s*</td>', html)

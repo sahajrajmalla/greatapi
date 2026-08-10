@@ -11,6 +11,7 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from starlette.responses import Response
 
+from greatapi import __version__
 from greatapi.admin.registry import get_registry
 from greatapi.conf.settings import ADMIN_TEMPLATE_DIR, get_settings
 from greatapi.db.models import User
@@ -97,6 +98,10 @@ def render(
         "settings": settings,
         "admin_path": settings.admin_path,
         "static_path": f"{settings.admin_path}/_static",
+        # Appended to asset URLs. Without it, upgrading GreatAPI leaves
+        # every existing browser on the previous stylesheet until its cache
+        # happens to expire.
+        "asset_version": __version__,
         "site_title": settings.admin_title,
         "current_user": user,
         "active": active,

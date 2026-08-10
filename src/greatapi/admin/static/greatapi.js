@@ -146,6 +146,52 @@
     });
   }
 
+  /* A double-click on a submit button posts the form twice -- which, on the
+     API keys page, silently issues two keys. Disable on first submit. */
+  function initSubmitGuard() {
+    document.querySelectorAll("form").forEach(function (form) {
+      form.addEventListener("submit", function (event) {
+        /* Deferred, so the button's value is still included in the post -- and
+           so a `data-confirm` handler that cancelled has already run. Without
+           the defaultPrevented check, declining a confirm dialog would leave
+           the button disabled forever. */
+        window.setTimeout(function () {
+          if (event.defaultPrevented) return;
+          form.querySelectorAll("button[type=submit]").forEach(function (button) {
+            button.disabled = true;
+            button.dataset.busyLabel = button.textContent;
+            button.textContent = "Working…";
+          });
+        }, 0);
+      });
+    });
+
+    /* Restore on bfcache restore, or the buttons stay dead after Back. */
+    window.addEventListener("pageshow", function (event) {
+      if (!event.persisted) return;
+      document.querySelectorAll("button[data-busy-label]").forEach(function (button) {
+        button.disabled = false;
+        button.textContent = button.dataset.busyLabel;
+        delete button.dataset.busyLabel;
+      });
+    });
+  }
+
+  /* `/` focuses search, the way every admin tool does. */
+  function initShortcuts() {
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+      var tag = (document.activeElement || {}).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      var search = document.querySelector('input[type="search"]');
+      if (!search) return;
+      event.preventDefault();
+      search.focus();
+      search.select();
+    });
+  }
+
   /* Filter dropdowns apply on change. Wired here rather than with an inline
      `onchange`, which the admin's Content-Security-Policy blocks. */
   function initFilters() {
@@ -165,5 +211,7 @@
     initCopyButtons();
     initSearch();
     initFilters();
+    initSubmitGuard();
+    initShortcuts();
   });
 })();

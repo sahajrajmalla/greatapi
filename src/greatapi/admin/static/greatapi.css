@@ -4,6 +4,31 @@
  * Google Fonts from CDNs at runtime, which meant it broke with no internet and
  * could not run under a strict Content-Security-Policy. Everything here is one
  * file, no build step, no npm: change a colour by editing a custom property.
+ *
+ * The palette is the GreatAPI brand, carried over verbatim from the 1.x
+ * Tailwind config:
+ *
+ *   primary    #0055FF     blackone    #1F232E
+ *   success    #3BB200     blacktwo    #3D414C
+ *   warning    #FFB731     shadeblack  #676B77
+ *   danger     #FF0000     shadegray   #F7F8FB
+ *                          shadeblue   #F7FAFF
+ */
+
+/* -------------------------------------------------------------- brand font */
+
+/* Raleway is the brand typeface. 1.x pulled it from Google Fonts, which is the
+ * reason the admin could not render offline or under a strict CSP. To bundle it
+ * instead, drop Raleway-*.woff2 into this directory and uncomment the block
+ * below -- no other change is needed, and the stack already prefers it.
+ *
+ * @font-face {
+ *   font-family: "Raleway";
+ *   font-style: normal;
+ *   font-weight: 100 900;
+ *   font-display: swap;
+ *   src: url("Raleway-Variable.woff2") format("woff2-variations");
+ * }
  */
 
 /* ---------------------------------------------------------------- tokens */
@@ -11,43 +36,51 @@
 :root {
   color-scheme: light;
 
-  --bg: #f6f7fb;
+  /* shadegray / white / shadeblue */
+  --bg: #f7f8fb;
   --surface: #ffffff;
-  --surface-2: #f2f4f9;
-  --surface-hover: #eef1f8;
-  --border: #e2e6ef;
-  --border-strong: #cbd2e1;
+  --surface-2: #f7faff;
+  --surface-hover: #edf3ff;
+  --border: #e4e9f2;
+  --border-strong: #c8d3e8;
 
-  --text: #171a21;
-  --text-muted: #5f6675;
-  --text-faint: #8a91a1;
+  /* blackone / blacktwo / shadeblack */
+  --text: #1f232e;
+  --text-muted: #3d414c;
+  --text-faint: #676b77;
 
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-soft: #eef2ff;
+  /* primary */
+  --accent: #0055ff;
+  --accent-hover: #0044cc;
+  --accent-soft: #e8f0ff;
   --accent-text: #ffffff;
 
-  --success: #0f7b52;
-  --success-soft: #e6f6ee;
-  --warning: #96650a;
-  --warning-soft: #fdf3e0;
-  --danger: #c02626;
-  --danger-soft: #fdecec;
-  --info: #1d5fbf;
-  --info-soft: #e8f0fe;
+  /* Brand hues. The `-soft` tints are the brand colour at low opacity; the
+   * text tones are darkened from the brand value, because #3BB200, #FFB731 and
+   * #FF0000 as text on white land at 3.2:1, 1.9:1 and 4.0:1 -- below the 4.5:1
+   * needed to be readable. The hue is unchanged, only the lightness. */
+  --success: #2e8a00;
+  --success-soft: #edf8e6;
+  --warning: #8a6100;
+  --warning-soft: #fff5e2;
+  --danger: #d40000;
+  --danger-soft: #ffecec;
+  --info: #0055ff;
+  --info-soft: #e8f0ff;
 
   --radius: 10px;
   --radius-lg: 16px;
   --radius-sm: 6px;
 
-  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 4%);
-  --shadow-lg: 0 8px 24px rgb(16 24 40 / 10%);
+  --shadow: 0 1px 2px rgb(31 35 46 / 6%), 0 1px 3px rgb(31 35 46 / 4%);
+  --shadow-lg: 0 8px 24px rgb(31 35 46 / 10%);
 
   --sidebar-width: 248px;
   --topbar-height: 60px;
 
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    "Noto Sans", sans-serif;
+  /* Raleway first; the rest is the fallback until it is bundled or installed. */
+  --font: "Raleway", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 }
@@ -56,30 +89,32 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --bg: #0e1117;
-    --surface: #161a23;
-    --surface-2: #1c212c;
-    --surface-hover: #222836;
-    --border: #272e3b;
-    --border-strong: #38414f;
+    /* blackone (#1F232E) becomes the surface; the page sits one step darker. */
+    --bg: #14171f;
+    --surface: #1f232e;
+    --surface-2: #262b38;
+    --surface-hover: #2e3444;
+    --border: #2f3543;
+    --border-strong: #414958;
 
-    --text: #e8eaf0;
-    --text-muted: #9aa3b4;
-    --text-faint: #6f7787;
+    --text: #eef0f5;
+    --text-muted: #a9b0be;
+    --text-faint: #7c8494;
 
-    --accent: #818cf8;
-    --accent-hover: #a5b0fb;
-    --accent-soft: #1e2233;
-    --accent-text: #10121a;
+    /* #0055FF on a dark background is only 2.4:1. Same hue, lifted to 7.1:1. */
+    --accent: #5c93ff;
+    --accent-hover: #85afff;
+    --accent-soft: #16223d;
+    --accent-text: #0b1220;
 
-    --success: #4ade80;
-    --success-soft: #12281e;
-    --warning: #fbbf24;
-    --warning-soft: #2a2110;
-    --danger: #f87171;
-    --danger-soft: #2c1618;
-    --info: #60a5fa;
-    --info-soft: #12203a;
+    --success: #62d42a;
+    --success-soft: #14260c;
+    --warning: #ffb731;
+    --warning-soft: #2b2008;
+    --danger: #ff5a5a;
+    --danger-soft: #2d1414;
+    --info: #5c93ff;
+    --info-soft: #16223d;
 
     --shadow: 0 1px 2px rgb(0 0 0 / 40%);
     --shadow-lg: 0 8px 24px rgb(0 0 0 / 45%);
@@ -89,30 +124,32 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0e1117;
-  --surface: #161a23;
-  --surface-2: #1c212c;
-  --surface-hover: #222836;
-  --border: #272e3b;
-  --border-strong: #38414f;
+  /* blackone (#1F232E) becomes the surface; the page sits one step darker. */
+  --bg: #14171f;
+  --surface: #1f232e;
+  --surface-2: #262b38;
+  --surface-hover: #2e3444;
+  --border: #2f3543;
+  --border-strong: #414958;
 
-  --text: #e8eaf0;
-  --text-muted: #9aa3b4;
-  --text-faint: #6f7787;
+  --text: #eef0f5;
+  --text-muted: #a9b0be;
+  --text-faint: #7c8494;
 
-  --accent: #818cf8;
-  --accent-hover: #a5b0fb;
-  --accent-soft: #1e2233;
-  --accent-text: #10121a;
+  /* #0055FF on a dark background is only 2.4:1. Same hue, lifted to 7.1:1. */
+  --accent: #5c93ff;
+  --accent-hover: #85afff;
+  --accent-soft: #16223d;
+  --accent-text: #0b1220;
 
-  --success: #4ade80;
-  --success-soft: #12281e;
-  --warning: #fbbf24;
-  --warning-soft: #2a2110;
-  --danger: #f87171;
-  --danger-soft: #2c1618;
-  --info: #60a5fa;
-  --info-soft: #12203a;
+  --success: #62d42a;
+  --success-soft: #14260c;
+  --warning: #ffb731;
+  --warning-soft: #2b2008;
+  --danger: #ff5a5a;
+  --danger-soft: #2d1414;
+  --info: #5c93ff;
+  --info-soft: #16223d;
 
   --shadow: 0 1px 2px rgb(0 0 0 / 40%);
   --shadow-lg: 0 8px 24px rgb(0 0 0 / 45%);
@@ -254,17 +291,31 @@ pre {
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-size: 0.85rem;
-  font-weight: 800;
-  flex: none;
+/* The wordmark is a fixed-colour brand asset, so it is used as-is rather than
+ * recoloured. On a dark background #0055FF drops to 2.4:1, so it is lifted
+ * tonally -- the hue is untouched. Swap in a dedicated dark logo by overriding
+ * this rule if you have one. */
+.brand-logo {
+  display: block;
+  width: 100%;
+  max-width: 168px;
+  height: auto;
+}
+
+:root[data-theme="dark"] .brand-logo {
+  filter: brightness(1.6) saturate(0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo {
+    filter: brightness(1.6) saturate(0.92);
+  }
+}
+
+.brand-text {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
 }
 
 .nav-group + .nav-group {
@@ -303,13 +354,6 @@ pre {
   background: var(--accent-soft);
   color: var(--accent);
   font-weight: 620;
-}
-
-.nav-count {
-  margin-left: auto;
-  font-size: 0.72rem;
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
 }
 
 .sidebar-footer {
@@ -438,7 +482,7 @@ pre {
 }
 
 .grid-tiles {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
 }
 
 /* ---------------------------------------------------------------- stats */
@@ -484,8 +528,8 @@ pre {
 .tile {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.95rem 1.05rem;
+  gap: 0.1rem;
+  padding: 0.75rem 0.85rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -505,7 +549,7 @@ pre {
 }
 
 .tile-count {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 680;
   font-variant-numeric: tabular-nums;
 }
@@ -556,6 +600,35 @@ tbody tr:hover {
 
 tbody tr:last-child td {
   border-bottom: none;
+}
+
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.th-sort:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.th-arrow {
+  opacity: 0;
+  font-size: 0.85em;
+  transition: opacity 0.12s ease;
+}
+
+th:hover .th-arrow,
+.th-sort.is-sorted .th-arrow {
+  opacity: 1;
+}
+
+.th-sort.is-sorted {
+  color: var(--accent);
 }
 
 td.numeric,
@@ -988,11 +1061,11 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  margin-bottom: 0.35rem;
-  font-size: 1.2rem;
-  font-weight: 720;
-  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.login-brand .brand-logo {
+  max-width: 180px;
 }
 
 .login-sub {
