@@ -309,6 +309,42 @@ class TestOpenRedirect:
         assert response.status_code == 303
         assert response.headers["location"] == "/admin", target
 
+    @pytest.mark.parametrize(
+        "target",
+        [
+            "https://evil.example.com",
+            "//evil.example.com",
+            "///evil.example.com",
+            "/\\evil.example.com",
+            "\\\\evil.example.com",
+            "//\\evil.example.com",
+            "javascript:alert(1)",
+            "http:/evil.example.com",
+            "/ /evil.example.com",
+            "/a\tb",
+            "/x\r\nSet-Cookie: y",
+            "/\x00evil",
+            "\t//evil.example.com",
+            "/" + "a" * 600,
+        ],
+    )
+    def test_the_sanitiser_never_returns_an_offsite_target(self, target: str) -> None:
+        """The invariant, checked directly rather than through a request.
+
+        Whatever comes back must be a single-slash, same-site path: no scheme,
+        no host, no backslash, no whitespace or control characters.
+        """
+        from urllib.parse import urlsplit
+
+        from greatapi.admin.views.auth import _safe_next
+
+        result = _safe_next(target)
+        assert result.startswith("/") and not result.startswith("//"), result
+        parsed = urlsplit(result)
+        assert not parsed.scheme and not parsed.netloc, result
+        assert "\\" not in result
+        assert not any(c.isspace() or ord(c) < 0x20 for c in result), result
+
     @pytest.mark.parametrize("target", ["/admin/usage", "/admin/jobs?status=failed", "/"])
     async def test_same_site_targets_are_honoured(
         self, client: httpx.AsyncClient, admin_user: User, target: str

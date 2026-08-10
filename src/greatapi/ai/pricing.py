@@ -24,6 +24,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass
+from functools import cache
 
 from greatapi.ai.types import Usage
 
@@ -61,7 +62,6 @@ _pricing: dict[str, ModelPrice] = {
 }
 
 _unpriced: set[str] = set()
-_loaded_env = False
 
 
 def register_pricing(model: str, *, input_per_1m: float, output_per_1m: float) -> None:
@@ -107,12 +107,13 @@ def unpriced_models() -> set[str]:
     return set(_unpriced)
 
 
+@cache
 def _load_env_pricing() -> None:
-    global _loaded_env
-    if _loaded_env:
-        return
-    _loaded_env = True
+    """Read prices from the environment once.
 
+    ``cache`` rather than a module-level flag: run-once semantics without a
+    second piece of state to keep in step.
+    """
     raw = os.environ.get(_PRICING_ENV_VAR)
     if not raw:
         return

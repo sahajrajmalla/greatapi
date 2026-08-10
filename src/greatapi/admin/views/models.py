@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from typing import Any
+from urllib.parse import quote
 
 from fastapi import APIRouter, Form, HTTPException, Query, Request, status
 from fastapi.responses import RedirectResponse
@@ -215,7 +216,7 @@ async def edit_submit(
 
     await _audit(session, user, AuditAction.update, model_admin, instance)
     return RedirectResponse(
-        flash_url(f"{_base_url(model_admin)}/{_identity(instance)}", "saved"),
+        flash_url(f"{_base_url(model_admin)}/{_url_segment(instance)}", "saved"),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
@@ -314,6 +315,16 @@ def _assert_creatable(model_admin: ModelAdmin) -> None:
     reason = model_admin.creation_blocked_reason()
     if reason is not None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, reason)
+
+
+def _url_segment(instance: Base) -> str:
+    """The record's primary key, percent-encoded for use as a path segment.
+
+    Encoding matters even though the value comes from the database: a key
+    containing ``?``, ``#`` or a slash would otherwise change the structure of
+    the URL it is interpolated into rather than just its last segment.
+    """
+    return quote(str(_identity(instance)), safe="")
 
 
 def _identity(obj: Any) -> Any | None:

@@ -13,8 +13,6 @@ import re
 import secrets
 from pathlib import Path
 
-from jinja2 import Environment
-
 from greatapi.conf.settings import PACKAGE_DIR
 from greatapi.exceptions import GreatAPIError
 
@@ -33,18 +31,17 @@ APP_TEMPLATE_DIR = PACKAGE_DIR / "conf" / "app_template"
 TEMPLATE_SUFFIX = ".py-tpl"
 GENERIC_SUFFIX = "-tpl"
 
-# Autoescaping is off deliberately, and must stay off: these templates render
-# Python source, .env files and an alembic.ini -- HTML-escaping them would turn
-# a quote in a docstring into `&#34;` and produce a project that does not parse.
-#
-# It is not an XSS surface. The only variables are `project_name` and
-# `app_name`, both already checked by `validate_name` to be plain Python
-# identifiers, and the output is written to disk rather than served. The admin
-# templates, which *are* served, use Jinja2Templates with autoescaping on.
-_TEMPLATES = Environment(
-    autoescape=False,  # noqa: S701 - renders source files, not markup; see above
-    keep_trailing_newline=True,
-)
+#: The scaffolding needs four substitutions and no logic, so it does them by
+#: name rather than running a template engine.
+#:
+#: Jinja would mean choosing an autoescape setting, and the only correct choice
+#: here is "off" -- these files are Python source, a .env and an alembic.ini, so
+#: HTML-escaping a quote in a docstring would produce a project that does not
+#: parse. Rather than carry a permanently-disabled safety feature and explain it
+#: forever, there is no engine: no expression evaluation, and so no template
+#: injection to reason about. `string.Template` is avoided for the same reason
+#: in miniature -- alembic.ini contains `%` and `$` that it would misread.
+PLACEHOLDERS = ("project_name", "app_name", "app_name.capitalize()", "secret_key")
 
 #: Names that would shadow the framework or a standard module the templates use.
 RESERVED_NAMES = {
@@ -113,13 +110,38 @@ def render_tree(source: Path, destination: Path, context: dict[str, str]) -> lis
             continue
 
         raw = entry.read_text()
-        content = raw if entry.suffix == ".mako" else _TEMPLATES.from_string(raw).render(**context)
+        content = raw if entry.suffix == ".mako" else _substitute(raw, context, entry)
 
         target = destination / target_name
         target.write_text(content)
         written.append(target)
 
     return written
+
+
+def _substitute(raw: str, context: dict[str, str], source: Path) -> str:
+    """Replace every ``{{ name }}`` placeholder, and refuse to leave one behind.
+
+    An unrecognised placeholder means a typo in a template, which would
+    otherwise ship to the user as literal ``{{ whatever }}`` in their new
+    project. Failing here turns that into a bug we catch instead of one they do.
+    """
+    values = dict(context)
+    if "app_name" in values:
+        values["app_name.capitalize()"] = values["app_name"].capitalize()
+
+    content = raw
+    for name in PLACEHOLDERS:
+        if name in values:
+            content = content.replace("{{ " + name + " }}", values[name])
+
+    leftover = re.search(r"\{\{\s*([^}]+?)\s*\}\}", content)
+    if leftover is not None:
+        raise GreatAPIError(
+            f"{source.name} uses an unknown placeholder {{{{ {leftover.group(1)} }}}}. "
+            f"Known placeholders: {', '.join(PLACEHOLDERS)}."
+        )
+    return content
 
 
 def _output_name(name: str, context: dict[str, str]) -> str:

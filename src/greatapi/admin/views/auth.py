@@ -7,7 +7,7 @@ before the check ran -- ``curl`` skipped it entirely.
 
 from __future__ import annotations
 
-import re
+from urllib.parse import urlsplit, urlunsplit
 
 from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
@@ -30,26 +30,39 @@ auth_router = APIRouter(include_in_schema=False)
 _LOGIN_FAILED = "Incorrect username or password."
 
 
-#: A same-site destination: one leading slash, then nothing that could turn it
-#: into an absolute or protocol-relative URL. Anything else falls back to the
-#: admin root rather than being cleaned up -- a redirect target is not worth
-#: guessing at.
-_SAFE_NEXT = re.compile(r"^/(?![/\\])[^\\\s]*$")
-
-
 def _safe_next(raw: str | None) -> str:
-    r"""Return ``raw`` only if it is a same-site path, else the admin root.
+    r"""Return a same-site destination, or the admin root.
 
-    Rejects ``//evil.com`` and ``/\evil.com`` alike: browsers normalise a
-    backslash to a forward slash, so the second is protocol-relative too and a
-    naive ``startswith("//")`` check misses it. Whitespace and control
-    characters are rejected for the same reason -- a browser may strip them and
-    change what the URL means.
+    The result is *rebuilt* from the parsed path and query rather than the
+    caller's string being handed back, so nothing outside those two components
+    can survive -- no scheme, no host, no fragment.
+
+    A backslash is rejected outright: browsers normalise it to a forward slash,
+    which makes ``/\evil.com`` protocol-relative, and a naive
+    ``startswith("//")`` check misses it. Whitespace and control characters go
+    too, since a browser may strip them and change what the URL means.
     """
     settings = get_settings()
-    if raw and len(raw) <= 512 and _SAFE_NEXT.match(raw) and "\x00" not in raw:
-        return raw
-    return settings.admin_path
+    if not raw or len(raw) > 512:
+        return settings.admin_path
+
+    if "\\" in raw or any(character.isspace() or ord(character) < 0x20 for character in raw):
+        return settings.admin_path
+
+    # Reject the leading-slash-run forms up front. `urlsplit` reads "///x" as
+    # an empty authority and a "/x" path, but browsers do not agree with each
+    # other about that, and a redirect target is not the place to find out.
+    if raw.startswith("//"):
+        return settings.admin_path
+
+    parts = urlsplit(raw)
+    # A scheme or a host means it points somewhere else entirely.
+    if parts.scheme or parts.netloc:
+        return settings.admin_path
+    if not parts.path.startswith("/") or parts.path.startswith("//"):
+        return settings.admin_path
+
+    return urlunsplit(("", "", parts.path, parts.query, ""))
 
 
 @auth_router.get("/login")
