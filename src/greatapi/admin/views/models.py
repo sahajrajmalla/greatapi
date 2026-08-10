@@ -276,7 +276,7 @@ async def set_password(
     await session.commit()
     await _audit(session, user, AuditAction.update, model_admin, instance, note="password reset")
     return RedirectResponse(
-        flash_url(f"{_base_url(model_admin)}/{pk}", "password-changed"),
+        flash_url(f"{_base_url(model_admin)}/{_url_segment(instance)}", "password-changed"),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
