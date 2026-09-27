@@ -1,0 +1,24 @@
+name: GreatAPI CodeQL
+
+# The security-and-quality suite includes maintainability queries that predate
+# `typing.Protocol`. Two of them fire on correct, idiomatic code all over this
+# package, and leaving them on means a real finding arrives buried in a dozen
+# false ones.
+#
+# Only these two are excluded, and only for the reasons below. Every security
+# query stays on.
+queries:
+  - uses: security-and-quality
+
+query-filters:
+  # Fires on `...` in a Protocol method body -- which is how a Protocol is
+  # written -- and on a bare `await task`, whose effect is the awaiting.
+  # greatapi/ai/providers/base.py, keys/ratelimit.py, streaming.py, jobs/worker.py
+  - exclude:
+      id: py/ineffectual-statement
+
+paths-ignore:
+  - tests
+  - examples
+  - src/greatapi/conf/project_template
+  - src/greatapi/conf/app_template

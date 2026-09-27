@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: "1"
+  GREATAPI_SECRET_KEY: ci-secret-key-not-used-for-anything-real-0000000000
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests examples
+      - run: ruff format --check src tests examples
+      - run: mypy
+
+  test:
+    name: Test ${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          # Path handling in the scaffolding is the thing most likely to differ,
+          # so cover the other platforms on one interpreter rather than all.
+          - os: macos-latest
+            python: "3.12"
+          - os: windows-latest
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest --cov=greatapi --cov-report=xml --cov-fail-under=82
+      - uses: codecov/codecov-action@v5
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
+
+  base-install:
+    name: Core works with no extras
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      # Deliberately no [ai]: this job is what keeps the lean-core promise honest.
+      - run: pip install -e "." pytest pytest-asyncio pytest-cov httpx
+      - name: Import greatapi.ai without its optional dependencies
+        run: |
+          python - <<'PY'
+          import greatapi.ai
+          from greatapi.exceptions import MissingDependencyError
+
+          # The module must import, and the echo provider must work offline.
+          provider, model = greatapi.ai.resolve("echo:demo")
+          assert provider.name == "echo", provider
+
+          try:
+              greatapi.ai.resolve("anthropic:whatever")
+          except MissingDependencyError as exc:
+              assert 'pip install "greatapi[anthropic]"' in str(exc), exc
+              print("MissingDependencyError is actionable:", str(exc).splitlines()[-1])
+          else:
+              raise SystemExit("expected MissingDependencyError without the anthropic extra")
+          PY
+      - run: pytest -m "not requires_ai" --no-cov
+
+  package:
+    name: Build and smoke-test the wheel
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*
+
+      # The journey a real user takes. This is what catches missing templates
+      # and static files, which unit tests running from the source tree cannot.
+      - name: Install the wheel and run the quickstart
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv /tmp/smoke
+          if [ -d /tmp/smoke/Scripts ]; then BIN=/tmp/smoke/Scripts; else BIN=/tmp/smoke/bin; fi
+          "$BIN/python" -m pip install --quiet --upgrade pip
+          "$BIN/python" -m pip install --quiet "$(ls dist/*.whl)[ai]"
+
+          cd "$(mktemp -d)"
+          "$BIN/greatapi" --version
+          "$BIN/greatapi" startproject demo
+          cd demo
+
+          export GREATAPI_SECRET_KEY="$("$BIN/greatapi" generate-secret)"
+          export GREATAPI_DEBUG=true
+
+          "$BIN/greatapi" startapp catalog
+          "$BIN/greatapi" makemigrations -m initial
+          "$BIN/greatapi" migrate
+          "$BIN/greatapi" createsuperuser --noinput \
+            --email ci@example.com --username ci --password "hunter2hunter2"
+          "$BIN/greatapi" routes
+
+          # Boot it and check the API, the admin and its static assets.
+          "$BIN/python" - <<'PY'
+          import asyncio, httpx
+          from main import app
+
+          async def main():
+              transport = httpx.ASGITransport(app=app)
+              async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+                  async with app.router.lifespan_context(app):
+                      for path in ("/health", "/", "/catalog/items", "/admin/login",
+                                   "/admin/_static/greatapi.css", "/admin/_static/greatapi.js"):
+                          r = await c.get(path)
+                          print(f"{r.status_code} {path}")
+                          assert r.status_code == 200, (path, r.status_code)
+                      css = await c.get("/admin/_static/greatapi.css")
+                      assert len(css.content) > 5000, "the stylesheet is missing from the wheel"
+                      body = (await c.get("/admin/login")).text
+                      assert "cdn." not in body and "googleapis" not in body
+
+          asyncio.run(main())
+          print("quickstart OK")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: distributions
+          path: dist/
+
+  docs:
+    name: Documentation builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[docs]"
+      - run: mkdocs build --strict

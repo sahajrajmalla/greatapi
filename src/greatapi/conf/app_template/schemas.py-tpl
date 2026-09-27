@@ -1,0 +1,31 @@
+"""Request and response shapes for the {{ app_name }} app."""
+
+from __future__ import annotations
+
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class {{ app_name.capitalize() }}ItemIn(BaseModel):
+    """What a client sends."""
+
+    title: str = Field(min_length=1, max_length=200)
+    body: str | None = None
+    is_published: bool = False
+
+
+class {{ app_name.capitalize() }}ItemOut(BaseModel):
+    """What the API returns.
+
+    Separate from the input model on purpose: server-owned fields like `id` and
+    `created_at` must never be settable by a client.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    title: str
+    body: str | None
+    is_published: bool
+    created_at: datetime

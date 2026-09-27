@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+
+{% block title %}API keys &middot; {{ site_title }}{% endblock %}
+{% block heading %}API keys{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>API keys</h1>
+    <p>Machine-to-machine credentials with scopes, rate limits and spend caps.</p>
+  </div>
+</div>
+
+{% if new_key %}
+<div class="callout">
+  <strong>Copy this key now.</strong> Only its hash is stored, so it cannot be
+  shown again.
+  <div class="secret">
+    <code id="new-key">{{ new_key }}</code>
+    <button type="button" class="btn btn-sm" data-copy="#new-key">Copy</button>
+  </div>
+</div>
+{% endif %}
+
+<section class="card">
+  <div class="card-header"><h2>Create a key</h2></div>
+  <div class="card-body">
+    <form method="post" action="{{ admin_path }}/api-keys">
+      <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">Name<span class="required-mark" aria-hidden="true">*</span></label>
+          <input type="text" id="name" name="name" required maxlength="120"
+                 placeholder="Mobile app" />
+        </div>
+        <div class="field">
+          <label for="scopes">Scopes</label>
+          <input type="text" id="scopes" name="scopes" placeholder="chat:write jobs:read" />
+          <span class="field-help">Space or comma separated.</span>
+        </div>
+        <div class="field">
+          <label for="rate_limit_per_minute">Rate limit</label>
+          <input type="number" id="rate_limit_per_minute" name="rate_limit_per_minute"
+                 min="1" placeholder="60" />
+          <span class="field-help">Requests per minute. Blank for unlimited.</span>
+        </div>
+        <div class="field">
+          <label for="monthly_budget_usd">Monthly budget</label>
+          <input type="number" id="monthly_budget_usd" name="monthly_budget_usd"
+                 min="0" step="any" placeholder="50.00" />
+          <span class="field-help">USD. Requests get 402 once exhausted.</span>
+        </div>
+        <div class="field">
+          <label for="expires_at">Expires</label>
+          <input type="datetime-local" id="expires_at" name="expires_at" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ icon('plus') }} Create key</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header"><h2>Existing keys</h2></div>
+  {% if keys %}
+  <div class="table-wrap">
+    <table class="table-stack">
+      <thead>
+        <tr>
+          <th>Name</th><th>Key</th><th>Scopes</th><th>Status</th>
+          <th class="numeric">Limit</th><th class="numeric">Spend</th>
+          <th>Last used</th>
+          <th class="actions"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key in keys %}
+        <tr>
+          <td data-label="Name">{{ key.name }}</td>
+          <td data-label="Key"><code>gapi_{{ key.prefix }}_<span class="redacted">••••</span></code></td>
+          <td data-label="Scopes">
+            {% for scope in key.scopes %}
+            <span class="badge badge-neutral">{{ scope }}</span>
+            {% else %}
+            <span class="field-help">none</span>
+            {% endfor %}
+          </td>
+          <td data-label="Status">
+            {% if not key.is_active %}
+            <span class="badge badge-danger">revoked</span>
+            {% elif key.expires_at and key.expires_at < now %}
+            <span class="badge badge-warning">expired</span>
+            {% else %}
+            <span class="badge badge-success">active</span>
+            {% endif %}
+          </td>
+          <td data-label="Limit" class="numeric">
+            {{ (key.rate_limit_per_minute ~ '/min') if key.rate_limit_per_minute else '—' }}
+          </td>
+          <td data-label="Spend" class="numeric">
+            ${{ "%.2f"|format(spend.get(key.id, 0.0)) }}{% if key.monthly_budget_usd %}
+            <span class="field-help">/ ${{ "%.2f"|format(key.monthly_budget_usd) }}</span>
+            {% endif %}
+          </td>
+          <td data-label="Last used">
+            {{ key.last_used_at.strftime("%d %b %H:%M") if key.last_used_at else 'never' }}
+          </td>
+          <td class="actions">
+            {% if key.is_active %}
+            <form class="inline-form" method="post"
+                  action="{{ admin_path }}/api-keys/{{ key.id }}/revoke"
+                  data-confirm="Revoke “{{ key.name }}”? Anything using it stops working immediately.">
+              <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+              <button type="submit" class="btn btn-sm btn-danger">Revoke</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h3>No API keys yet</h3>
+    <p>Create one above, then protect an endpoint with
+      <code>Depends(require_api_key("chat:write"))</code>.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

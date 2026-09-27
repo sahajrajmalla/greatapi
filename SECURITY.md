@@ -1,31 +1,49 @@
 # Security Policy
 
-Security is very important for GreatAPI and its community. 🔒
+## Supported versions
 
-Learn more about it below. 👇
+| Version | Supported |
+|---|---|
+| 2.x | Yes |
+| 1.x | Security fixes only, until 2027-08 |
 
-## Supported Versions
+1.x contains known vulnerabilities that cannot be fixed without breaking
+changes — most importantly a JWT signing key that was published with the
+package, and an admin whose authorization check ran only in the browser. If you
+are on 1.x, please upgrade. See [MIGRATION.md](MIGRATION.md).
 
-The latest versions of GreatAPI are supported.
+## Reporting a vulnerability
 
-You are encouraged to [write tests](https://fastapi.tiangolo.com/tutorial/testing/) for your application and update your GreatAPI version frequently after ensuring that your tests are passing. This way you will benefit from the latest features, bug fixes, and **security fixes**.
+Please report privately, through
+[GitHub's private advisory form](https://github.com/sahajrajmalla/greatapi/security/advisories/new),
+or by email to mallasahajraj@gmail.com.
 
-You can learn more about [GreatAPI versions and how to pin and upgrade them](https://fastapi.tiangolo.com/deployment/versions/) for your project in the docs.
+Please include:
 
-## Reporting a Vulnerability
+- what an attacker can do, and what they need in order to do it
+- the affected version and the smallest reproduction you can manage
+- anything you already know about a fix
 
-If you think you found a vulnerability, and even if you are not sure about it, please report it right away by sending an email to: mallasahajraj@gmail.com. Please try to be as explicit as possible, describing all the steps and example code to reproduce the security issue.
+You can expect an acknowledgement within three days and an assessment within
+seven. If the report is valid, we will agree a disclosure date with you, credit
+you in the advisory unless you would rather we did not, and release a fix for
+the supported versions.
 
-I (the author, [@sahajrajmalla](https://www.linkedin.com/in/sahajrajmalla/)) will review it thoroughly and get back to you.
+Please do not open a public issue, and please give us a chance to ship a fix
+before disclosing.
 
-## Public Discussions
+## Deploying GreatAPI safely
 
-Please restrain from publicly discussing a potential security vulnerability. 🙊
-
-It's better to discuss privately and try to find a solution first, to limit the potential impact as much as possible.
-
----
-
-Thanks for your help!
-
-The GreatAPI community and I thank you for that. 🙇
+- **Set `GREATAPI_SECRET_KEY`** from `greatapi generate-secret`, and keep it out
+  of source control. The app refuses to start without one unless `DEBUG` is on.
+- **Leave `GREATAPI_DEBUG` off** in production. It controls error verbosity,
+  whether tables are created on boot, and whether session cookies require HTTPS.
+- **Serve over HTTPS.** Session cookies are `Secure` whenever debug is off, and
+  will not be sent over plain HTTP.
+- **Use migrations, not `create_tables`,** so schema changes are reviewed.
+- **Give API keys the narrowest scopes** that work, and set a rate limit and a
+  monthly budget on each.
+- **Keep the admin off the public internet** if you can — behind a VPN, an IP
+  allow-list, or an authenticating proxy.
+- The default rate limiter is per-process. Behind several workers, supply a
+  shared implementation via `greatapi.keys.set_rate_limiter`.

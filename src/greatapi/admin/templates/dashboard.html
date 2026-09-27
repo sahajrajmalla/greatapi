@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+
+{% block title %}Dashboard &middot; {{ site_title }}{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Overview</h1>
+    <p>Signed in as {{ current_user.username }}.</p>
+  </div>
+</div>
+
+{% if ai_enabled %}
+<section class="grid grid-stats" aria-label="AI usage, last 7 days">
+  <div class="stat">
+    <span class="stat-label">Calls · 7d</span>
+    <span class="stat-value">{{ "{:,}".format(ai_calls) }}</span>
+    <span class="stat-hint">Provider requests recorded</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Tokens · 7d</span>
+    <span class="stat-value">{{ "{:,}".format(ai_tokens) }}</span>
+    {{ ai_sparkline }}
+  </div>
+  <div class="stat">
+    <span class="stat-label">Cost · 7d</span>
+    <span class="stat-value">${{ "%.2f"|format(ai_cost) }}</span>
+    <span class="stat-hint"><a href="{{ admin_path }}/usage">Full breakdown</a></span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Jobs</span>
+    <span class="stat-value">{{ job_counts.queued + job_counts.running }}</span>
+    <span class="stat-hint">
+      {{ job_counts.running }} running,
+      {{ job_counts.queued }} queued{% if job_counts.failed %},
+      <a href="{{ admin_path }}/jobs?status=failed">{{ job_counts.failed }} failed</a>{% endif %}
+    </span>
+  </div>
+</section>
+{% else %}
+<section class="grid grid-stats" aria-label="Queue status">
+  <div class="stat">
+    <span class="stat-label">Queued jobs</span>
+    <span class="stat-value">{{ job_counts.queued }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Running</span>
+    <span class="stat-value">{{ job_counts.running }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Succeeded</span>
+    <span class="stat-value">{{ job_counts.succeeded }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Failed</span>
+    <span class="stat-value">{{ job_counts.failed }}</span>
+    {% if job_counts.failed %}
+    <span class="stat-hint"><a href="{{ admin_path }}/jobs?status=failed">Review</a></span>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<div class="grid grid-halves">
+  <section class="card">
+    <div class="card-header"><h2>Models</h2></div>
+    <div class="card-body">
+      {% if tiles %}
+      <div class="grid grid-tiles">
+        {% for tile in tiles %}
+        <a class="tile" href="{{ admin_path }}/model/{{ tile.group }}/{{ tile.slug }}">
+          <span class="tile-group">{{ tile.group }}</span>
+          <span class="tile-name">{{ tile.label }}</span>
+          <span class="tile-count">{{ "{:,}".format(tile.count) }}</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <h3>No models registered</h3>
+        <p>Use <code>@admin.register(YourModel)</code> to add one.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Recent activity</h2>
+      <span class="spacer"></span>
+      <a class="btn btn-sm btn-ghost"
+         href="{{ admin_path }}/model/system/greatapi_audit_log">View all</a>
+    </div>
+    <div class="card-body">
+      {% if recent_activity %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Action</th><th>Details</th><th>When</th></tr>
+          </thead>
+          <tbody>
+            {% for entry in recent_activity %}
+            <tr>
+              <td>
+                {% set level = {'create': 'success', 'delete': 'danger', 'update': 'warning'} %}
+                <span class="badge badge-{{ level.get(entry.action.value, 'info') }}">
+                  {{ entry.action.value }}
+                </span>
+              </td>
+              <td><span class="cell-truncate">{{ entry.message }}</span></td>
+              <td>{{ entry.created_at.strftime("%d %b %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <h3>Nothing yet</h3>
+        <p>Changes made through the admin will show up here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

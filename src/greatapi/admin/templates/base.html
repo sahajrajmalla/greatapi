@@ -1,0 +1,107 @@
+{% from "partials/icons.html" import icon %}
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{% block title %}{{ site_title }}{% endblock %}</title>
+    <link rel="icon" href="{{ static_path }}/favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="{{ static_path }}/greatapi.css?v={{ asset_version }}" />
+    {# Loaded synchronously so the saved theme applies before first paint. #}
+    <script src="{{ static_path }}/greatapi.js?v={{ asset_version }}"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="shell">
+      <nav class="sidebar" data-sidebar aria-label="Admin sections">
+        <a class="brand" href="{{ admin_path }}" aria-label="{{ site_title }}">
+          {# The brand wordmark already reads "GreatAPI", so showing the title
+             next to it would say it twice. A customised title wins instead. #}
+          {% if site_title == "GreatAPI" %}
+          <img class="brand-logo" src="{{ static_path }}/logo.svg" alt="GreatAPI" />
+          {% else %}
+          <span class="brand-text">{{ site_title }}</span>
+          {% endif %}
+        </a>
+
+        <div class="nav-group">
+          <a class="nav-link" href="{{ admin_path }}"
+            {% if active == 'dashboard' %}aria-current="page"{% endif %}>
+            {{ icon('grid') }}
+            Dashboard
+          </a>
+          {% if ai_enabled %}
+          <a class="nav-link" href="{{ admin_path }}/usage"
+            {% if active == 'usage' %}aria-current="page"{% endif %}>
+            {{ icon('chart') }}
+            AI usage
+          </a>
+          {% endif %}
+          <a class="nav-link" href="{{ admin_path }}/jobs"
+            {% if active == 'jobs' %}aria-current="page"{% endif %}>
+            {{ icon('clock') }}
+            Jobs
+          </a>
+          <a class="nav-link" href="{{ admin_path }}/api-keys"
+            {% if active == 'api-keys' %}aria-current="page"{% endif %}>
+            {{ icon('key') }}
+            API keys
+          </a>
+        </div>
+
+        {% for group, admins in groups.items() %}
+        <div class="nav-group">
+          <p class="nav-heading">{{ group }}</p>
+          {% for entry in admins %}
+          <a class="nav-link"
+             href="{{ admin_path }}/model/{{ group }}/{{ entry.slug }}"
+             {% if active == 'model:' ~ group ~ ':' ~ entry.slug %}aria-current="page"{% endif %}>
+            {{ entry.label }}
+          </a>
+          {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="sidebar-footer">
+          <p>GreatAPI admin</p>
+        </div>
+      </nav>
+
+      <div class="main">
+        <header class="topbar">
+          <button type="button" class="btn btn-icon menu-toggle" data-menu-toggle
+                  aria-expanded="false" aria-label="Toggle navigation">
+            {{ icon('menu') }}
+          </button>
+          <span class="topbar-title">{% block heading %}{{ site_title }}{% endblock %}</span>
+          <div class="topbar-actions">
+            <button type="button" class="btn btn-icon btn-ghost" data-theme-toggle
+                    aria-pressed="false" aria-label="Switch theme" title="Switch theme">
+              {{ icon('theme') }}
+            </button>
+            {% if current_user %}
+            <a class="btn btn-sm btn-ghost" href="{{ admin_path }}/account">
+              {{ current_user.username }}
+            </a>
+            <form class="inline-form" method="post" action="{{ admin_path }}/logout">
+              <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+              <button type="submit" class="btn btn-sm">Sign out</button>
+            </form>
+            {% endif %}
+          </div>
+        </header>
+
+        <main class="content" id="main-content">
+          {% if flash_message %}
+          <div class="flash flash-{{ flash_level }}" role="status">{{ flash_message }}</div>
+          {% endif %}
+          {% if error %}
+          <div class="flash flash-error" role="alert">{{ error }}</div>
+          {% endif %}
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

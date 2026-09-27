@@ -1,0 +1,44 @@
+"""Routes for the {{ app_name }} app.
+
+The module-level `router` is what GreatAPI includes; you do not have to
+register it anywhere.
+"""
+
+from __future__ import annotations
+
+from fastapi import APIRouter, HTTPException, Query, status
+
+from greatapi.security import DbSession
+
+from {{ app_name }}.repository import create_item, get_item, list_items
+from {{ app_name }}.schemas import {{ app_name.capitalize() }}ItemIn, {{ app_name.capitalize() }}ItemOut
+
+router = APIRouter(prefix="/{{ app_name }}", tags=["{{ app_name.capitalize() }}"])
+
+
+@router.get("/items", response_model=list[{{ app_name.capitalize() }}ItemOut])
+async def read_items(
+    session: DbSession,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+) -> list[{{ app_name.capitalize() }}ItemOut]:
+    return await list_items(session, limit=limit, offset=offset)  # type: ignore[return-value]
+
+
+@router.get("/items/{item_id}", response_model={{ app_name.capitalize() }}ItemOut)
+async def read_item(item_id: int, session: DbSession) -> {{ app_name.capitalize() }}ItemOut:
+    item = await get_item(session, item_id)
+    if item is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"No item with id {item_id}.")
+    return item  # type: ignore[return-value]
+
+
+@router.post(
+    "/items",
+    response_model={{ app_name.capitalize() }}ItemOut,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_item(
+    payload: {{ app_name.capitalize() }}ItemIn, session: DbSession
+) -> {{ app_name.capitalize() }}ItemOut:
+    return await create_item(session, payload)  # type: ignore[return-value]

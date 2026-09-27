@@ -80,15 +80,25 @@ celerybeat.pid
 
 # Environments
 .env
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-.vscode
-test.ipynb
-examples
 
+# Editors
+.vscode/
+.idea/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+
+# Local databases created by the dev server / demo
+*.db
+*.sqlite3
 
 .DS_Store
+site/

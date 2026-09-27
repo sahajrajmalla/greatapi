@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}AI usage &middot; {{ site_title }}{% endblock %}
+{% block heading %}AI usage{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>AI usage</h1>
+    <p>Tokens, cost and latency recorded on every provider call.</p>
+  </div>
+  <div class="page-header-actions">
+    <form method="get" action="{{ admin_path }}/usage">
+      <label class="visually-hidden" for="days">Time range</label>
+      <select id="days" name="days" data-autosubmit-select>
+        {% for option in [7, 14, 30, 90] %}
+        <option value="{{ option }}" {% if days == option %}selected{% endif %}>
+          Last {{ option }} days
+        </option>
+        {% endfor %}
+      </select>
+      <noscript><button type="submit" class="btn btn-sm">Apply</button></noscript>
+    </form>
+  </div>
+</div>
+
+<section class="grid grid-stats">
+  <div class="stat">
+    <span class="stat-label">Calls</span>
+    <span class="stat-value">{{ "{:,}".format(total_calls) }}</span>
+    {% if failures %}
+    <span class="stat-hint">{{ failures }} failed</span>
+    {% endif %}
+  </div>
+  <div class="stat">
+    <span class="stat-label">Tokens</span>
+    <span class="stat-value">{{ "{:,}".format(total_tokens) }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Cost</span>
+    <span class="stat-value">${{ "%.2f"|format(total_cost) }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Avg latency</span>
+    <span class="stat-value">{{ "{:,}".format(avg_latency) }}<small>ms</small></span>
+  </div>
+</section>
+
+<div class="grid grid-halves">
+  <section class="card">
+    <div class="card-header"><h2>Tokens per day</h2></div>
+    <div class="card-body">{{ tokens_chart }}</div>
+  </section>
+  <section class="card">
+    <div class="card-header"><h2>Cost per day (USD)</h2></div>
+    <div class="card-body">{{ cost_chart }}</div>
+  </section>
+</div>
+
+<section class="card">
+  <div class="card-header"><h2>By model</h2></div>
+  {% if by_model %}
+  <div class="table-wrap">
+    <table class="table-stack">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th class="numeric">Calls</th>
+          <th class="numeric">Tokens</th>
+          <th class="numeric">Cost</th>
+          <th class="numeric">Avg latency</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in by_model %}
+        <tr>
+          <td data-label="Model"><code>{{ row.model }}</code></td>
+          <td data-label="Calls" class="numeric">{{ "{:,}".format(row.calls) }}</td>
+          <td data-label="Tokens" class="numeric">{{ "{:,}".format(row.tokens) }}</td>
+          <td data-label="Cost" class="numeric">${{ "%.4f"|format(row.cost) }}</td>
+          <td data-label="Avg latency" class="numeric">{{ "{:,}".format(row.latency) }}ms</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h3>No calls recorded</h3>
+    <p>Usage appears here as soon as your app makes its first provider call.</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2>Recent agent runs</h2>
+    <span class="spacer"></span>
+    <a class="btn btn-sm btn-ghost" href="{{ admin_path }}/model/ai/greatapi_agent_run">View all</a>
+  </div>
+  {% if recent_runs %}
+  <div class="table-wrap">
+    <table class="table-stack">
+      <thead>
+        <tr>
+          <th>Agent</th><th>Model</th><th>Status</th>
+          <th class="numeric">Steps</th><th class="numeric">Tokens</th><th class="numeric">Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in recent_runs %}
+        {% set level = {'succeeded': 'success', 'failed': 'danger', 'running': 'info'} %}
+        <tr>
+          <td data-label="Agent">{{ run.name }}</td>
+          <td data-label="Model"><code>{{ run.model }}</code></td>
+          <td data-label="Status">
+            <span class="badge badge-{{ level.get(run.status.value, 'neutral') }}">
+              {{ run.status.value }}
+            </span>
+          </td>
+          <td data-label="Steps" class="numeric">{{ run.steps }}</td>
+          <td data-label="Tokens" class="numeric">{{ "{:,}".format(run.total_tokens) }}</td>
+          <td data-label="Cost" class="numeric">${{ "%.4f"|format(run.cost_usd) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h3>No agent runs yet</h3>
+    <p>Runs started with <code>ai.Agent</code> are traced here, step by step.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

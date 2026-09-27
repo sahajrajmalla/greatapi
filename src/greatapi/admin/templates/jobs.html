@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs &middot; {{ site_title }}{% endblock %}
+{% block heading %}Jobs{% endblock %}
+
+{% set level = {
+  'succeeded': 'success', 'failed': 'danger', 'running': 'info',
+  'queued': 'warning', 'cancelled': 'neutral'
+} %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Background jobs</h1>
+    <p>
+      {% if handlers %}
+      {{ handlers|length }} handler{{ '' if handlers|length == 1 else 's' }} registered:
+      {% for name in handlers %}<code>{{ name }}</code>{{ ', ' if not loop.last }}{% endfor %}
+      {% else %}
+      No handlers registered. Decorate an async function with <code>@job()</code>.
+      {% endif %}
+    </p>
+  </div>
+  <div class="page-header-actions">
+    <form method="get" action="{{ admin_path }}/jobs">
+      <label class="visually-hidden" for="status">Filter by status</label>
+      <select id="status" name="status" data-autosubmit-select>
+        <option value="">All statuses</option>
+        {% for name in statuses %}
+        <option value="{{ name }}" {% if status_filter == name %}selected{% endif %}>
+          {{ name }} ({{ counts.get(name, 0) }})
+        </option>
+        {% endfor %}
+      </select>
+      <noscript><button type="submit" class="btn btn-sm">Filter</button></noscript>
+    </form>
+  </div>
+</div>
+
+<section class="grid grid-stats">
+  {% for name in statuses %}
+  <div class="stat">
+    <span class="stat-label">{{ name }}</span>
+    <span class="stat-value">{{ "{:,}".format(counts.get(name, 0)) }}</span>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="card">
+  {% if page.items %}
+  <div class="table-wrap">
+    <table class="table-stack">
+      <thead>
+        <tr>
+          <th>#</th><th>Name</th><th>Status</th>
+          <th class="numeric">Attempts</th><th>Created</th><th>Finished</th>
+          <th class="actions"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in page.items %}
+        <tr>
+          <td data-label="#">{{ job.id }}</td>
+          <td data-label="Name"><code>{{ job.name }}</code></td>
+          <td data-label="Status">
+            <span class="badge badge-{{ level.get(job.status.value, 'neutral') }}">
+              {{ job.status.value }}
+            </span>
+            {% if job.error %}
+            <br /><span class="cell-truncate field-help" title="{{ job.error }}">{{ job.error }}</span>
+            {% endif %}
+          </td>
+          <td data-label="Attempts" class="numeric">{{ job.attempts }}/{{ job.max_attempts }}</td>
+          <td data-label="Created">{{ job.created_at.strftime("%d %b %H:%M") }}</td>
+          <td data-label="Finished">
+            {{ job.finished_at.strftime("%d %b %H:%M") if job.finished_at else '—' }}
+          </td>
+          <td class="actions">
+            {% if job.status.value in ('failed', 'cancelled') %}
+            <form class="inline-form" method="post" action="{{ admin_path }}/jobs/{{ job.id }}/retry">
+              <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+              <button type="submit" class="btn btn-sm">Retry</button>
+            </form>
+            {% elif job.status.value == 'queued' %}
+            <form class="inline-form" method="post" action="{{ admin_path }}/jobs/{{ job.id }}/cancel"
+                  data-confirm="Cancel this job?">
+              <input type="hidden" name="{{ csrf_field }}" value="{{ csrf_token }}" />
+              <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "partials/pagination.html" %}
+  {% else %}
+  <div class="empty-state">
+    <h3>No jobs{% if status_filter %} with status “{{ status_filter }}”{% endif %}</h3>
+    <p>Queue one with <code>await enqueue(my_job, arg=1)</code>.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+"""Project settings.
+
+Runtime configuration -- secret key, database URL, API keys -- lives in .env and
+is read by GreatAPI itself. This file is only for what your project declares.
+"""
+
+from __future__ import annotations
+
+#: Apps to load. `greatapi startapp <name>` appends to this list.
+#:
+#: For each entry GreatAPI imports `<app>.models` (so migrations see its
+#: tables), `<app>.admin` (so its admin registrations run) and includes
+#: `<app>.router:router` if it exists. Any of those may be absent.
+INSTALLED_APPS: list[str] = [
+]

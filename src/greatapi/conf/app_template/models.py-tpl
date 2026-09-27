@@ -1,0 +1,23 @@
+"""Database models for the {{ app_name }} app.
+
+Anything defined here is picked up by `greatapi makemigrations`, because
+GreatAPI imports this module for every app in INSTALLED_APPS.
+"""
+
+from __future__ import annotations
+
+from sqlalchemy import String, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from greatapi.db import Base, TimestampMixin
+
+
+class {{ app_name.capitalize() }}Item(TimestampMixin, Base):
+    """A starter model. Rename it, or delete it and write your own."""
+
+    __tablename__ = "{{ app_name }}_item"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), index=True)
+    body: Mapped[str | None] = mapped_column(Text)
+    is_published: Mapped[bool] = mapped_column(default=False)
