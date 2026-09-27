@@ -7,7 +7,7 @@ Admin, auth, migrations, jobs and streaming out of the box — so you ship the
 backend instead of the plumbing.
 
 [![CI](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/greatapi)](https://pypi.org/project/greatapi/)
+[![PyPI](https://img.shields.io/pypi/v/greatapi?color=blue)](https://pypi.org/project/greatapi/)
 [![Python](https://img.shields.io/pypi/pyversions/greatapi)](https://pypi.org/project/greatapi/)
 [![License](https://img.shields.io/pypi/l/greatapi)](LICENSE)
 
