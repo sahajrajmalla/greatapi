@@ -82,7 +82,7 @@ dev = [
     "twine>=5.1",
     "pre-commit>=3.7",
 ]
-docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.25"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=1.0.6"]
 
 [project.urls]
 Homepage = "https://github.com/sahajrajmalla/greatapi"
