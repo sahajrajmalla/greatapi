@@ -1,17 +1,17 @@
 <div align="center">
 
-<img src="docs/assets/greatapi-logo.svg" alt="GreatAPI" width="320" />
+<img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/greatapi-logo.svg" alt="GreatAPI" width="320" />
 
 **The batteries-included FastAPI framework.**
 Admin, auth, migrations, jobs and streaming out of the box — so you ship the
 backend instead of the plumbing.
 
 [![CI](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml/badge.svg)](https://github.com/sahajrajmalla/greatapi/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/greatapi)](https://pypi.org/project/greatapi/)
+[![PyPI](https://img.shields.io/pypi/v/greatapi?color=blue)](https://pypi.org/project/greatapi/)
 [![Python](https://img.shields.io/pypi/pyversions/greatapi)](https://pypi.org/project/greatapi/)
 [![License](https://img.shields.io/pypi/l/greatapi)](LICENSE)
 
-<img src="docs/assets/admin-dashboard.png" alt="The GreatAPI admin dashboard" width="900" />
+<img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-dashboard.png" alt="The GreatAPI admin dashboard" width="900" />
 
 </div>
 
@@ -70,12 +70,12 @@ another edit.
 
 <table>
 <tr>
-<td width="50%"><a href="docs/assets/admin-ai-usage.png"><img src="docs/assets/admin-ai-usage.png" alt="Tokens, cost and latency per model" /></a><br /><sub><b>AI usage</b> — tokens, cost and latency, recorded on every call</sub></td>
-<td width="50%"><a href="docs/assets/admin-jobs.png"><img src="docs/assets/admin-jobs.png" alt="The background job queue" /></a><br /><sub><b>Jobs</b> — a durable queue with retries, right in the admin</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-ai-usage.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-ai-usage.png" alt="Tokens, cost and latency per model" /></a><br /><sub><b>AI usage</b> — tokens, cost and latency, recorded on every call</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-jobs.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-jobs.png" alt="The background job queue" /></a><br /><sub><b>Jobs</b> — a durable queue with retries, right in the admin</sub></td>
 </tr>
 <tr>
-<td width="50%"><a href="docs/assets/admin-api-keys.png"><img src="docs/assets/admin-api-keys.png" alt="API keys with scopes and spend caps" /></a><br /><sub><b>API keys</b> — scopes, rate limits and monthly spend caps</sub></td>
-<td width="50%"><a href="docs/assets/admin-llm-calls.png"><img src="docs/assets/admin-llm-calls.png" alt="Sortable list view over any model" /></a><br /><sub><b>List views</b> — search, sort and paginate any model you register</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-api-keys.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-api-keys.png" alt="API keys with scopes and spend caps" /></a><br /><sub><b>API keys</b> — scopes, rate limits and monthly spend caps</sub></td>
+<td width="50%"><a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-llm-calls.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-llm-calls.png" alt="Sortable list view over any model" /></a><br /><sub><b>List views</b> — search, sort and paginate any model you register</sub></td>
 </tr>
 </table>
 
@@ -111,7 +111,7 @@ call and every agent step is recorded with its model, tokens, cost, latency and
 outcome, and shows up at `/admin/usage` — an agent run opens as a trace rather
 than a number in a log line.
 
-<a href="docs/assets/admin-agent-runs.png"><img src="docs/assets/admin-agent-runs.png" alt="Agent runs, with steps and cost" width="900" /></a>
+<a href="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-agent-runs.png"><img src="https://raw.githubusercontent.com/sahajrajmalla/greatapi/master/docs/assets/admin-agent-runs.png" alt="Agent runs, with steps and cost" width="900" /></a>
 
 Models are addressed as `provider:model`:
 
