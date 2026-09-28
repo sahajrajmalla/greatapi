@@ -46,7 +46,7 @@ classifiers = [
 # Base install: a complete general-purpose web framework. No LLM dependency.
 dependencies = [
     "fastapi>=0.115",
-    "pydantic>=2.7",
+    "pydantic>=2.13.5",
     "pydantic-settings>=2.3",
     "sqlalchemy[asyncio]>=2.0.30",
     "aiosqlite>=0.20",
